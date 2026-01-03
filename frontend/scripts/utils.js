@@ -23,7 +23,7 @@ class Utils {
 
 static getApiBaseUrl() {
     // Always use localhost:5000 for development
-    return 'http://localhost:5000/api';
+    return 'https://fc3be690de421ba4-223-233-83-89.serveousercontent.com/api';
 }
 
 static showAlert(message, type = 'info') {
@@ -149,7 +149,7 @@ static async checkDatabaseConnection() {
     try {
         // Create a unique timestamp to prevent caching
         const timestamp = new Date().getTime();
-        const url = `http://localhost:5000/api/health?t=${timestamp}`;
+        const url = `https://fc3be690de421ba4-223-233-83-89.serveousercontent.com/api/health?t=${timestamp}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -339,7 +339,7 @@ static updateDatabaseStatus(isOnline, errorMessage = '') {
     }
     
     static async fetchJobCardData(endpoint, data = null) {
-        const url = `http://localhost:5000${endpoint}`;
+        const url = `https://fc3be690de421ba4-223-233-83-89.serveousercontent.com${endpoint}`;
         
         try {
             const options = {

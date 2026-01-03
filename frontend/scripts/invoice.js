@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000/api'; // Update with your backend URL
+const API_BASE_URL = 'https://fc3be690de421ba4-223-233-83-89.serveousercontent.com/api'; // Update with your backend URL
 
 // Sample data for fallback
 let jobCards = []; // Will be populated from database
