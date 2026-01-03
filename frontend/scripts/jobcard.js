@@ -120,16 +120,16 @@ function setupModeTypeListeners() {
     }
 }
 
+// Update fetchNextJobNumber to only fill if empty
 async function fetchNextJobNumber() {
     try {
-        // Get mode of travel and shipment type values
         const modeSelect = document.getElementById('modeOfTravel');
         const typeSelect = document.getElementById('shipmentType');
+        const jobNoField = document.getElementById('jobNo');
         
         const mode = modeSelect ? modeSelect.value : 'ROA';
         const type = typeSelect ? typeSelect.value : 'I';
         
-        // Only fetch if both mode and type are selected
         if (!mode || !type) {
             console.log('Mode or Type not selected, skipping job number fetch');
             return;
@@ -140,42 +140,45 @@ async function fetchNextJobNumber() {
         
         console.log('Next job number response:', data);
         
-        const jobNoField = document.getElementById('jobNo');
         if (jobNoField && data.nextJobNumber) {
-            jobNoField.dataset.previewNumber = data.nextJobNumber;
+            // Only set if field is empty or contains a temporary number
+            const currentValue = jobNoField.value;
+            const isTemporary = !currentValue || 
+                               currentValue.includes('JC-') || 
+                               currentValue === jobNoField.dataset.previewNumber;
             
-            if (!jobNoField.value || jobNoField.value.includes('JC-')) {
+            if (isTemporary) {
                 jobNoField.value = data.nextJobNumber;
+                jobNoField.dataset.previewNumber = data.nextJobNumber;
                 
-                setTimeout(() => {
-                    jobNoField.focus();
-                    jobNoField.setSelectionRange(jobNoField.value.length, jobNoField.value.length);
-                }, 100);
+                // Make it editable but show it's auto-generated
+                jobNoField.readOnly = false;
+                jobNoField.classList.remove('auto-filled');
+                
+                // Add info text
+                if (!jobNoField.nextElementSibling || 
+                    !jobNoField.nextElementSibling.classList.contains('field-hint')) {
+                    const hint = document.createElement('small');
+                    hint.className = 'field-hint';
+                    hint.style.display = 'block';
+                    hint.style.marginTop = '5px';
+                    hint.style.color = '#6b7280';
+                    hint.style.fontSize = '12px';
+                    hint.textContent = 'Auto-generated. You can edit if needed.';
+                    jobNoField.parentNode.appendChild(hint);
+                }
             }
             
             return data.nextJobNumber;
         }
         
-        showFallbackJobNumber();
-        
     } catch (error) {
         console.error('Error fetching next job number:', error);
-        showFallbackJobNumber();
+        // Don't show fallback - let user enter manually
     }
 }
 
-function showFallbackJobNumber() {
-    const jobNoField = document.getElementById('jobNo');
-    if (jobNoField) {
-        const year = new Date().getFullYear();
-        const timestamp = Date.now().toString().slice(-6);
-        // Update format to match new pattern
-        jobNoField.value = `JC-${year}-${timestamp.padStart(6, '0')}`;
-        jobNoField.dataset.previewNumber = jobNoField.value;
-        
-        showNotification('Using temporary job number. Save to get permanent number.', 'info');
-    }
-}
+
 
 // Add this helper function to check if job number already exists
 async function checkJobNumberExists(jobNumber) {
@@ -197,20 +200,15 @@ function generateJobNumber() {
     const typeSelect = document.getElementById('shipmentType');
     
     if (jobNoField) {
-        // Check if mode and type are selected
-        const mode = modeSelect ? modeSelect.value : '';
-        const type = typeSelect ? typeSelect.value : '';
+        // Check if this is a new form (no value yet)
+        const isNewForm = !jobNoField.value || 
+                         jobNoField.value.trim() === '' || 
+                         jobNoField.value.includes('JC-') ||
+                         jobNoField.value === jobNoField.dataset.previewNumber;
         
-        // Only generate if field is empty AND mode/type are selected
-        if ((!jobNoField.value || jobNoField.value.trim() === '') && mode && type) {
+        // Only auto-generate if mode and type are selected AND it's a new form
+        if (isNewForm && modeSelect && typeSelect && modeSelect.value && typeSelect.value) {
             fetchNextJobNumber();
-        } else if (jobNoField.value && jobNoField.value.trim() !== '') {
-            // If job number exists, make it read-only for saved records
-            const jobCardId = document.querySelector('input[name="jobCardId"]')?.value || window.currentJobCardId;
-            if (jobCardId) {
-                jobNoField.readOnly = true;
-                jobNoField.classList.add('auto-filled');
-            }
         }
     }
 }
@@ -1164,7 +1162,6 @@ function printJobCard() {
     window.print();
 }
 
-// Form Actions
 async function saveJobCard() {
     const form = document.getElementById('jobCardForm');
     if (!form.checkValidity()) {
@@ -1175,6 +1172,14 @@ async function saveJobCard() {
     const jobNoField = document.getElementById('jobNo');
     const modeSelect = document.getElementById('modeOfTravel');
     const typeSelect = document.getElementById('shipmentType');
+    
+    // Validate job number format
+    const jobNoPattern = /^(ROA|AIR|SEA|MUL|JC)-[IED]-20\d{2}-\d{6}$/;
+    if (!jobNoPattern.test(jobNoField.value)) {
+        showNotification('Invalid job number format. Expected format: AIR-E-2026-000001', 'error');
+        jobNoField.focus();
+        return;
+    }
     
     // Check if mode and type are selected
     if (!modeSelect.value || !typeSelect.value) {
@@ -1259,10 +1264,23 @@ async function handleJobCardSubmit(event) {
     }
     
     const jobNoField = document.getElementById('jobNo');
-    if (!jobNoField.value || jobNoField.value === 'EOE/') {
-        showNotification('Job number is required.', 'error');
+    
+    // Validate job number format
+    const jobNoPattern = /^(ROA|AIR|SEA|MUL|JC)-[IED]-20\d{2}-\d{6}$/;
+    if (!jobNoPattern.test(jobNoField.value)) {
+        showNotification('Invalid job number format. Expected format: AIR-E-2026-000001', 'error');
         jobNoField.focus();
         return;
+    }
+    
+    // Check if job number already exists (only for new entries)
+    if (!window.currentJobCardId) {
+        const exists = await checkJobNumberExists(jobNoField.value);
+        if (exists) {
+            showNotification('Job number already exists. Please use a different number.', 'error');
+            jobNoField.focus();
+            return;
+        }
     }
     
     const formData = new FormData(form);
