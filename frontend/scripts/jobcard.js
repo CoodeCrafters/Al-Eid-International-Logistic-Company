@@ -71,6 +71,34 @@ function setupModalCloseButtons() {
     });
 }
 
+// Add this function to format date-time strings
+function formatDateTime(dateTimeString) {
+    if (!dateTimeString || dateTimeString === 'Not Set') return 'Not Set';
+    
+    try {
+        const date = new Date(dateTimeString);
+        
+        // If it's a valid date, format it
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }) + ' ' + date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        } else {
+            // Try to parse as just time if it's not a full datetime
+            return dateTimeString;
+        }
+    } catch (e) {
+        console.log('Error formatting datetime:', e, dateTimeString);
+        return dateTimeString;
+    }
+}
+
 function setupModeTypeListeners() {
     const modeSelect = document.getElementById('modeOfTravel');
     const typeSelect = document.getElementById('shipmentType');
