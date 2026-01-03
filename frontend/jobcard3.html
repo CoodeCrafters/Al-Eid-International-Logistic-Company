@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job Card - AI Eid International Logistic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/jobcard4.css">
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo-circle">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="company-info">
+                <h1 class="company-title">AI Eid International Logistic Company</h1>
+                <p class="company-tagline">Global Logistics & Transport Solutions</p>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="system-info">
+                <div class="system-time" id="systemTime">00:00:00</div>
+                <div class="system-date" id="systemDate">Saturday, January 3, 2026</div>
+            </div>
+            
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="profile-name" id="userName">Admin User</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <aside class="sidebar">
+        <div class="menu-header">
+            <h3><i class="fas fa-bars"></i> <span>MAIN MENU</span></h3>
+        </div>
+        
+        <ul class="menu-items">
+            <li class="menu-item">
+                <a href="home.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="jobcard.html">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Job Card</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invoice-generator.html">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoice Generator</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invoice-review.html">
+                    <i class="fas fa-search-dollar"></i>
+                    <span>Review Invoice Details</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="menu-footer">
+            <div class="system-stats">
+                <div class="stat-item">
+                    <span><i class="fas fa-file-invoice"></i> Invoices:</span>
+                    <strong id="invoiceCount">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span><i class="fas fa-clipboard-check"></i> Job Cards:</span>
+                    <strong id="jobcardCount">0</strong>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <main class="content-area">
+            <div class="content-header">
+                <h2><i class="fas fa-clipboard-list"></i> Create New Job Card</h2>
+                <div class="content-actions">
+                    <button class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary" onclick="showPreviewModal()">
+                        <i class="fas fa-eye"></i> Preview & Save
+                    </button>
+                </div>
+            </div>
+            
+            <!-- System Status Banner -->
+            <div class="system-banner">
+                <div class="banner-content">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <h4>Job Card Generation</h4>
+                        <p>Electronic Management System — <span class="status-active">System Active</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Card Form -->
+            <div class="jobcard-form-container">
+                <form id="jobCardForm" class="jobcard-form">
+                    <div class="form-grid">
+                        <!-- REFERENCE DETAILS Card -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h3>REFERENCE DETAILS</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="jobNo">
+                                        <i class="fas fa-hashtag"></i> JOB NUMBER
+                                    </label>
+                                    <input type="text" id="jobNo" name="jobNo" required 
+                                           placeholder="e.g. JC-2026-0001">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="date">
+                                        <i class="fas fa-calendar"></i> OPERATIONAL DATE
+                                    </label>
+                                    <input type="date" id="date" name="date" required 
+                                           value="2026-01-03">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="costCenter">
+                                        <i class="fas fa-building"></i> COST CENTER
+                                    </label>
+                                    <select id="costCenter" name="costCenter" required>
+                                        <option value="">Select Cost Center</option>
+                                        <option value="Main Office - Riyadh">Main Office - Riyadh</option>
+                                        <option value="Branch - Jeddah">Branch - Jeddah</option>
+                                        <option value="Branch - Dubai">Branch - Dubai</option>
+                                        <option value="Head Office - Kuwait">Head Office - Kuwait</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Mode of Travel and Shipment Type -->
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="modeOfTravel">
+                                            <i class="fas fa-plane-departure"></i> MODE OF TRAVEL
+                                        </label>
+                                        <select id="modeOfTravel" name="modeOfTravel" required>
+                                            <option value="">Select Mode</option>
+                                            <option value="ROA">Road</option>
+                                            <option value="AIR">Air</option>
+                                            <option value="SEA">Sea</option>
+                                            <option value="MUL">Multimodal</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="shipmentType">
+                                            <i class="fas fa-exchange-alt"></i> SHIPMENT TYPE
+                                        </label>
+                                        <select id="shipmentType" name="shipmentType" required>
+                                            <option value="">Select Type</option>
+                                            <option value="I">Import</option>
+                                            <option value="E">Export</option>
+                                            <option value="D">Domestic</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARGO SPECS Card -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="fas fa-box"></i>
+                                <h3>CARGO SPECS</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="bayanNo">
+                                        <i class="fas fa-file-alt"></i> BAYAN NUMBER
+                                    </label>
+                                    <input type="text" id="bayanNo" name="bayanNo" required 
+                                           placeholder="Enter Bayan Number">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="grossWeight">
+                                            <i class="fas fa-weight"></i> GROSS WT (KG)
+                                        </label>
+                                        <input type="number" id="grossWeight" name="grossWeight" required 
+                                               placeholder="0.00" step="0.01" min="0">
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="packages">
+                                            <i class="fas fa-boxes"></i> PKGS QTY
+                                        </label>
+                                        <input type="number" id="packages" name="packages" required 
+                                               placeholder="0" min="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="packageType">
+                                        <i class="fas fa-cube"></i> PACKAGE TYPE
+                                    </label>
+                                    <select id="packageType" name="packageType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Cartons">Cartons</option>
+                                        <option value="Pallets">Pallets</option>
+                                        <option value="Crates">Crates</option>
+                                        <option value="Drums">Drums</option>
+                                        <option value="Bags">Bags</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bayanDate">
+                                        <i class="fas fa-calendar-day"></i> BAYAN DATE
+                                    </label>
+                                    <input type="date" id="bayanDate" name="bayanDate" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CLIENT INFORMATION Card -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="fas fa-user-tie"></i>
+                                <h3>CLIENT INFORMATION</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="customerName">
+                                        <i class="fas fa-building"></i> CUSTOMER NAME
+                                    </label>
+                                    <input type="text" id="customerName" name="customerName" required 
+                                           placeholder="Full Company Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerRefNo">
+                                        <i class="fas fa-id-card"></i> CUSTOMER REP #
+                                    </label>
+                                    <input type="text" id="customerRefNo" name="customerRefNo" required 
+                                           placeholder="PO or internal Ref">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">
+                                        <i class="fas fa-envelope"></i> CONTACT EMAIL
+                                    </label>
+                                    <input type="email" id="email" name="email" required 
+                                           placeholder="billing@client.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phone">
+                                        <i class="fas fa-phone"></i> PHONE NUMBER
+                                    </label>
+                                    <input type="tel" id="phone" name="phone" required 
+                                           placeholder="Enter phone number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerAddress">
+                                        <i class="fas fa-map-marker-alt"></i> ADDRESS
+                                    </label>
+                                    <textarea id="customerAddress" name="customerAddress" rows="2" 
+                                              placeholder="Customer address" required></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="requesterName">
+                                        <i class="fas fa-user"></i> REQUESTER NAME
+                                    </label>
+                                    <input type="text" id="requesterName" name="requesterName" required 
+                                           placeholder="Enter Requester Name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LOGISTICS PATH Card -->
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="fas fa-route"></i>
+                                <h3>LOGISTICS PATH</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="shipperName">
+                                        <i class="fas fa-user-friends"></i> SHIPPER / VENDOR
+                                    </label>
+                                    <input type="text" id="shipperName" name="shipperName" required 
+                                           placeholder="Origin Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="truckWaybillNo">
+                                        <i class="fas fa-truck"></i> WAYBILL / TRUCK NO
+                                    </label>
+                                    <input type="text" id="truckWaybillNo" name="truckWaybillNo" required 
+                                           placeholder="Tracking Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="portArrival">
+                                        <i class="fas fa-anchor"></i> PORT OF ARRIVAL
+                                    </label>
+                                    <select id="portArrival" name="portArrival" required>
+                                        <option value="">Select Port</option>
+                                        <option value="Jebel Ali Port, UAE">Jebel Ali Port, UAE</option>
+                                        <option value="Hamad Port, Qatar">Hamad Port, Qatar</option>
+                                        <option value="Kuwait Port, Kuwait">Kuwait Port, Kuwait</option>
+                                        <option value="King Abdulaziz Port, Saudi Arabia">King Abdulaziz Port, Saudi Arabia</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="estd">
+                                            <i class="fas fa-ship"></i> ESTD
+                                        </label>
+                                        <input type="datetime-local" id="estd" name="estd" required>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="eta">
+                                            <i class="fas fa-flag-checkered"></i> ETA
+                                        </label>
+                                        <input type="datetime-local" id="eta" name="eta" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipperRefNo">
+                                        <i class="fas fa-file-contract"></i> SHIPPER REF NO
+                                    </label>
+                                    <input type="text" id="shipperRefNo" name="shipperRefNo" required 
+                                           placeholder="Enter Shipper Reference Number">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARGO DESCRIPTION Card -->
+                        <div class="form-card wide">
+                            <div class="card-header">
+                                <i class="fas fa-sticky-note"></i>
+                                <h3>CARGO DESCRIPTION & INSTRUCTIONS</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="description">
+                                        <i class="fas fa-align-left"></i> DESCRIPTION OF GOODS
+                                    </label>
+                                    <textarea id="description" name="description" rows="4" 
+                                              placeholder="Enter detailed manifest information..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="specialInstructions">
+                                        <i class="fas fa-exclamation-circle"></i> SPECIAL INSTRUCTIONS
+                                    </label>
+                                    <textarea id="specialInstructions" name="specialInstructions" rows="3" 
+                                              placeholder="Fragile, Refrigerated, Urgent, etc."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dimensions">
+                                        <i class="fas fa-ruler-combined"></i> DIMENSIONS (L×W×H in cm)
+                                    </label>
+                                    <input type="text" id="dimensions" name="dimensions" 
+                                           placeholder="e.g., 100×50×60">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="showPreviewModal()">
+                            <i class="fas fa-eye"></i> Print Preview
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="saveJobCard()">
+                            <i class="fas fa-save"></i> Finalize & Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Job Card Preview</h3>
+                <button class="modal-close" onclick="closePreviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="jobCardPreview">
+                <!-- Preview content will be inserted here -->
+                <div class="preview-placeholder">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>Preview will be generated here</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePreviewModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button class="btn btn-primary" onclick="saveJobCard()">
+                    <i class="fas fa-save"></i> Save Job Card
+                </button>
+                <button class="btn btn-success" onclick="printJobCard()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay success" id="successModal">
+        <div class="modal-container success">
+            <div class="modal-header success">
+                <h3><i class="fas fa-check-circle"></i> Success!</h3>
+                <button class="modal-close" onclick="closeSuccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4>Job Card Saved Successfully!</h4>
+                <p>Job Card <strong id="savedJobNumber">[Number]</strong> has been saved to the database.</p>
+                <p>An invoice number has been automatically generated: <strong id="generatedInvoice">INV/2026/08321</strong></p>
+                <div class="success-actions">
+                    <button class="btn btn-primary" onclick="closeSuccessModal()">
+                        <i class="fas fa-plus"></i> Create New Job Card
+                    </button>
+                    <button class="btn btn-success" onclick="generateInvoice()">
+                        <i class="fas fa-file-invoice"></i> Generate Invoice
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/jobcard.js"></script>
+</body>
+</html>

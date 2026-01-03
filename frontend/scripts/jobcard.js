@@ -51,25 +51,74 @@ function initJobCardSystem() {
     
     // Add enhanced CSS styles
     addEnhancedStyles();
+    
+    // NEW: Add event listeners for mode and type changes
+    setupModeTypeListeners();
+    setupModalCloseButtons();
+
+}
+
+function setupModalCloseButtons() {
+    // Close modal when clicking on overlay
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+}
+
+function setupModeTypeListeners() {
+    const modeSelect = document.getElementById('modeOfTravel');
+    const typeSelect = document.getElementById('shipmentType');
+    
+    if (modeSelect) {
+        modeSelect.addEventListener('change', function() {
+            if (modeSelect.value && document.getElementById('shipmentType').value) {
+                fetchNextJobNumber();
+            }
+        });
+    }
+    
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            if (typeSelect.value && document.getElementById('modeOfTravel').value) {
+                fetchNextJobNumber();
+            }
+        });
+    }
 }
 
 async function fetchNextJobNumber() {
     try {
-        const response = await fetch('https://fc3be690de421ba4-223-233-83-89.serveousercontent.com/api/jobcards/next-number');
+        // Get mode of travel and shipment type values
+        const modeSelect = document.getElementById('modeOfTravel');
+        const typeSelect = document.getElementById('shipmentType');
+        
+        const mode = modeSelect ? modeSelect.value : 'ROA';
+        const type = typeSelect ? typeSelect.value : 'I';
+        
+        // Only fetch if both mode and type are selected
+        if (!mode || !type) {
+            console.log('Mode or Type not selected, skipping job number fetch');
+            return;
+        }
+        
+        const response = await fetch(`https://fc3be690de421ba4-223-233-83-89.serveousercontent.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
         const data = await response.json();
         
         console.log('Next job number response:', data);
         
         const jobNoField = document.getElementById('jobNo');
         if (jobNoField && data.nextJobNumber) {
-            // Store the preview number in a data attribute
             jobNoField.dataset.previewNumber = data.nextJobNumber;
             
-            // Only show if field is empty
-            if (!jobNoField.value || jobNoField.value === 'EOE/') {
+            if (!jobNoField.value || jobNoField.value.includes('JC-')) {
                 jobNoField.value = data.nextJobNumber;
                 
-                // Focus at the end of the value for easy editing
                 setTimeout(() => {
                     jobNoField.focus();
                     jobNoField.setSelectionRange(jobNoField.value.length, jobNoField.value.length);
@@ -92,7 +141,8 @@ function showFallbackJobNumber() {
     if (jobNoField) {
         const year = new Date().getFullYear();
         const timestamp = Date.now().toString().slice(-6);
-        jobNoField.value = `EOE/${year}/${timestamp.padStart(5, '0')}`;
+        // Update format to match new pattern
+        jobNoField.value = `JC-${year}-${timestamp.padStart(6, '0')}`;
         jobNoField.dataset.previewNumber = jobNoField.value;
         
         showNotification('Using temporary job number. Save to get permanent number.', 'info');
@@ -115,15 +165,19 @@ async function checkJobNumberExists(jobNumber) {
 
 function generateJobNumber() {
     const jobNoField = document.getElementById('jobNo');
-    const form = document.getElementById('jobCardForm');
+    const modeSelect = document.getElementById('modeOfTravel');
+    const typeSelect = document.getElementById('shipmentType');
     
     if (jobNoField) {
-        // Only generate if field is empty AND form is in new state (not editing existing)
-        if (!jobNoField.value || jobNoField.value.trim() === '') {
+        // Check if mode and type are selected
+        const mode = modeSelect ? modeSelect.value : '';
+        const type = typeSelect ? typeSelect.value : '';
+        
+        // Only generate if field is empty AND mode/type are selected
+        if ((!jobNoField.value || jobNoField.value.trim() === '') && mode && type) {
             fetchNextJobNumber();
-        } else {
+        } else if (jobNoField.value && jobNoField.value.trim() !== '') {
             // If job number exists, make it read-only for saved records
-            // Check if we're editing an existing job card
             const jobCardId = document.querySelector('input[name="jobCardId"]')?.value || window.currentJobCardId;
             if (jobCardId) {
                 jobNoField.readOnly = true;
@@ -812,13 +866,18 @@ function setupEditButtons() {
     });
 }
 
-function setupRealTimePreview() {
-    const inputs = document.querySelectorAll('#jobCardForm input, #jobCardForm select, #jobCardForm textarea');
+// function setupRealTimePreview() {
+//     const inputs = document.querySelectorAll('#jobCardForm input, #jobCardForm select, #jobCardForm textarea');
     
-    inputs.forEach(input => {
-        input.addEventListener('input', updatePreview);
-        input.addEventListener('change', updatePreview);
-    });
+//     inputs.forEach(input => {
+//         input.addEventListener('input', updatePreview);
+//         input.addEventListener('change', updatePreview);
+//     });
+// }
+
+function setupRealTimePreview() {
+    // Don't auto-update modal preview constantly
+    // We'll update it when modal opens
 }
 
 function updatePreview() {
@@ -827,27 +886,47 @@ function updatePreview() {
     const formData = {
         jobNo: document.getElementById('jobNo')?.value || 'Not Set',
         date: document.getElementById('date')?.value || 'Not Set',
-        estd: document.getElementById('estd')?.value || 'Not Set',
-        eta: document.getElementById('eta')?.value || 'Not Set',
-        portArrival: document.getElementById('portArrival')?.value || 'Not Set',
+        modeOfTravel: document.getElementById('modeOfTravel')?.value || 'Not Set',
+        shipmentType: document.getElementById('shipmentType')?.value || 'Not Set',
         costCenter: document.getElementById('costCenter')?.value || 'Not Set',
-        customerRefNo: document.getElementById('customerRefNo')?.value || 'Not Set',
-        requesterName: document.getElementById('requesterName')?.value || 'Not Set',
-        customerName: document.getElementById('customerName')?.value || 'Not Set',
-        customerAddress: document.getElementById('customerAddress')?.value || 'Not Set',
-        email: document.getElementById('email')?.value || 'Not Set',
-        phone: document.getElementById('phone')?.value || 'Not Set',
-        truckWaybillNo: document.getElementById('truckWaybillNo')?.value || 'Not Set',
-        shipperName: document.getElementById('shipperName')?.value || 'Not Set',
-        shipperRefNo: document.getElementById('shipperRefNo')?.value || 'Not Set',
         bayanNo: document.getElementById('bayanNo')?.value || 'Not Set',
         bayanDate: document.getElementById('bayanDate')?.value || 'Not Set',
         grossWeight: document.getElementById('grossWeight')?.value || '0',
         packages: document.getElementById('packages')?.value || '0',
         packageType: document.getElementById('packageType')?.value || 'Not Set',
-        dimensions: document.getElementById('dimensions')?.value || 'Not Set',
-        description: document.getElementById('description')?.value || 'Not Set'
+        customerName: document.getElementById('customerName')?.value || 'Not Set',
+        customerRefNo: document.getElementById('customerRefNo')?.value || 'Not Set',
+        email: document.getElementById('email')?.value || 'Not Set',
+        phone: document.getElementById('phone')?.value || 'Not Set',
+        customerAddress: document.getElementById('customerAddress')?.value || 'Not Set',
+        requesterName: document.getElementById('requesterName')?.value || 'Not Set',
+        shipperName: document.getElementById('shipperName')?.value || 'Not Set',
+        truckWaybillNo: document.getElementById('truckWaybillNo')?.value || 'Not Set',
+        portArrival: document.getElementById('portArrival')?.value || 'Not Set',
+        estd: document.getElementById('estd')?.value || 'Not Set',
+        eta: document.getElementById('eta')?.value || 'Not Set',
+        shipperRefNo: document.getElementById('shipperRefNo')?.value || 'Not Set',
+        description: document.getElementById('description')?.value || 'Not Set',
+        specialInstructions: document.getElementById('specialInstructions')?.value || 'Not Set',
+        dimensions: document.getElementById('dimensions')?.value || 'Not Set'
     };
+    
+    // Format shipment type for display
+    let shipmentTypeDisplay = formData.shipmentType;
+    switch(formData.shipmentType) {
+        case 'I': shipmentTypeDisplay = 'Import'; break;
+        case 'E': shipmentTypeDisplay = 'Export'; break;
+        case 'D': shipmentTypeDisplay = 'Domestic'; break;
+    }
+    
+    // Format mode of travel for display
+    let modeDisplay = formData.modeOfTravel;
+    switch(formData.modeOfTravel) {
+        case 'ROA': modeDisplay = 'Road'; break;
+        case 'AIR': modeDisplay = 'Air'; break;
+        case 'SEA': modeDisplay = 'Sea'; break;
+        case 'MUL': modeDisplay = 'Multimodal'; break;
+    }
     
     const allEmpty = Object.values(formData).every(value => 
         value === 'Not Set' || value === '0' || value === ''
@@ -864,79 +943,197 @@ function updatePreview() {
     }
     
     previewDiv.innerHTML = `
-        <div class="preview-card">
-            <div class="preview-header-card">
-                <div class="preview-title">
-                    <h4>Job Card Preview</h4>
+        <div class="preview-content">
+            <div class="preview-card">
+                <div class="preview-section">
+                    <h4>REFERENCE DETAILS</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">JOB NUMBER</span>
+                        <span class="preview-value">${formData.jobNo}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">OPERATIONAL DATE</span>
+                        <span class="preview-value">${formatDate(formData.date)}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">COST CENTER</span>
+                        <span class="preview-value">${formData.costCenter}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">MODE OF TRAVEL</span>
+                        <span class="preview-value">${modeDisplay}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">SHIPMENT TYPE</span>
+                        <span class="preview-value">${shipmentTypeDisplay}</span>
+                    </div>
                 </div>
-                <div class="preview-id">${formData.jobNo}</div>
             </div>
             
-            <div class="preview-grid">
-                <div class="preview-item">
-                    <span class="preview-label">Customer</span>
-                    <span class="preview-value">${formData.customerName}</span>
+            <div class="preview-card">
+                <div class="preview-section">
+                    <h4>CARGO SPECS</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">BAYAN NUMBER</span>
+                        <span class="preview-value">${formData.bayanNo}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">GROSS WEIGHT</span>
+                        <span class="preview-value">${formData.grossWeight} kg</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">PACKAGES</span>
+                        <span class="preview-value">${formData.packages} ${formData.packageType}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">BAYAN DATE</span>
+                        <span class="preview-value">${formatDate(formData.bayanDate)}</span>
+                    </div>
                 </div>
-                <div class="preview-item">
-                    <span class="preview-label">Reference No</span>
-                    <span class="preview-value">${formData.customerRefNo}</span>
+            </div>
+            
+            <div class="preview-card">
+                <div class="preview-section">
+                    <h4>CLIENT INFORMATION</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">CUSTOMER NAME</span>
+                        <span class="preview-value">${formData.customerName}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">CUSTOMER REF #</span>
+                        <span class="preview-value">${formData.customerRefNo}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">CONTACT EMAIL</span>
+                        <span class="preview-value">${formData.email}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">PHONE</span>
+                        <span class="preview-value">${formData.phone}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">ADDRESS</span>
+                        <span class="preview-value">${formData.customerAddress.substring(0, 80)}${formData.customerAddress.length > 80 ? '...' : ''}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">REQUESTER NAME</span>
+                        <span class="preview-value">${formData.requesterName}</span>
+                    </div>
                 </div>
-                <div class="preview-item">
-                    <span class="preview-label">ESTD</span>
-                    <span class="preview-value">${formatDateTime(formData.estd)}</span>
+            </div>
+            
+            <div class="preview-card">
+                <div class="preview-section">
+                    <h4>LOGISTICS PATH</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">SHIPPER / VENDOR</span>
+                        <span class="preview-value">${formData.shipperName}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">WAYBILL / TRUCK NO</span>
+                        <span class="preview-value">${formData.truckWaybillNo}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">PORT OF ARRIVAL</span>
+                        <span class="preview-value">${formData.portArrival}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">ESTD</span>
+                        <span class="preview-value">${formatDateTime(formData.estd)}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">ETA</span>
+                        <span class="preview-value">${formatDateTime(formData.eta)}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">SHIPPER REF NO</span>
+                        <span class="preview-value">${formData.shipperRefNo}</span>
+                    </div>
                 </div>
-                <div class="preview-item">
-                    <span class="preview-label">ETA</span>
-                    <span class="preview-value">${formatDateTime(formData.eta)}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Port of Arrival</span>
-                    <span class="preview-value">${formData.portArrival}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Cost Center</span>
-                    <span class="preview-value">${formData.costCenter}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Shipper</span>
-                    <span class="preview-value">${formData.shipperName}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Weight</span>
-                    <span class="preview-value">${formData.grossWeight} kg</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Packages</span>
-                    <span class="preview-value">${formData.packages} ${formData.packageType}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Bayan No</span>
-                    <span class="preview-value">${formData.bayanNo}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">Description</span>
-                    <span class="preview-value">${formData.description.substring(0, 100)}${formData.description.length > 100 ? '...' : ''}</span>
+            </div>
+            
+            <div class="preview-card wide">
+                <div class="preview-section">
+                    <h4>CARGO DESCRIPTION & INSTRUCTIONS</h4>
+                    <div class="preview-item">
+                        <span class="preview-label">DESCRIPTION OF GOODS</span>
+                        <span class="preview-value">${formData.description.substring(0, 200)}${formData.description.length > 200 ? '...' : ''}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">SPECIAL INSTRUCTIONS</span>
+                        <span class="preview-value">${formData.specialInstructions.substring(0, 150)}${formData.specialInstructions.length > 150 ? '...' : ''}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">DIMENSIONS</span>
+                        <span class="preview-value">${formData.dimensions}</span>
+                    </div>
                 </div>
             </div>
         </div>
     `;
 }
 
-function formatDateTime(dateTimeString) {
-    if (!dateTimeString || dateTimeString === 'Not Set') return 'Not Set';
+function formatDate(dateString) {
+    if (!dateString || dateString === 'Not Set') return 'Not Set';
     
     try {
-        const date = new Date(dateTimeString);
-        return date.toLocaleString('en-US', {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: 'numeric'
         });
     } catch (e) {
-        return dateTimeString;
+        return dateString;
     }
+}
+
+function showPreviewModal() {
+    // First validate the form
+    const form = document.getElementById('jobCardForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Update the preview
+    updatePreview();
+    
+    // Show the modal
+    const modal = document.getElementById('previewModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePreviewModal() {
+    const modal = document.getElementById('previewModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function showSuccessModal(jobNumber, invoiceNumber) {
+    document.getElementById('savedJobNumber').textContent = jobNumber;
+    if (invoiceNumber) {
+        document.getElementById('generatedInvoice').textContent = invoiceNumber;
+    }
+    
+    const modal = document.getElementById('successModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    // Reset form for new entry
+    resetForm();
+}
+
+// Update print function
+function printJobCard() {
+    window.print();
 }
 
 // Form Actions
@@ -948,10 +1145,19 @@ async function saveJobCard() {
     }
     
     const jobNoField = document.getElementById('jobNo');
-    if (!jobNoField.value || jobNoField.value === 'EOE/') {
+    const modeSelect = document.getElementById('modeOfTravel');
+    const typeSelect = document.getElementById('shipmentType');
+    
+    // Check if mode and type are selected
+    if (!modeSelect.value || !typeSelect.value) {
+        showNotification('Please select Mode of Travel and Shipment Type.', 'error');
+        return;
+    }
+    
+    if (!jobNoField.value) {
         // If job number not generated, generate one first
         await fetchNextJobNumber();
-        if (!jobNoField.value || jobNoField.value === 'EOE/') {
+        if (!jobNoField.value) {
             showNotification('Please wait for job number generation.', 'error');
             return;
         }
@@ -997,7 +1203,12 @@ async function saveJobCard() {
             // Add edit button
             addEditButton(jobNoField);
             
-            showNotification('Job Card saved as draft successfully!', 'success');
+            // Close preview modal if open
+            closePreviewModal();
+            
+            // Show success modal with job number and invoice number
+            showSuccessModal(jobNoField.value, result.invoiceNumber);
+            
         } else {
             throw new Error('Failed to save draft');
         }
@@ -1008,6 +1219,7 @@ async function saveJobCard() {
         submitBtn.disabled = false;
     }
 }
+
 
 async function handleJobCardSubmit(event) {
     event.preventDefault();
@@ -1126,21 +1338,29 @@ function resetForm() {
     if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
         const form = document.getElementById('jobCardForm');
         const jobNoField = document.getElementById('jobNo');
+        const modeSelect = document.getElementById('modeOfTravel');
+        const typeSelect = document.getElementById('shipmentType');
         
-        // Store current job number temporarily
+        // Store current values
         const currentJobNo = jobNoField.value;
+        const currentMode = modeSelect ? modeSelect.value : '';
+        const currentType = typeSelect ? typeSelect.value : '';
         
         form.reset();
         window.currentJobCardId = null;
         
-        // Keep the job number if it's a valid format
-        if (currentJobNo && currentJobNo.startsWith('EOE/')) {
+        // Reset mode and type to empty
+        if (modeSelect) modeSelect.value = '';
+        if (typeSelect) typeSelect.value = '';
+        
+        // Keep the job number if it's already set, but clear if mode/type changed
+        if (currentJobNo && currentMode && currentType) {
             jobNoField.value = currentJobNo;
             jobNoField.readOnly = false;
             jobNoField.classList.remove('auto-filled');
         } else {
-            // Generate new job number
-            generateJobNumber();
+            // Clear job number
+            jobNoField.value = '';
         }
         
         initializeDates();
@@ -1148,6 +1368,8 @@ function resetForm() {
         showNotification('Form has been reset', 'info');
     }
 }
+
+
 
 async function generateInvoice() {
     const form = document.getElementById('jobCardForm');
