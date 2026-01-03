@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job Card - AI Eid International Logistic</title>
+    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="styles/jobcard.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dashboard-container">
+        
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-circle">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="company-info">
+                        <h1 class="company-title">AI Eid International Logistic Company</h1>
+                        <p class="company-tagline">Global Logistics & Transport Solutions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="system-info">
+                    <div class="system-time" id="systemTime">00:00:00</div>
+                    <div class="system-date" id="systemDate">Loading...</div>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="profile-dropdown">
+                        <button class="profile-btn">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="profile-name" id="userName">Admin User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="home.html" class="dropdown-item">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="index.html" class="dropdown-item logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            
+            <!-- Sidebar Menu -->
+            <aside class="sidebar">
+                <nav class="main-menu">
+                    <div class="menu-header">
+                        <h3><i class="fas fa-bars"></i> MAIN MENU</h3>
+                    </div>
+                    
+                    <ul class="menu-items">
+                        <li class="menu-item">
+                            <a href="home.html">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="menu-item active">
+                            <a href="jobcard.html">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Job Card</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="invoice-generator.html">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>Invoice Generator</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="invoice-review.html">
+                                <i class="fas fa-search-dollar"></i>
+                                <span>Review Invoice Details</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#">
+                                <i class="fas fa-users"></i>
+                                <span>Customers</span>
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="menu-footer">
+                        <div class="system-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>Invoices: <strong id="invoiceCount">0</strong></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clipboard-check"></i>
+                                <span>Job Cards: <strong id="jobcardCount">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                <div class="content-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Create New Job Card</h2>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn btn-primary" onclick="saveJobCard()">
+                            <i class="fas fa-save"></i> Save Job Card
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Job Card Form -->
+                <div class="jobcard-form-container">
+                    <form id="jobCardForm" class="jobcard-form">
+                        
+                        <!-- Section 1: Basic Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h3>Basic Information</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="jobNo">
+                                        <i class="fas fa-hashtag"></i> Job Number
+                                    </label>
+                                    <input type="text" id="jobNo" name="jobNo" required 
+                                           placeholder="Enter Job Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="date">
+                                        <i class="fas fa-calendar"></i> Date
+                                    </label>
+                                    <input type="date" id="date" name="date" required 
+                                           value="<?php echo date('Y-m-d'); ?>">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="estd">
+                                        <i class="fas fa-ship"></i> ESTD (Estimated Time of Departure)
+                                    </label>
+                                    <input type="datetime-local" id="estd" name="estd" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="eta">
+                                        <i class="fas fa-flag-checkered"></i> ETA (Estimated Time of Arrival)
+                                    </label>
+                                    <input type="datetime-local" id="eta" name="eta" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="portArrival">
+                                        <i class="fas fa-anchor"></i> Port of Arrival
+                                    </label>
+                                    <input type="text" id="portArrival" name="portArrival" required 
+                                           placeholder="Enter Port of Arrival">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="costCenter">
+                                        <i class="fas fa-money-bill-wave"></i> Cost Center
+                                    </label>
+                                    <input type="text" id="costCenter" name="costCenter" required 
+                                           placeholder="Enter Cost Center">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 2: Customer Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-user-tie"></i>
+                                <h3>Customer Information</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="customerRefNo">
+                                        <i class="fas fa-id-card"></i> Customer Reference No.
+                                    </label>
+                                    <input type="text" id="customerRefNo" name="customerRefNo" required 
+                                           placeholder="Enter Customer Reference Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="requesterName">
+                                        <i class="fas fa-user"></i> Requester Name
+                                    </label>
+                                    <input type="text" id="requesterName" name="requesterName" required 
+                                           placeholder="Enter Requester Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerName">
+                                        <i class="fas fa-building"></i> Customer Name
+                                    </label>
+                                    <input type="text" id="customerName" name="customerName" required 
+                                           placeholder="Enter Customer Name">
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="customerAddress">
+                                        <i class="fas fa-map-marker-alt"></i> Customer Address
+                                    </label>
+                                    <textarea id="customerAddress" name="customerAddress" rows="3" 
+                                              placeholder="Enter complete address" required></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">
+                                        <i class="fas fa-envelope"></i> Email Address
+                                    </label>
+                                    <input type="email" id="email" name="email" required 
+                                           placeholder="Enter email address">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phone">
+                                        <i class="fas fa-phone"></i> Phone Number
+                                    </label>
+                                    <input type="tel" id="phone" name="phone" required 
+                                           placeholder="Enter phone number">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 3: Shipping Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-shipping-fast"></i>
+                                <h3>Shipping Information</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="truckWaybillNo">
+                                        <i class="fas fa-truck"></i> Truck Way Bill No.
+                                    </label>
+                                    <input type="text" id="truckWaybillNo" name="truckWaybillNo" required 
+                                           placeholder="Enter Truck Way Bill Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipperName">
+                                        <i class="fas fa-user-friends"></i> Shipper Name
+                                    </label>
+                                    <input type="text" id="shipperName" name="shipperName" required 
+                                           placeholder="Enter Shipper Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipperRefNo">
+                                        <i class="fas fa-file-contract"></i> Shipper Reference No.
+                                    </label>
+                                    <input type="text" id="shipperRefNo" name="shipperRefNo" required 
+                                           placeholder="Enter Shipper Reference Number">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 4: Customs Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-passport"></i>
+                                <h3>Customs Information</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="bayanNo">
+                                        <i class="fas fa-file-alt"></i> Bayan Number
+                                    </label>
+                                    <input type="text" id="bayanNo" name="bayanNo" required 
+                                           placeholder="Enter Bayan Number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bayanDate">
+                                        <i class="fas fa-calendar-day"></i> Bayan Date
+                                    </label>
+                                    <input type="date" id="bayanDate" name="bayanDate" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="grossWeight">
+                                        <i class="fas fa-weight"></i> Gross Weight (kg)
+                                    </label>
+                                    <input type="number" id="grossWeight" name="grossWeight" required 
+                                           placeholder="Enter weight in kilograms" step="0.01" min="0">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="packages">
+                                        <i class="fas fa-boxes"></i> Number of Packages
+                                    </label>
+                                    <input type="number" id="packages" name="packages" required 
+                                           placeholder="Enter number of packages" min="1">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="packageType">
+                                        <i class="fas fa-box"></i> Package Type
+                                    </label>
+                                    <select id="packageType" name="packageType" required>
+                                        <option value="">Select Package Type</option>
+                                        <option value="carton">Carton</option>
+                                        <option value="pallet">Pallet</option>
+                                        <option value="crate">Crate</option>
+                                        <option value="drum">Drum</option>
+                                        <option value="bag">Bag</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dimensions">
+                                        <i class="fas fa-ruler-combined"></i> Dimensions (L×W×H in cm)
+                                    </label>
+                                    <input type="text" id="dimensions" name="dimensions" 
+                                           placeholder="e.g., 100×50×60">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 5: Additional Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <i class="fas fa-sticky-note"></i>
+                                <h3>Additional Information</h3>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="description">
+                                        <i class="fas fa-align-left"></i> Description of Goods
+                                    </label>
+                                    <textarea id="description" name="description" rows="4" 
+                                              placeholder="Enter detailed description of goods"></textarea>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="specialInstructions">
+                                        <i class="fas fa-exclamation-circle"></i> Special Instructions
+                                    </label>
+                                    <textarea id="specialInstructions" name="specialInstructions" rows="3" 
+                                              placeholder="Any special instructions or requirements"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> Reset Form
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Job Card
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="generateInvoice()">
+                                <i class="fas fa-file-invoice"></i> Generate Invoice
+                            </button>
+                        </div>
+                        
+                    </form>
+                </div>
+                
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <div class="preview-header">
+                        <h3><i class="fas fa-eye"></i> Job Card Preview</h3>
+                    </div>
+                    <div class="preview-content" id="jobCardPreview">
+                        <!-- Preview will be generated here -->
+                        <div class="preview-placeholder">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>Fill the form to see preview</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </main>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>© 2024 AI Eid International Logistic Company. All rights reserved.</p>
+                <div class="footer-links">
+                    <span>Job Card System</span>
+                    <span>Auto-generates Invoice Number: INV/<?php echo date('Y'); ?>/08321</span>
+                </div>
+            </div>
+        </footer>
+        
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/jobcard.js"></script>
+</body>
+</html>

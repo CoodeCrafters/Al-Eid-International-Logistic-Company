@@ -1,0 +1,522 @@
+/* ========== ROOT & GLOBAL ========== */
+:root {
+    --bg-body: #f3f4f6;
+    --bg-card: #ffffff;
+    --bg-muted: #f9fafb;
+
+    --primary: #2563eb;
+    --primary-soft: rgba(37, 99, 235, 0.12);
+    --primary-dark: #1d4ed8;
+
+    --accent: #10b981;
+    --accent-soft: rgba(16, 185, 129, 0.14);
+
+    --border-subtle: #e5e7eb;
+    --border-strong: #d1d5db;
+
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --text-soft: #9ca3af;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --shadow-subtle: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+    --transition-fast: 0.18s ease-out;
+    --transition-base: 0.24s ease;
+}
+
+body {
+    background: radial-gradient(circle at top left, #eff6ff 0, #f3f4f6 40%, #f9fafb 100%);
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-main);
+}
+
+/* ========== MAIN LAYOUT HOOKS (optional overrides) ========== */
+
+.dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ensure main content has nice breathing room */
+.main-content {
+    padding: 24px;
+    gap: 24px;
+}
+
+/* content area layout: form + preview side by side on large screens */
+.content-area {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* content header */
+.content-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.content-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-main);
+}
+
+.content-header h2 i {
+    color: var(--primary);
+}
+
+.content-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ========== BUTTONS ========== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    white-space: nowrap;
+}
+
+.btn i {
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: var(--text-main);
+    border-color: var(--border-subtle);
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-subtle);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.38);
+}
+
+/* ========== JOB CARD FORM CARD ========== */
+
+.jobcard-form-container {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 24px 24px 20px;
+    margin-bottom: 0;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+/* section separation */
+
+.form-section {
+    padding: 18px 0 20px;
+    border-bottom: 1px dashed var(--border-subtle);
+}
+
+.form-section:first-of-type {
+    padding-top: 0;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* section header */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.section-header i {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.section-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* form grid */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* labels */
+
+.form-group label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-group label i {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+/* inputs / selects / textarea */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 9px 11px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background-color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-main);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base), transform var(--transition-fast);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* focus states */
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary-soft), 0 0 0 4px rgba(37, 99, 235, 0.1);
+    background-color: #ffffff;
+    transform: translateY(-0.5px);
+}
+
+/* disabled */
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    background-color: #f3f4f6;
+    color: var(--text-soft);
+    cursor: not-allowed;
+}
+
+/* placeholder */
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-soft);
+}
+
+/* number fields alignment */
+
+.form-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ========== FORM ACTIONS ========== */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* ========== PREVIEW PANEL ========== */
+
+.preview-section {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 320px;
+}
+
+.preview-header {
+    background: linear-gradient(135deg, #0f172a 0%, #2563eb 45%, #60a5fa 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+}
+
+.preview-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-header h3 i {
+    font-size: 15px;
+}
+
+/* scrollable content */
+
+.preview-content {
+    padding: 18px 20px 16px;
+    max-height: 430px;
+    overflow-y: auto;
+    background: radial-gradient(circle at top left, #f9fafb 0, #ffffff 40%);
+}
+
+/* custom scrollbar */
+
+.preview-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+.preview-content::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 999px;
+}
+
+.preview-content::-webkit-scrollbar-thumb {
+    background: #cbd5f5;
+    border-radius: 999px;
+}
+
+.preview-content::-webkit-scrollbar-thumb:hover {
+    background: #93c5fd;
+}
+
+/* placeholder */
+
+.preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    color: var(--text-soft);
+    text-align: center;
+    gap: 8px;
+}
+
+.preview-placeholder i {
+    font-size: 42px;
+    opacity: 0.45;
+}
+
+.preview-placeholder p {
+    font-size: 13px;
+}
+
+/* preview card inside content (for generated preview) */
+
+.preview-card {
+    background: var(--bg-muted);
+    border-radius: var(--radius-md);
+    padding: 18px 18px 14px;
+    border: 1px solid var(--border-subtle);
+}
+
+.preview-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-subtle);
+}
+
+.preview-title h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.preview-id {
+    background: var(--primary);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* grid for values inside preview */
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px 14px;
+}
+
+.preview-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.preview-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-soft);
+}
+
+.preview-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    word-break: break-word;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+@media (max-width: 1024px) {
+    .content-area {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .preview-section {
+        order: 2;
+    }
+
+    .jobcard-form-container {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+
+    .jobcard-form-container {
+        padding: 18px 16px 16px;
+    }
+
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .content-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        width: auto;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-header h2 {
+        font-size: 18px;
+    }
+
+    .section-header h3 {
+        font-size: 15px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+}

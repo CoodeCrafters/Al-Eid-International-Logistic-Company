@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Eid International Logistic Company - Dashboard</title>
+    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dashboard-container">
+        
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-circle">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="company-info">
+                        <h1 class="company-title">AI Eid International Logistic Company</h1>
+                        <p class="company-tagline">Global Logistics & Transport Solutions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="system-info">
+                    <div class="system-time" id="systemTime">00:00:00</div>
+                    <div class="system-date" id="systemDate">Loading...</div>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="profile-dropdown">
+                        <button class="profile-btn">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="profile-name" id="userName">Admin User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="index.html" class="dropdown-item logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            
+            <!-- Sidebar Menu -->
+            <aside class="sidebar">
+                <nav class="main-menu">
+                    <div class="menu-header">
+                        <h3><i class="fas fa-bars"></i> MAIN MENU</h3>
+                    </div>
+                    
+                    <ul class="menu-items">
+                        <li class="menu-item active">
+                            <a href="#">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="jobcard.html">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Job Card</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="invoice-generator.html">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>Invoice Generator</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="invoice-review.html">
+                                <i class="fas fa-search-dollar"></i>
+                                <span>Review Invoice Details</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#">
+                                <i class="fas fa-users"></i>
+                                <span>Customers</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help & Support</span>
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="menu-footer">
+                        <div class="system-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>Invoices: <strong id="invoiceCount">0</strong></span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-clipboard-check"></i>
+                                <span>Job Cards: <strong id="jobcardCount">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                <div class="content-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+                    <div class="content-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Invoice
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Video Showcase Container -->
+<section class="video-showcase">
+    <video id="bgVideo" autoplay muted playsinline></video>
+
+    <div class="video-overlay">
+        <h3>AI Eid International Logistic Company</h3>
+        <p>Reliable • Secure • Global Logistics Solutions</p>
+    </div>
+</section>
+
+                
+                <!-- Dashboard Widgets -->
+                <div class="dashboard-widgets">
+                    
+                    <!-- Invoice Statistics -->
+                    <div class="widget large">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-chart-bar"></i> Invoice Statistics</h3>
+                            <select class="period-select">
+                                <option>This Month</option>
+                                <option>Last Month</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        <div class="widget-content">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon pending">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4>Pending</h4>
+                                        <p class="stat-value" id="pendingInvoices">0</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon paid">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4>Paid</h4>
+                                        <p class="stat-value" id="paidInvoices">0</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon total">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4>Total</h4>
+                                        <p class="stat-value" id="totalInvoices">0</p>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon revenue">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4>Revenue</h4>
+                                        <p class="stat-value" id="totalRevenue">$0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Invoices -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-history"></i> Recent Invoices</h3>
+                            <a href="invoice-review.html" class="view-all">View All</a>
+                        </div>
+                        <div class="widget-content">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Invoice No</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentInvoices">
+                                        <!-- Will be populated by JavaScript -->
+                                        <tr>
+                                            <td colspan="5" class="no-data">No invoices found</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="quick-actions">
+                                <a href="jobcard.html" class="quick-action">
+                                    <div class="action-icon">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                    <span>Create Job Card</span>
+                                </a>
+                                <a href="invoice-generator.html" class="quick-action">
+                                    <div class="action-icon">
+                                        <i class="fas fa-file-invoice"></i>
+                                    </div>
+                                    <span>Generate Invoice</span>
+                                </a>
+                                <a href="#" class="quick-action">
+                                    <div class="action-icon">
+                                        <i class="fas fa-print"></i>
+                                    </div>
+                                    <span>Print Report</span>
+                                </a>
+                                <a href="#" class="quick-action">
+                                    <div class="action-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <span>Send Email</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Company Info -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-info-circle"></i> Company Information</h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="company-details">
+                                <div class="company-item">
+                                    <i class="fas fa-building"></i>
+                                    <div>
+                                        <strong>AI Eid International Logistic Company</strong>
+                                        <p>Global Logistics & Transport Solutions Provider</p>
+                                    </div>
+                                </div>
+                                <div class="company-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <div>
+                                        <strong>Head Office</strong>
+                                        <p>123 Logistics Street, Industrial Area, City, Country</p>
+                                    </div>
+                                </div>
+                                <div class="company-item">
+                                    <i class="fas fa-phone"></i>
+                                    <div>
+                                        <strong>Contact</strong>
+                                        <p>+123 456 7890 | info@aieidlogistics.com</p>
+                                    </div>
+                                </div>
+                                <div class="company-item">
+                                    <i class="fas fa-globe"></i>
+                                    <div>
+                                        <strong>Services</strong>
+                                        <p>Air Freight | Sea Freight | Land Transport | Customs Clearance</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </main>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>© 2024 AI Eid International Logistic Company. All rights reserved.</p>
+                <div class="footer-links">
+                    <span>System Version: 2.1.4</span>
+                    <span>Last Updated: Today</span>
+                    <span id="connectionStatus">● Online</span>
+                </div>
+            </div>
+        </footer>
+        
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/dashboard.js"></script>
+    <script src="scripts/auth.js"></script>
+</body>
+</html>

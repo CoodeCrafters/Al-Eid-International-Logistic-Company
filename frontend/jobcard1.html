@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job Card - AI Eid International Logistic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== ROOT & GLOBAL ========== */
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-sidebar-hover: #f1f5f9;
+            
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-bg: #eff6ff;
+            
+            --accent: #10b981;
+            --accent-light: #34d399;
+            
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --text-white: #ffffff;
+            
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+            --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+            
+            --transition-base: 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ========== MAIN HEADER ========== */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-circle {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .company-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .company-tagline {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .system-info {
+            text-align: right;
+        }
+
+        .system-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .system-date {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-top: 2px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .user-profile i {
+            font-size: 20px;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ========== SIDEBAR MENU ========== */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            color: var(--text-primary);
+            height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            display: flex;
+            flex-direction: column;
+            z-index: 900;
+            border-right: 1px solid var(--border-light);
+            overflow-y: auto;
+        }
+
+        .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--primary-bg);
+        }
+
+        .menu-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-header h3 i {
+            font-size: 16px;
+        }
+
+        /* Menu Items */
+        .menu-items {
+            padding: 15px 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            list-style: none;
+            margin-bottom: 2px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 25px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            font-weight: 500;
+            font-size: 14px;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item a:hover {
+            background: var(--bg-sidebar-hover);
+            color: var(--primary);
+            border-left-color: var(--primary-light);
+        }
+
+        .menu-item.active a {
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        /* Menu Footer */
+        .menu-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-sidebar);
+        }
+
+        .system-stats {
+            background: var(--bg-body);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            border: 1px solid var(--border-light);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-item span {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-item strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== CONTENT AREA ========== */
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .content-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-header h2 i {
+            color: var(--primary);
+            font-size: 26px;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ========== FORM CONTAINER ========== */
+        .jobcard-form-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        /* ========== FORM SECTIONS ========== */
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .section-header i {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-bg);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ========== FORM GRID ========== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* ========== FORM LABELS ========== */
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+            font-size: 14px;
+            width: 16px;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        /* ========== FORM CONTROLS ========== */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: white;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+            outline: none;
+            width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group input:hover:not(:focus):not(:disabled),
+        .form-group select:hover:not(:focus):not(:disabled),
+        .form-group textarea:hover:not(:focus):not(:disabled) {
+            border-color: var(--primary-light);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-family: inherit;
+            line-height: 1.5;
+            white-space: nowrap;
+        }
+
+        .btn i {
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-secondary);
+            border-color: var(--border-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-body);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .btn-success:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========== FORM ACTIONS ========== */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* ========== PREVIEW SECTION ========== */
+        .preview-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            background: linear-gradient(135deg, #0f172a 0%, #2563eb 45%, #60a5fa 100%);
+            color: white;
+            padding: 18px 25px;
+        }
+
+        .preview-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-content {
+            padding: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-tertiary);
+            text-align: center;
+            gap: 15px;
+        }
+
+        .preview-placeholder i {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .preview-placeholder p {
+            font-size: 14px;
+        }
+
+        /* ========== SCROLLBAR ========== */
+        .sidebar::-webkit-scrollbar,
+        .content-area::-webkit-scrollbar,
+        .preview-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .menu-header h3 span,
+            .menu-item span,
+            .company-tagline,
+            .system-date {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-area {
+                padding: 20px;
+            }
+            
+            .jobcard-form-container {
+                padding: 20px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .content-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+            
+            .main-header {
+                padding: 0 15px;
+            }
+            
+            .header-right {
+                gap: 15px;
+            }
+            
+            .company-title {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .section-header i {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .content-header h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo-circle">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="company-info">
+                <h1 class="company-title">AI Eid International Logistic Company</h1>
+                <p class="company-tagline">Global Logistics & Transport Solutions</p>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="system-info">
+                <div class="system-time" id="systemTime">01:11:32</div>
+                <div class="system-date" id="systemDate">Saturday, January 3, 2026</div>
+            </div>
+            
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="profile-name" id="userName">Admin User</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <aside class="sidebar">
+        <div class="menu-header">
+            <h3><i class="fas fa-bars"></i> <span>MAIN MENU</span></h3>
+        </div>
+        
+        <ul class="menu-items">
+            <li class="menu-item">
+                <a href="home.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="jobcard.html">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Job Card</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invoice-generator.html">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoice Generator</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invoice-review.html">
+                    <i class="fas fa-search-dollar"></i>
+                    <span>Review Invoice Details</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="menu-footer">
+            <div class="system-stats">
+                <div class="stat-item">
+                    <span><i class="fas fa-file-invoice"></i> Invoices:</span>
+                    <strong id="invoiceCount">128</strong>
+                </div>
+                <div class="stat-item">
+                    <span><i class="fas fa-clipboard-check"></i> Job Cards:</span>
+                    <strong id="jobcardCount">45</strong>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <main class="content-area">
+            <div class="content-header">
+                <h2><i class="fas fa-clipboard-list"></i> Create New Job Card</h2>
+                <div class="content-actions">
+                    <button class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary" onclick="saveJobCard()">
+                        <i class="fas fa-save"></i> Save Job Card
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Job Card Form -->
+            <div class="jobcard-form-container">
+                <form id="jobCardForm" class="jobcard-form">
+                    
+                    <!-- Section 1: Basic Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-info-circle"></i>
+                            <h3>Basic Information</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="jobNo">
+                                    <i class="fas fa-hashtag"></i> Job Number
+                                </label>
+                                <input type="text" id="jobNo" name="jobNo" required 
+                                       placeholder="Enter Job Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date">
+                                    <i class="fas fa-calendar"></i> Date
+                                </label>
+                                <input type="date" id="date" name="date" required 
+                                       value="2026-01-03">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="estd">
+                                    <i class="fas fa-ship"></i> ESTD (Estimated Time of Departure)
+                                </label>
+                                <input type="datetime-local" id="estd" name="estd" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="eta">
+                                    <i class="fas fa-flag-checkered"></i> ETA (Estimated Time of Arrival)
+                                </label>
+                                <input type="datetime-local" id="eta" name="eta" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="portArrival">
+                                    <i class="fas fa-anchor"></i> Port of Arrival
+                                </label>
+                                <input type="text" id="portArrival" name="portArrival" required 
+                                       placeholder="Enter Port of Arrival">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="costCenter">
+                                    <i class="fas fa-money-bill-wave"></i> Cost Center
+                                </label>
+                                <input type="text" id="costCenter" name="costCenter" required 
+                                       placeholder="Enter Cost Center">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 2: Customer Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-user-tie"></i>
+                            <h3>Customer Information</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="customerRefNo">
+                                    <i class="fas fa-id-card"></i> Customer Reference No.
+                                </label>
+                                <input type="text" id="customerRefNo" name="customerRefNo" required 
+                                       placeholder="Enter Customer Reference Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="requesterName">
+                                    <i class="fas fa-user"></i> Requester Name
+                                </label>
+                                <input type="text" id="requesterName" name="requesterName" required 
+                                       placeholder="Enter Requester Name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="customerName">
+                                    <i class="fas fa-building"></i> Customer Name
+                                </label>
+                                <input type="text" id="customerName" name="customerName" required 
+                                       placeholder="Enter Customer Name">
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="customerAddress">
+                                    <i class="fas fa-map-marker-alt"></i> Customer Address
+                                </label>
+                                <textarea id="customerAddress" name="customerAddress" rows="3" 
+                                          placeholder="Enter complete address" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fas fa-envelope"></i> Email Address
+                                </label>
+                                <input type="email" id="email" name="email" required 
+                                       placeholder="Enter email address">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">
+                                    <i class="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input type="tel" id="phone" name="phone" required 
+                                       placeholder="Enter phone number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 3: Shipping Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-shipping-fast"></i>
+                            <h3>Shipping Information</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="truckWaybillNo">
+                                    <i class="fas fa-truck"></i> Truck Way Bill No.
+                                </label>
+                                <input type="text" id="truckWaybillNo" name="truckWaybillNo" required 
+                                       placeholder="Enter Truck Way Bill Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="shipperName">
+                                    <i class="fas fa-user-friends"></i> Shipper Name
+                                </label>
+                                <input type="text" id="shipperName" name="shipperName" required 
+                                       placeholder="Enter Shipper Name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="shipperRefNo">
+                                    <i class="fas fa-file-contract"></i> Shipper Reference No.
+                                </label>
+                                <input type="text" id="shipperRefNo" name="shipperRefNo" required 
+                                       placeholder="Enter Shipper Reference Number">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 4: Customs Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-passport"></i>
+                            <h3>Customs Information</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bayanNo">
+                                    <i class="fas fa-file-alt"></i> Bayan Number
+                                </label>
+                                <input type="text" id="bayanNo" name="bayanNo" required 
+                                       placeholder="Enter Bayan Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bayanDate">
+                                    <i class="fas fa-calendar-day"></i> Bayan Date
+                                </label>
+                                <input type="date" id="bayanDate" name="bayanDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="grossWeight">
+                                    <i class="fas fa-weight"></i> Gross Weight (kg)
+                                </label>
+                                <input type="number" id="grossWeight" name="grossWeight" required 
+                                       placeholder="Enter weight in kilograms" step="0.01" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="packages">
+                                    <i class="fas fa-boxes"></i> Number of Packages
+                                </label>
+                                <input type="number" id="packages" name="packages" required 
+                                       placeholder="Enter number of packages" min="1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="packageType">
+                                    <i class="fas fa-box"></i> Package Type
+                                </label>
+                                <select id="packageType" name="packageType" required>
+                                    <option value="">Select Package Type</option>
+                                    <option value="carton">Carton</option>
+                                    <option value="pallet">Pallet</option>
+                                    <option value="crate">Crate</option>
+                                    <option value="drum">Drum</option>
+                                    <option value="bag">Bag</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dimensions">
+                                    <i class="fas fa-ruler-combined"></i> Dimensions (L×W×H in cm)
+                                </label>
+                                <input type="text" id="dimensions" name="dimensions" 
+                                       placeholder="e.g., 100×50×60">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 5: Additional Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-sticky-note"></i>
+                            <h3>Additional Information</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="description">
+                                    <i class="fas fa-align-left"></i> Description of Goods
+                                </label>
+                                <textarea id="description" name="description" rows="4" 
+                                          placeholder="Enter detailed description of goods"></textarea>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="specialInstructions">
+                                    <i class="fas fa-exclamation-circle"></i> Special Instructions
+                                </label>
+                                <textarea id="specialInstructions" name="specialInstructions" rows="3" 
+                                          placeholder="Any special instructions or requirements"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-redo"></i> Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Job Card
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="generateInvoice()">
+                            <i class="fas fa-file-invoice"></i> Generate Invoice
+                        </button>
+                    </div>
+                    
+                </form>
+            </div>
+            
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div class="preview-header">
+                    <h3><i class="fas fa-eye"></i> Job Card Preview</h3>
+                </div>
+                <div class="preview-content" id="jobCardPreview">
+                    <!-- Preview will be generated here -->
+                    <div class="preview-placeholder">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>Fill the form to see preview</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/jobcard.js"></script>
+</body>
+</html>

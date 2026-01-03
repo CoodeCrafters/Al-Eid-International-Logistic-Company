@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Eid Company - Create Account</title>
+    <link rel="stylesheet" href="styles/login.css">
+    <style>
+        /* Additional styles for signup page */
+        /* Main body styling with grid background */
+body {
+    font-family: 'Arial', 'Segoe UI', sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-attachment: fixed;
+}
+
+/* Container styling */
+.login-container {
+    width: 100%;
+    max-width: 800px; /* Wider container */
+    position: relative;
+    z-index: 1;
+}
+
+/* Card styling */
+.login-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 40px 35px;
+    min-height: 600px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Rest of your existing CSS continues here... */
+        
+        /* Two-column layout for form fields */
+        .form-row {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-group.full-width {
+            flex: 0 0 100%;
+        }
+        
+        .form-group.left {
+            flex: 0 0 48%;
+        }
+        
+        .form-group.right {
+            flex: 0 0 48%;
+        }
+        
+        .back-to-login {
+            text-align: center;
+            margin: 30px 0 20px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+        
+        .back-to-login a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .back-to-login a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        .form-group select {
+            cursor: pointer;
+        }
+        
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 20px;
+        }
+        
+        .strength-bar {
+            height: 5px;
+            flex-grow: 1;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+            border-radius: 3px;
+        }
+        
+        .strength-weak {
+            background-color: #dc3545;
+            width: 25%;
+        }
+        
+        .strength-fair {
+            background-color: #ffc107;
+            width: 50%;
+        }
+        
+        .strength-good {
+            background-color: #28a745;
+            width: 75%;
+        }
+        
+        .strength-strong {
+            background-color: #20c997;
+            width: 100%;
+        }
+        
+        .terms-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* Minimal gap */
+    margin: 20px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.terms-checkbox input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+    margin-right: 2px; /* Control right spacing */
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.terms-checkbox label {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    cursor: pointer;
+}
+        
+        .terms-checkbox a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Remove toggle signup since we're on separate page */
+        .signup-toggle {
+            display: none;
+        }
+        
+        /* Hide login form on signup page */
+        #loginForm {
+            display: none !important;
+        }
+        
+        /* Make signup form visible by default */
+        #signupForm {
+            display: block !important;
+        }
+        
+        /* Adjust spacing for wider form */
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        
+        .username-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .check-btn {
+            min-width: 90px;
+            padding: 0 18px;
+            font-size: 13px;
+            white-space: nowrap;
+            height: 42px;
+            border-radius: 2px;
+        }
+        
+        .status-message {
+            font-size: 12px;
+            margin-top: 6px;
+            padding: 7px 10px;
+            border-radius: 3px;
+            min-height: 22px;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Signup button styling */
+        .signup-btn {
+            padding: 13px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        /* Header adjustments */
+        .login-header {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+        }
+        
+        .login-header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 850px) {
+            .login-container {
+                max-width: 95%;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .form-group.left,
+            .form-group.right {
+                flex: 0 0 100%;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .form-row {
+                gap: 15px;
+            }
+            
+            .username-group {
+                flex-direction: column;
+            }
+            
+            .check-btn {
+                width: 100%;
+                height: 40px;
+            }
+        }
+        
+        /* Field labels styling */
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+        
+        /* Required field indicator */
+        .form-group label::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        /* Input focus effects */
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+        
+        /* OTP modal adjustments for wider layout */
+        .otp-content {
+            max-width: 450px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- System Status Bar -->
+        <div class="system-status">
+            <div class="status-item">
+                <span class="status-online">●</span>
+                System: Online
+            </div>
+            <div class="status-item">
+    <span id="databaseStatus" class="status-online">● Database: Offline</span>
+</div>
+        </div>
+
+        <!-- Date Time Display -->
+        <div class="datetime-display">
+            <div class="date" id="currentDate">Loading...</div>
+            <div class="time" id="currentTime">00:00:00</div>
+        </div>
+
+        <!-- Signup Card -->
+        <div class="login-card">
+            <div class="login-header">
+                <h1>CREATE ACCOUNT</h1>
+                <p>Al Eid International Logistic Company</p>
+            </div>
+            
+            <!-- Login Form (Hidden) -->
+            <form id="loginForm" class="login-form" style="display: none;">
+                <!-- This form is hidden on signup page -->
+            </form>
+            
+            <!-- Signup Form -->
+            <form id="signupForm" class="signup-form">
+                <!-- Row 1: Full Name and Email -->
+                <div class="form-row">
+                    <div class="form-group left">
+                        <label for="signupName">FULL NAME</label>
+                        <input type="text" id="signupName" name="name" required 
+                               placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group right">
+                        <label for="signupEmail">COMPANY EMAIL</label>
+                        <input type="email" id="signupEmail" name="email" required 
+                               placeholder="name@al-eid-logistics.com">
+                    </div>
+                </div>
+                
+                <!-- Row 2: Gender and Username -->
+                <div class="form-row">
+                    <div class="form-group left">
+                        <label for="signupGender">GENDER</label>
+                        <select id="signupGender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Prefer not to say</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group right">
+                        <label for="signupUsername">USERNAME</label>
+                        <div class="username-group">
+                            <input type="text" id="signupUsername" name="username" required 
+                                   placeholder="Choose a username">
+                            <button type="button" id="checkUsernameBtn" class="check-btn">Check</button>
+                        </div>
+                        <div id="usernameStatus" class="status-message"></div>
+                    </div>
+                </div>
+                
+                <!-- Row 3: Password and Confirm Password -->
+                <div class="form-row">
+                    <div class="form-group left">
+                        <label for="signupPassword">PASSWORD</label>
+                        <input type="password" id="signupPassword" name="password" required 
+                               placeholder="Create a password (min. 6 chars)"
+                               minlength="6">
+                        <div class="password-strength">
+                            <span id="strengthLabel">Strength:</span>
+                            <div class="strength-bar">
+                                <div id="strengthFill" class="strength-fill"></div>
+                            </div>
+                            <span id="strengthText" style="font-weight: 500; min-width: 60px; text-align: right;">None</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group right">
+                        <label for="confirmPassword">CONFIRM PASSWORD</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required 
+                               placeholder="Re-enter your password">
+                        <div id="passwordMatchStatus" class="status-message"></div>
+                    </div>
+                </div>
+                
+                <!-- Row 4: Terms & Conditions -->
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <div class="terms-checkbox">
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <label for="agreeTerms">
+                                I agree to the <a href="#" target="_blank">Terms of Service</a> and 
+                                <a href="#" target="_blank">Privacy Policy</a> of Al Eid International Logistic Company
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <button type="submit" class="signup-btn">
+                            <span id="signupText">CREATE ACCOUNT</span>
+                            <div id="signupSpinner" class="spinner" style="display: none;"></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Back to Login -->
+            <div class="back-to-login">
+                <a href="index.html">← Already have an account? Login here</a>
+            </div>
+
+            <!-- OTP Verification Modal -->
+            <div id="otpModal" class="otp-modal" style="display: none;">
+                <div class="otp-content">
+                    <h3>ACCOUNT VERIFICATION REQUIRED</h3>
+                    <p id="otpMessage">A 6-digit verification code has been sent to the system administrator for approval. Please enter the code provided by your supervisor:</p>
+                    
+                    <div class="otp-input-group">
+                        <input type="text" id="otp1" maxlength="1" class="otp-input" autofocus>
+                        <input type="text" id="otp2" maxlength="1" class="otp-input">
+                        <input type="text" id="otp3" maxlength="1" class="otp-input">
+                        <input type="text" id="otp4" maxlength="1" class="otp-input">
+                        <input type="text" id="otp5" maxlength="1" class="otp-input">
+                        <input type="text" id="otp6" maxlength="1" class="otp-input">
+                    </div>
+                    
+                    <div id="otpTimer" class="otp-timer">
+                        Code expires in: <span id="timer">05:00</span>
+                    </div>
+                    
+                    <div class="otp-actions">
+                        <button type="button" id="verifyOtpBtn" class="verify-btn">VERIFY & COMPLETE REGISTRATION</button>
+                        <button type="button" id="resendOtpBtn" class="resend-btn" disabled>Request New Code (60s)</button>
+                        <button type="button" id="cancelOtpBtn" class="cancel-btn">CANCEL REGISTRATION</button>
+                    </div>
+                    
+                    <div id="otpStatus" class="status-message"></div>
+                </div>
+            </div>
+            
+            <div id="errorAlert" class="alert alert-error" style="display: none;"></div>
+            <div id="successAlert" class="alert alert-success" style="display: none;"></div>
+            
+            <div class="shortcut-hint">
+                Press F1 for Help | ESC to Cancel
+            </div>
+            
+            <div class="login-footer">
+                <p>Note: All new accounts require admin approval</p>
+                <p>Your default role will be set as 'Cashier' until approved</p>
+            </div>
+
+            <div class="company-brand">
+                <div class="company-name">© 2025 AL EID INTERNATIONAL LOGISTIC COMPANY</div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/signup.js"></script>
+    
+    
+</body>
+</html>

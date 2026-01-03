@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Job Card | AI Eid International</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sidebar-logo i { font-size: 24px; color: var(--primary); }
+        .sidebar-logo span { font-family: 'Montserrat'; font-size: 16px; letter-spacing: 1px; }
+
+        .nav-menu { padding: 20px 0; flex-grow: 1; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+            border-left: 4px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-left-color: var(--primary);
+        }
+        .nav-link i { width: 25px; font-size: 18px; }
+
+        /* --- MAIN CONTENT --- */
+        .main-container {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 30px 40px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .top-bar h1 { font-family: 'Montserrat'; font-size: 22px; color: #1e293b; }
+        .top-bar p { color: var(--text-muted); font-size: 14px; }
+
+        /* --- THE GRID LAYOUT --- */
+        .jobcard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .section-title i { color: var(--primary); font-size: 18px; }
+        .section-title h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Large Sections */
+        .col-span-2 { grid-column: span 2; }
+        .col-span-3 { grid-column: span 3; }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-save:hover { background: var(--primary-dark); }
+        .btn-print { background: var(--success); color: white; }
+        .btn-reset { background: #e2e8f0; color: #475569; }
+
+        /* Utility */
+        .status-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1200px) {
+            .jobcard-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-globe-americas"></i>
+            <span>AI EID LOGISTIC</span>
+        </div>
+        <div class="nav-menu">
+            <a href="#" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="#" class="nav-link active"><i class="fas fa-file-signature"></i> Create Job Card</a>
+            <a href="#" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Invoice Center</a>
+            <a href="#" class="nav-link"><i class="fas fa-truck-container"></i> Live Tracking</a>
+            <a href="#" class="nav-link"><i class="fas fa-address-book"></i> Client Database</a>
+        </div>
+        <div style="padding: 20px; font-size: 12px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.1);">
+            <i class="fas fa-clock"></i> <span id="timeDisplay">00:00:00</span>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        
+        <header class="top-bar">
+            <div>
+                <h1>Job Card Generation</h1>
+                <p>Electronic Management System — <span class="status-badge">System Active</span></p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-reset">Cancel</button>
+                <button class="btn btn-print"><i class="fas fa-print"></i> Print Preview</button>
+                <button class="btn btn-save"><i class="fas fa-save"></i> Finalize & Save</button>
+            </div>
+        </header>
+
+        <form id="masterJobForm">
+            <div class="jobcard-grid">
+                
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-hashtag"></i>
+                        <h3>Reference Details</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Number</label>
+                        <input type="text" placeholder="e.g. JC-2026-0001" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Operational Date</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cost Center</label>
+                        <select>
+                            <option>Main Office - Riyadh</option>
+                            <option>Branch - Jeddah</option>
+                            <option>Branch - Dammam</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-user-tie"></i>
+                        <h3>Client Information</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" placeholder="Full Company Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Ref #</label>
+                        <input type="text" placeholder="PO or internal Ref">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" placeholder="billing@client.com">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-ship"></i>
+                        <h3>Logistics Path</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Shipper / Vendor</label>
+                        <input type="text" placeholder="Origin Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Waybill / Truck No</label>
+                        <input type="text" placeholder="Tracking Number">
+                    </div>
+                    <div class="form-group">
+                        <label>Port of Arrival</label>
+                        <input type="text" placeholder="Final Destination Port">
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <h3>Cargo Specs</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Bayan Number</label>
+                        <input type="text">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Gross Wt (KG)</label>
+                            <input type="number" placeholder="0.00">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Pkgs</label>
+                            <input type="number" placeholder="QTY">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Package Type</label>
+                        <select>
+                            <option>Cartons</option>
+                            <option>Euro Pallets</option>
+                            <option>Crates</option>
+                            <option>Loose Cargo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-card col-span-2">
+                    <div class="section-title">
+                        <i class="fas fa-list-check"></i>
+                        <h3>Cargo Description & Instructions</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Description of Goods</label>
+                        <textarea rows="4" placeholder="Enter detailed manifest information..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Special Instructions</label>
+                        <input type="text" placeholder="Fragile, Refrigerated, Urgent, etc.">
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+        <footer style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <span>AI Eid International Logistic Company - Terminal Management System v4.0</span>
+            <span>Security ID: <?php echo rand(1000,9999); ?>-SEC</span>
+        </footer>
+
+    </main>
+
+        <!-- JavaScript Files -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/jobcard.js"></script>
+</body>
+</html>
