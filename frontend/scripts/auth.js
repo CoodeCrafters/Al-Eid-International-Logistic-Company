@@ -94,7 +94,7 @@ class Auth {
             
             // REDIRECT TO DASHBOARD (not verification.html)
             setTimeout(() => {
-                window.location.href = 'Home.html';
+                window.location.href = 'home.html';
             }, 1500);
             
         } else {
