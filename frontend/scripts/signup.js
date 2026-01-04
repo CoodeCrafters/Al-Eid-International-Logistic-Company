@@ -273,34 +273,15 @@ class Signup {
             throw new Error(registerData.message || 'Registration failed');
         }
         
-        // 2️⃣ SECOND: SEND VERIFICATION CODE (after user is registered)
-        const verifyResponse = await fetch(`${Utils.getApiBaseUrl()}/send-verification`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                username // Only username is needed now
-            })
-        });
-        
-        if (!verifyResponse.ok) {
-            const errorData = await verifyResponse.json().catch(() => ({}));
-            throw new Error(errorData.message || `HTTP error! status: ${verifyResponse.status}`);
-        }
-        
-        const verifyData = await verifyResponse.json();
-        
-        if (verifyData.success) {
-            // REDIRECT TO OTP VERIFICATION PAGE WITH USERNAME
-            const encodedUsername = encodeURIComponent(username);
-            window.location.href = `otp-verification.html?username=${encodedUsername}&email=${encodeURIComponent(email)}`;
-            
-            // Clear timers since we're redirecting
-            this.clearTimers();
-        } else {
-            throw new Error(verifyData.message || 'Failed to send verification code');
-        }
+                // ✅ ADD THIS - Redirect after successful registration
+        const encodedUsername = encodeURIComponent(username);
+        const encodedEmail = encodeURIComponent(email);
+
+        Utils.showAlert('Registration successful! Check your email for verification code.', 'success');
+
+        setTimeout(() => {
+            window.location.href = `otp-verification.html?username=${encodedUsername}&email=${encodedEmail}`;
+        }, 1500);
         
     } catch (error) {
         console.error('Signup error:', error);
