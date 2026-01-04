@@ -23,7 +23,7 @@ class Utils {
 
 static getApiBaseUrl() {
     // Always use localhost:5000 for development
-    return 'https://a48af46286b337f6-223-233-87-122.serveousercontent.com/api';
+    return 'https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api';
 }
 
 static showAlert(message, type = 'info') {
@@ -149,7 +149,7 @@ static async checkDatabaseConnection() {
     try {
         // Create a unique timestamp to prevent caching
         const timestamp = new Date().getTime();
-        const url = `https://a48af46286b337f6-223-233-87-122.serveousercontent.com/api/health?t=${timestamp}`;
+        const url = `https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/health?t=${timestamp}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -339,7 +339,7 @@ static updateDatabaseStatus(isOnline, errorMessage = '') {
     }
     
     static async fetchJobCardData(endpoint, data = null) {
-        const url = `https://a48af46286b337f6-223-233-87-122.serveousercontent.com${endpoint}`;
+        const url = `https://mild-cooper-hollywood-miscellaneous.trycloudflare.com${endpoint}`;
         
         try {
             const options = {

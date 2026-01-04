@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://a48af46286b337f6-223-233-87-122.serveousercontent.com/api'; // Update with your backend URL
+const API_BASE_URL = 'https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api'; // Update with your backend URL
 
 // Sample data for fallback
 let jobCards = []; // Will be populated from database
