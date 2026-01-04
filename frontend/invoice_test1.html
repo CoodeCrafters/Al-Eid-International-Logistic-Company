@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Service Jobs | Al Eid International Logistics</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="styles/dashboard.css" />
+<link rel="stylesheet" href="styles/sidebar.css" />
+</head>
+
+<body>
+<!-- ================= SIDEBAR NAVIGATION ================= -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <i class="fa-solid fa-truck-fast logo-icon"></i>
+      <h2 class="logo-text">HAVAL LAB</h2>
+    </div>
+  </div>
+
+  <div class="sidebar-menu">
+    <div class="menu-section">
+      <h3 class="menu-title">MAIN MENU</h3>
+      <a href="#" class="menu-item active" id="menu-home">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <h3 class="menu-title">OPERATIONS</h3>
+      <a href="#" class="menu-item" id="menu-data-sources">
+        <i class="fa-solid fa-database"></i>
+        <span>Data sources</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-targets">
+        <i class="fa-solid fa-bullseye"></i>
+        <span>Targets</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-members">
+        <i class="fa-solid fa-users"></i>
+        <span>Members</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-upgrade">
+        <i class="fa-solid fa-arrow-up"></i>
+        <span>Upgrade</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help center</span>
+      </a>
+    </div>
+
+    <div class="menu-section">
+      <h3 class="menu-title">TEAMS</h3>
+      <a href="#" class="menu-item" id="menu-all-teams">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>All teams</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-finance">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Finance</span>
+      </a>
+      <a href="#" class="menu-item" id="menu-product">
+        <i class="fa-solid fa-cube"></i>
+        <span>Product</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-profile">
+      <div class="user-avatar">
+        <i class="fa-solid fa-user-circle"></i>
+      </div>
+      <div class="user-info">
+        <span class="user-name">Admin User</span>
+        <span class="user-role">Administrator</span>
+      </div>
+    </div>
+    <button class="sidebar-toggle" id="toggleSidebar">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- ================= MAIN CONTENT AREA ================= -->
+<div class="main-content">
+  <!-- ================= TOP HEADER ================= -->
+  <header class="top-header">
+    <div class="header-left">
+      <button class="menu-btn" id="mobileMenuToggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="company-logo">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>AI Eid International Logistics</span>
+      </div>
+    </div>
+
+    <nav class="main-nav">
+      <a href="#" class="nav-link active" id="nav-service-jobs">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>Service Jobs</span>
+      </a>
+      <a href="#" class="nav-link" id="nav-operations">
+        <i class="fa-solid fa-cogs"></i>
+        <span>Operations</span>
+      </a>
+      <a href="#" class="nav-link" id="nav-quotes">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span>Quotes</span>
+      </a>
+      <a href="#" class="nav-link" id="nav-reporting">
+        <i class="fa-solid fa-chart-bar"></i>
+        <span>Reporting</span>
+      </a>
+      <a href="#" class="nav-link" id="nav-configuration">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Configuration</span>
+      </a>
+    </nav>
+
+    <div class="header-right">
+      <button class="header-btn notification-btn">
+        <i class="fa-solid fa-bell"></i>
+        <span class="badge">3</span>
+      </button>
+      <div class="user-dropdown">
+        <button class="header-btn user-btn">
+          <i class="fa-solid fa-user-circle"></i>
+          <span>Admin</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="#"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="#"><i class="fa-solid fa-cog"></i> Settings</a>
+          <div class="divider"></div>
+          <a href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= PAGE CONTENT ================= -->
+  <main class="page-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">
+        <h1>Service Jobs</h1>
+        <div class="page-subtitle">Manage and track all service jobs</div>
+      </div>
+      <div class="page-actions">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="board" title="Board View">
+            <i class="fa-solid fa-grip"></i>
+          </button>
+          <button class="view-btn" data-view="list" title="List View">
+            <i class="fa-solid fa-list"></i>
+          </button>
+        </div>
+        <button class="btn btn-secondary" id="filterToggle">
+          <i class="fa-solid fa-filter"></i>
+          <span>Filter</span>
+        </button>
+        <button class="btn btn-primary" id="createJobCardBtn">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Job Card</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-group">
+          <i class="fa-solid fa-search search-icon"></i>
+          <input 
+            type="text" 
+            id="globalSearch" 
+            class="search-input" 
+            placeholder="Search Job No, Bayan, Customer, Shipper..." 
+            autocomplete="off"
+          />
+          <button class="search-clear" id="clearSearch" title="Clear search">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <button class="btn btn-search" id="searchBtn">
+          <i class="fa-solid fa-search"></i>
+          <span>Search</span>
+        </button>
+      </div>
+
+      <div class="filter-tabs">
+        <div class="filter-options">
+          <label class="filter-option">
+            <input type="radio" name="filterType" value="bayan" checked>
+            <span class="filter-label">
+              <i class="fa-solid fa-file-contract"></i>
+              Bayan
+            </span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="filterType" value="invoice">
+            <span class="filter-label">
+              <i class="fa-solid fa-receipt"></i>
+              Invoice
+            </span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="filterType" value="customer">
+            <span class="filter-label">
+              <i class="fa-solid fa-user-tie"></i>
+              Customer
+            </span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="filterType" value="arrival">
+            <span class="filter-label">
+              <i class="fa-solid fa-location-dot"></i>
+              Arrival
+            </span>
+          </label>
+          <label class="filter-option">
+            <input type="radio" name="filterType" value="shipper">
+            <span class="filter-label">
+              <i class="fa-solid fa-truck-loading"></i>
+              Shipper
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Suggestions Dropdown -->
+      <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+    </div>
+
+    <!-- Job Cards Board View -->
+    <div class="board-container" id="boardView">
+      <div class="board-columns">
+        <!-- In Transit Column -->
+        <div class="board-column transit-column">
+          <div class="column-header">
+            <div class="column-title">
+              <i class="fa-solid fa-truck"></i>
+              <h3>In Transit</h3>
+              <span class="column-count" id="transitCount">0</span>
+            </div>
+            <button class="column-add-btn" data-column="transit">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div class="column-body" id="colTransit" data-status="transit">
+            <!-- Job cards will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Arrived Column -->
+        <div class="board-column arrived-column">
+          <div class="column-header">
+            <div class="column-title">
+              <i class="fa-solid fa-box"></i>
+              <h3>Arrived</h3>
+              <span class="column-count" id="arrivedCount">0</span>
+            </div>
+            <button class="column-add-btn" data-column="arrived">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div class="column-body" id="colArrived" data-status="arrived">
+            <!-- Job cards will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Completed Column -->
+        <div class="board-column completed-column">
+          <div class="column-header">
+            <div class="column-title">
+              <i class="fa-solid fa-check-circle"></i>
+              <h3>Completed</h3>
+              <span class="column-count" id="completedCount">0</span>
+            </div>
+            <button class="column-add-btn" data-column="completed">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div class="column-body" id="colCompleted" data-status="completed">
+            <!-- Job cards will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table View (Hidden by default) -->
+    <div class="table-container" id="tableView" style="display: none;">
+      <div class="table-header">
+        <h3>All Job Cards</h3>
+        <div class="table-actions">
+          <button class="btn btn-sm btn-export">
+            <i class="fa-solid fa-download"></i>
+            <span>Export</span>
+          </button>
+          <button class="btn btn-sm btn-refresh" id="refreshTable">
+            <i class="fa-solid fa-sync-alt"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Job No</th>
+              <th>Invoice No</th>
+              <th>Customer</th>
+              <th>Shipper</th>
+              <th>Port Arrival</th>
+              <th>Status</th>
+              <th>Created Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="jobCardsTableBody">
+            <!-- Table rows will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <div class="pagination">
+          <button class="pagination-btn" disabled>
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span class="page-info">Page 1 of 1</span>
+          <button class="pagination-btn">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon transit">
+          <i class="fa-solid fa-truck"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value" id="statTransit">0</div>
+          <div class="stat-label">In Transit</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon arrived">
+          <i class="fa-solid fa-box"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value" id="statArrived">0</div>
+          <div class="stat-label">Arrived</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <i class="fa-solid fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value" id="statCompleted">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon revenue">
+          <i class="fa-solid fa-money-bill-wave"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value" id="statRevenue">0 KWD</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Job Card Details Modal -->
+<div class="modal" id="jobCardModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Job Card Details</h3>
+        <div class="modal-actions">
+          <button class="btn btn-sm btn-edit" id="editJobCardBtn">
+            <i class="fa-solid fa-edit"></i>
+            <span>Edit</span>
+          </button>
+          <button class="btn btn-sm btn-invoice" id="createInvoiceBtn">
+            <i class="fa-solid fa-file-invoice"></i>
+            <span>Create Invoice</span>
+          </button>
+          <button class="btn btn-sm btn-close" id="closeJobCardModal">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="jobCardDetailsContent">
+          <!-- Details will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Invoice Modal -->
+<div class="modal" id="invoiceModal">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="invoiceModalTitle">Create Invoice</h3>
+        <button class="btn btn-sm btn-close" id="closeInvoiceModal">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="invoiceForm">
+          <!-- Invoice Header -->
+          <div class="invoice-header">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="invoiceNo">Invoice Number *</label>
+                <input type="text" id="invoiceNo" class="form-control" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="invoiceDate">Invoice Date *</label>
+                <input type="date" id="invoiceDate" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="dueDate">Due Date *</label>
+                <input type="date" id="dueDate" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="jobNo">Job Number *</label>
+                <input type="text" id="jobNo" class="form-control" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="customerName">Customer Name *</label>
+                <input type="text" id="customerName" class="form-control" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="customerRef">Customer Reference</label>
+                <input type="text" id="customerRef" class="form-control" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charges Section -->
+          <div class="section-header">
+            <h4><i class="fa-solid fa-money-bill-wave"></i> Charges</h4>
+            <button type="button" class="btn btn-sm btn-success" id="addChargeBtn">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add Charge</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="charges-table" id="chargesTable">
+              <thead>
+                <tr>
+                  <th width="50">#</th>
+                  <th>Description</th>
+                  <th width="100">Qty</th>
+                  <th width="150">Unit Amount (KWD)</th>
+                  <th width="150">Amount (KWD)</th>
+                  <th width="80">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="chargesTableBody">
+                <!-- Charges will be added here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals Section -->
+          <div class="totals-section">
+            <div class="totals-grid">
+              <div class="total-row">
+                <span>Subtotal:</span>
+                <input type="text" id="subtotal" class="total-input" readonly value="0.000">
+              </div>
+              <div class="total-row">
+                <span>Tax (5%):</span>
+                <input type="text" id="tax" class="total-input" value="0.000">
+              </div>
+              <div class="total-row total-row-main">
+                <span><strong>Total Amount:</strong></span>
+                <input type="text" id="total" class="total-input total-amount" readonly value="0.000">
+              </div>
+            </div>
+
+            <div class="amount-words">
+              <label>Amount in Words:</label>
+              <textarea id="amountWords" class="form-control" rows="2" readonly></textarea>
+            </div>
+          </div>
+
+          <!-- Advance Payment Section -->
+          <div class="section-header">
+            <h4><i class="fa-solid fa-credit-card"></i> Advance Payment</h4>
+          </div>
+          <div class="advance-payment">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="advanceAmount">Advance Amount (KWD)</label>
+                <input type="number" id="advanceAmount" class="form-control" step="0.001" min="0" value="0.000">
+              </div>
+              <div class="form-group">
+                <label for="advanceDate">Advance Date</label>
+                <input type="date" id="advanceDate" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" class="form-control">
+                  <option value="">Select Method</option>
+                  <option value="cash">Cash</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="cheque">Cheque</option>
+                  <option value="credit_card">Credit Card</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="remainingAmount">Remaining Amount (KWD)</label>
+                <input type="text" id="remainingAmount" class="form-control" readonly value="0.000">
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes Section -->
+          <div class="form-group">
+            <label for="invoiceNotes">Notes</label>
+            <textarea id="invoiceNotes" class="form-control" rows="3" placeholder="Any additional notes..."></textarea>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelInvoiceBtn">
+              <i class="fa-solid fa-times"></i>
+              <span>Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-primary" id="saveInvoiceBtn">
+              <i class="fa-solid fa-save"></i>
+              <span>Save Invoice</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Job Card Modal -->
+<div class="modal" id="createJobCardModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Job Card</h3>
+        <button class="btn btn-sm btn-close" id="closeCreateJobCardModal">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="newJobCardForm">
+          <!-- Form will be loaded dynamically -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+</div>
+
+<!-- Templates -->
+<template id="jobCardTemplate">
+  <div class="job-card" data-id="{{id}}" data-status="{{status}}">
+    <div class="card-header">
+      <div class="job-number">{{job_no}}</div>
+      <div class="job-status {{status_class}}">{{status_display}}</div>
+    </div>
+    <div class="card-body">
+      <div class="route-info">
+        <i class="fa-solid fa-route"></i>
+        <span>Kuwait → {{port_arrival}}</span>
+      </div>
+      <div class="customer-info">
+        <i class="fa-solid fa-user-tie"></i>
+        <span>{{customer_name}}</span>
+      </div>
+      <div class="shipper-info">
+        <i class="fa-solid fa-truck-loading"></i>
+        <span>{{shipper_name}}</span>
+      </div>
+      <div class="meta-info">
+        <div class="meta-item">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>{{invoice_no}}</span>
+        </div>
+        <div class="meta-item">
+          <i class="fa-solid fa-weight-hanging"></i>
+          <span>{{gross_weight}} kg</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="total-amount">{{total_amount}} KWD</div>
+      <div class="card-actions">
+        <button class="action-btn view-btn" title="View Details">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+        <button class="action-btn edit-btn" title="Edit">
+          <i class="fa-solid fa-edit"></i>
+        </button>
+        <button class="action-btn invoice-btn" title="Create Invoice">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="tableRowTemplate">
+  <tr data-id="{{id}}">
+    <td><strong>{{job_no}}</strong></td>
+    <td>{{invoice_no}}</td>
+    <td>{{customer_name}}</td>
+    <td>{{shipper_name}}</td>
+    <td>{{port_arrival}}</td>
+    <td><span class="status-badge {{status_class}}">{{status_display}}</span></td>
+    <td>{{created_date}}</td>
+    <td>
+      <div class="table-actions">
+        <button class="action-btn view-btn" title="View">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+        <button class="action-btn edit-btn" title="Edit">
+          <i class="fa-solid fa-edit"></i>
+        </button>
+        <button class="action-btn invoice-btn" title="Invoice">
+          <i class="fa-solid fa-file-invoice"></i>
+        </button>
+      </div>
+    </td>
+  </tr>
+</template>
+
+<!-- JavaScript Files -->
+<script type="module" src="scripts/sidebar.js"></script>
+<script type="module" src="scripts/dashboard1.js"></script>
+<script type="module" src="scripts/invoice_manager.js"></script>
+</body>
+</html>
