@@ -292,14 +292,17 @@ function createCostCenterDropdown(inputField) {
         existingWrapper.remove();
     }
     
-    // Show the original input field first
-    inputField.style.display = '';
+    // COMPLETELY REMOVE THIS: Don't show/hide the original input
+    // inputField.style.display = '';
     
-    // Create a simple select dropdown
+    // Create a simple select dropdown - use the SAME ID as original
     const select = document.createElement('select');
     select.className = 'form-control normal-dropdown';
     select.name = inputField.name;
-    select.id = inputField.id + '-select';
+    select.id = inputField.id; // Use original ID, not modified
+    
+    // Set tabindex to ensure it's focusable
+    select.tabIndex = 0;
     
     // Add placeholder option
     const placeholderOption = document.createElement('option');
@@ -345,26 +348,27 @@ function createCostCenterDropdown(inputField) {
         select.appendChild(option);
     });
     
-    // Set initial value if exists
+    // Set initial value from original input
     if (inputField.value) {
         select.value = inputField.value;
     }
     
-    // Hide original input
-    inputField.style.display = 'none';
+    // CRITICAL: Replace the original input with select
+    inputField.parentNode.replaceChild(select, inputField);
     
-    // Insert dropdown after input field
-    const wrapper = document.createElement('div');
-    wrapper.className = 'dropdown-wrapper';
-    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
-    wrapper.appendChild(select);
+    // Auto-focus on the new dropdown
+    setTimeout(() => {
+        select.focus();
+    }, 10);
     
-    // Update hidden input when dropdown changes
+    // Add event listener
     select.addEventListener('change', function() {
-        inputField.value = this.value;
+        // No need to update hidden input since we replaced it
         // Trigger input event for preview
-        inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        this.dispatchEvent(new Event('input', { bubbles: true }));
     });
+    
+    return select;
 }
 
 function createPortDropdown(inputField) {
@@ -379,14 +383,17 @@ function createPortDropdown(inputField) {
         existingWrapper.remove();
     }
     
-    // Show the original input field first
-    inputField.style.display = '';
+    // REMOVE THIS LINE - Don't show the original input
+    // inputField.style.display = '';
     
-    // Create a simple select dropdown
+    // Create a simple select dropdown - Use original ID
     const select = document.createElement('select');
     select.className = 'form-control normal-dropdown';
     select.name = inputField.name;
-    select.id = inputField.id + '-select';
+    select.id = inputField.id; // Use original ID, not modified
+    
+    // Ensure it's focusable
+    select.tabIndex = 0;
     
     // Add placeholder option
     const placeholderOption = document.createElement('option');
@@ -437,20 +444,26 @@ function createPortDropdown(inputField) {
         select.value = inputField.value;
     }
     
-    // Hide original input
-    inputField.style.display = 'none';
+    // REMOVE THESE LINES - Don't hide input or create wrapper
+    // inputField.style.display = 'none';
+    // const wrapper = document.createElement('div');
+    // wrapper.className = 'dropdown-wrapper';
+    // inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
+    // wrapper.appendChild(select);
     
-    // Insert dropdown after input field
-    const wrapper = document.createElement('div');
-    wrapper.className = 'dropdown-wrapper';
-    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
-    wrapper.appendChild(select);
+    // CRITICAL FIX: Replace the original input with select
+    inputField.parentNode.replaceChild(select, inputField);
     
-    // Update hidden input when dropdown changes
+    // Auto-focus for better UX
+    setTimeout(() => {
+        select.focus();
+    }, 10);
+    
+    // Update when dropdown changes
     select.addEventListener('change', function() {
-        inputField.value = this.value;
+        // No need to update hidden input - we replaced it
         // Trigger input event for preview
-        inputField.dispatchEvent(new Event('input', { bubbles: true }));
+        this.dispatchEvent(new Event('input', { bubbles: true }));
     });
 }
 
