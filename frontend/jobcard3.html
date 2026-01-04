@@ -123,6 +123,36 @@
                                 <i class="fas fa-info-circle"></i>
                                 <h3>REFERENCE DETAILS</h3>
                             </div>
+
+
+                            <!-- Mode of Travel and Shipment Type -->
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="modeOfTravel">
+                                            <i class="fas fa-plane-departure"></i> MODE OF TRAVEL
+                                        </label>
+                                        <select id="modeOfTravel" name="modeOfTravel" required>
+                                            <option value="">Select Mode</option>
+                                            <option value="ROA">Road</option>
+                                            <option value="AIR">Air</option>
+                                            <option value="SEA">Sea</option>
+                                            <option value="MUL">Multimodal</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="shipmentType">
+                                            <i class="fas fa-exchange-alt"></i> SHIPMENT TYPE
+                                        </label>
+                                        <select id="shipmentType" name="shipmentType" required>
+                                            <option value="">Select Type</option>
+                                            <option value="I">Import</option>
+                                            <option value="E">Export</option>
+                                            <option value="D">Domestic</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="jobNo">
@@ -153,33 +183,7 @@
                                     </select>
                                 </div>
                                 
-                                <!-- Mode of Travel and Shipment Type -->
-                                <div class="form-row">
-                                    <div class="form-group half">
-                                        <label for="modeOfTravel">
-                                            <i class="fas fa-plane-departure"></i> MODE OF TRAVEL
-                                        </label>
-                                        <select id="modeOfTravel" name="modeOfTravel" required>
-                                            <option value="">Select Mode</option>
-                                            <option value="ROA">Road</option>
-                                            <option value="AIR">Air</option>
-                                            <option value="SEA">Sea</option>
-                                            <option value="MUL">Multimodal</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group half">
-                                        <label for="shipmentType">
-                                            <i class="fas fa-exchange-alt"></i> SHIPMENT TYPE
-                                        </label>
-                                        <select id="shipmentType" name="shipmentType" required>
-                                            <option value="">Select Type</option>
-                                            <option value="I">Import</option>
-                                            <option value="E">Export</option>
-                                            <option value="D">Domestic</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
 
