@@ -144,13 +144,9 @@
                                     <label for="costCenter">
                                         <i class="fas fa-building"></i> COST CENTER
                                     </label>
-                                    <select id="costCenter" name="costCenter" required>
-                                        <option value="">Select Cost Center</option>
-                                        <option value="Main Office - Riyadh">Main Office - Riyadh</option>
-                                        <option value="Branch - Jeddah">Branch - Jeddah</option>
-                                        <option value="Branch - Dubai">Branch - Dubai</option>
-                                        <option value="Head Office - Kuwait">Head Office - Kuwait</option>
-                                    </select>
+                                    <!-- Change from select to input -->
+                                    <input type="text" id="costCenter" name="costCenter" required 
+                                        placeholder="Select or type cost center">
                                 </div>
                                 
                                 <!-- Mode of Travel and Shipment Type -->
@@ -319,18 +315,14 @@
                                            placeholder="Tracking Number">
                                 </div>
                                 
-                                <div class="form-group">
-                                    <label for="portArrival">
-                                        <i class="fas fa-anchor"></i> PORT OF ARRIVAL
-                                    </label>
-                                    <select id="portArrival" name="portArrival" required>
-                                        <option value="">Select Port</option>
-                                        <option value="Jebel Ali Port, UAE">Jebel Ali Port, UAE</option>
-                                        <option value="Hamad Port, Qatar">Hamad Port, Qatar</option>
-                                        <option value="Kuwait Port, Kuwait">Kuwait Port, Kuwait</option>
-                                        <option value="King Abdulaziz Port, Saudi Arabia">King Abdulaziz Port, Saudi Arabia</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label for="portArrival">
+                                <i class="fas fa-anchor"></i> PORT OF ARRIVAL
+                                </label>
+                                <!-- Change from select to input -->
+                                <input type="text" id="portArrival" name="portArrival" required 
+                                placeholder="Select or type port">
+                            </div>
                                 
                                 <div class="form-row">
                                     <div class="form-group half">

@@ -994,3 +994,34 @@ select.form-control {
     background-color: #ffffff !important;
     border: 2px solid #3b82f6 !important;
 }
+
+
+
+/* Add this to your existing CSS */
+.dropdown-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-wrapper .normal-dropdown {
+    width: 100% !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Hide the original input but keep it in DOM for form submission */
+input[type="text"][style*="display: none"] {
+    display: none !important;
+}
+
+/* Make sure select dropdowns are focusable */
+select.normal-dropdown:invalid {
+    border-color: #dc3545;
+}
+
+select.normal-dropdown:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}

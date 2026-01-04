@@ -264,6 +264,7 @@ function setupEnhancedAutocomplete() {
     // Port of arrival - Use normal dropdown
     const portField = document.getElementById('portArrival');
     if (portField) {
+        // Make it a simple dropdown, not autocomplete
         createPortDropdown(portField);
     }
     
@@ -276,97 +277,12 @@ function setupEnhancedAutocomplete() {
     // Cost Center - Use normal dropdown
     const costCenterField = document.getElementById('costCenter');
     if (costCenterField) {
+        // Make it a simple dropdown, not autocomplete
         createCostCenterDropdown(costCenterField);
     }
 }
 
-function createCostCenterDropdown(inputField) {
-    // Check if dropdown already exists and remove it
-    const existingSelect = document.getElementById(inputField.id + '-select');
-    const existingWrapper = inputField.nextElementSibling;
-    
-    if (existingSelect) {
-        existingSelect.remove();
-    }
-    if (existingWrapper && existingWrapper.classList.contains('dropdown-wrapper')) {
-        existingWrapper.remove();
-    }
-    
-    // Show the original input field first
-    inputField.style.display = '';
-    
-    // Create a simple select dropdown
-    const select = document.createElement('select');
-    select.className = 'form-control normal-dropdown';
-    select.name = inputField.name;
-    select.id = inputField.id + '-select';
-    
-    // Add placeholder option
-    const placeholderOption = document.createElement('option');
-    placeholderOption.value = '';
-    placeholderOption.textContent = 'Select Cost Center';
-    placeholderOption.disabled = true;
-    placeholderOption.selected = true;
-    select.appendChild(placeholderOption);
-    
-    // Add cost center options
-    const costCenters = [
-        "UAE - Abu Dhabi",
-        "UAE - Dubai",
-        "UAE - Sharjah",
-        "UAE - Ajman",
-        "UAE - Umm Al-Quwain",
-        "UAE - Ras Al Khaimah",
-        "UAE - Fujairah",
-        "Saudi Arabia - Riyadh",
-        "Saudi Arabia - Jeddah",
-        "Saudi Arabia - Dammam",
-        "Saudi Arabia - Khobar",
-        "Kuwait - Kuwait City",
-        "Kuwait - Ahmadi",
-        "Kuwait - Hawalli",
-        "Qatar - Doha",
-        "Qatar - Al Rayyan",
-        "Bahrain - Manama",
-        "Oman - Muscat",
-        "Oman - Salalah",
-        "International - UK",
-        "International - USA",
-        "International - Europe",
-        "International - Asia Pacific",
-        "Head Office - Kuwait"
-    ];
-    
-    // Add options to dropdown
-    costCenters.forEach(center => {
-        const option = document.createElement('option');
-        option.value = center;
-        option.textContent = center;
-        select.appendChild(option);
-    });
-    
-    // Set initial value if exists
-    if (inputField.value) {
-        select.value = inputField.value;
-    }
-    
-    // Hide original input
-    inputField.style.display = 'none';
-    
-    // Insert dropdown after input field
-    const wrapper = document.createElement('div');
-    wrapper.className = 'dropdown-wrapper';
-    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
-    wrapper.appendChild(select);
-    
-    // Update hidden input when dropdown changes
-    select.addEventListener('change', function() {
-        inputField.value = this.value;
-        // Trigger input event for preview
-        inputField.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-}
-
+// Update both createPortDropdown and createCostCenterDropdown functions
 function createPortDropdown(inputField) {
     // Check if dropdown already exists and remove it
     const existingSelect = document.getElementById(inputField.id + '-select');
@@ -379,14 +295,19 @@ function createPortDropdown(inputField) {
         existingWrapper.remove();
     }
     
-    // Show the original input field first
-    inputField.style.display = '';
+    // First, remove the required attribute from the hidden input
+    // We'll make the select element required instead
+    inputField.removeAttribute('required');
+    
+    // Hide the original input field
+    inputField.style.display = 'none';
     
     // Create a simple select dropdown
     const select = document.createElement('select');
     select.className = 'form-control normal-dropdown';
-    select.name = inputField.name;
+    select.name = inputField.name + '-dropdown'; // Use different name to avoid conflict
     select.id = inputField.id + '-select';
+    select.required = true; // Make select required instead
     
     // Add placeholder option
     const placeholderOption = document.createElement('option');
@@ -437,8 +358,103 @@ function createPortDropdown(inputField) {
         select.value = inputField.value;
     }
     
-    // Hide original input
+    // Insert dropdown after input field
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dropdown-wrapper';
+    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
+    wrapper.appendChild(select);
+    
+    // Update hidden input when dropdown changes
+    select.addEventListener('change', function() {
+        inputField.value = this.value;
+        // Trigger input event for preview
+        inputField.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    
+    // Also trigger change on the select for validation
+    select.addEventListener('change', function() {
+        // Trigger validation check
+        this.reportValidity();
+    });
+    
+    // Set focusable tabindex
+    select.tabIndex = inputField.tabIndex;
+}
+
+function createCostCenterDropdown(inputField) {
+    // Check if dropdown already exists and remove it
+    const existingSelect = document.getElementById(inputField.id + '-select');
+    const existingWrapper = inputField.nextElementSibling;
+    
+    if (existingSelect) {
+        existingSelect.remove();
+    }
+    if (existingWrapper && existingWrapper.classList.contains('dropdown-wrapper')) {
+        existingWrapper.remove();
+    }
+    
+    // First, remove the required attribute from the hidden input
+    // We'll make the select element required instead
+    inputField.removeAttribute('required');
+    
+    // Hide the original input field
     inputField.style.display = 'none';
+    
+    // Create a simple select dropdown
+    const select = document.createElement('select');
+    select.className = 'form-control normal-dropdown';
+    select.name = inputField.name + '-dropdown'; // Use different name to avoid conflict
+    select.id = inputField.id + '-select';
+    select.required = true; // Make select required instead
+    
+    // Add placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = 'Select Cost Center';
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    select.appendChild(placeholderOption);
+    
+    // Add cost center options
+    const costCenters = [
+        "UAE - Abu Dhabi",
+        "UAE - Dubai",
+        "UAE - Sharjah",
+        "UAE - Ajman",
+        "UAE - Umm Al-Quwain",
+        "UAE - Ras Al Khaimah",
+        "UAE - Fujairah",
+        "Saudi Arabia - Riyadh",
+        "Saudi Arabia - Jeddah",
+        "Saudi Arabia - Dammam",
+        "Saudi Arabia - Khobar",
+        "Kuwait - Kuwait City",
+        "Kuwait - Ahmadi",
+        "Kuwait - Hawalli",
+        "Qatar - Doha",
+        "Qatar - Al Rayyan",
+        "Bahrain - Manama",
+        "Oman - Muscat",
+        "Oman - Salalah",
+        "International - UK",
+        "International - USA",
+        "International - Europe",
+        "International - Asia Pacific",
+        "Head Office - Kuwait"
+    ];
+    
+    // Add options to dropdown
+    costCenters.forEach(center => {
+        const option = document.createElement('option');
+        option.value = center;
+        option.textContent = center;
+        select.appendChild(option);
+    });
+    
+    // Set initial value if exists
+    if (inputField.value) {
+        select.value = inputField.value;
+    }
     
     // Insert dropdown after input field
     const wrapper = document.createElement('div');
@@ -452,6 +468,15 @@ function createPortDropdown(inputField) {
         // Trigger input event for preview
         inputField.dispatchEvent(new Event('input', { bubbles: true }));
     });
+    
+    // Also trigger change on the select for validation
+    select.addEventListener('change', function() {
+        // Trigger validation check
+        this.reportValidity();
+    });
+    
+    // Set focusable tabindex
+    select.tabIndex = inputField.tabIndex;
 }
 
 function setupEnhancedCustomerAutocomplete(inputField) {
@@ -909,12 +934,13 @@ function setupRealTimePreview() {
 function updatePreview() {
     const previewDiv = document.getElementById('jobCardPreview');
     
+    // IMPORTANT: Read from the original input fields (which are hidden but have values)
     const formData = {
         jobNo: document.getElementById('jobNo')?.value || 'Not Set',
         date: document.getElementById('date')?.value || 'Not Set',
         modeOfTravel: document.getElementById('modeOfTravel')?.value || 'Not Set',
         shipmentType: document.getElementById('shipmentType')?.value || 'Not Set',
-        costCenter: document.getElementById('costCenter')?.value || 'Not Set',
+        costCenter: document.getElementById('costCenter')?.value || 'Not Set', // This reads from hidden input
         bayanNo: document.getElementById('bayanNo')?.value || 'Not Set',
         bayanDate: document.getElementById('bayanDate')?.value || 'Not Set',
         grossWeight: document.getElementById('grossWeight')?.value || '0',
@@ -928,7 +954,7 @@ function updatePreview() {
         requesterName: document.getElementById('requesterName')?.value || 'Not Set',
         shipperName: document.getElementById('shipperName')?.value || 'Not Set',
         truckWaybillNo: document.getElementById('truckWaybillNo')?.value || 'Not Set',
-        portArrival: document.getElementById('portArrival')?.value || 'Not Set',
+        portArrival: document.getElementById('portArrival')?.value || 'Not Set', // This reads from hidden input
         estd: document.getElementById('estd')?.value || 'Not Set',
         eta: document.getElementById('eta')?.value || 'Not Set',
         shipperRefNo: document.getElementById('shipperRefNo')?.value || 'Not Set',
@@ -1164,6 +1190,9 @@ function printJobCard() {
 
 async function saveJobCard() {
     const form = document.getElementById('jobCardForm');
+
+    syncDropdownValuesToForm();
+
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -1254,10 +1283,29 @@ async function saveJobCard() {
 }
 
 
+// Add this helper function to sync dropdown values
+function syncDropdownValuesToForm() {
+    // Sync port arrival dropdown
+    const portSelect = document.getElementById('portArrival-select');
+    const portInput = document.getElementById('portArrival');
+    if (portSelect && portInput) {
+        portInput.value = portSelect.value;
+    }
+    
+    // Sync cost center dropdown
+    const costCenterSelect = document.getElementById('costCenter-select');
+    const costCenterInput = document.getElementById('costCenter');
+    if (costCenterSelect && costCenterInput) {
+        costCenterInput.value = costCenterSelect.value;
+    }
+}
+
 async function handleJobCardSubmit(event) {
     event.preventDefault();
     
     const form = event.target;
+    syncDropdownValuesToForm();
+
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
