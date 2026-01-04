@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Service Jobs | Logistics Dashboard</title>
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<!-- Main CSS -->
+<link rel="stylesheet" href="styles/invoice.css" />
+</head>
+
+<body>
+
+<!-- ================= TOP NAVIGATION ================= -->
+<header class="top-header">
+  <div class="logo">
+    <i class="fa-solid fa-truck-fast"></i>
+    <span>AI Eid International Logistics</span>
+  </div>
+
+  <nav class="top-menu">
+    <a class="active">Service Jobs</a>
+    <a>Operations</a>
+    <a>Quotes</a>
+    <a>Reporting</a>
+    <a>Configuration</a>
+  </nav>
+
+  <div class="user-area">
+    <i class="fa-solid fa-bell"></i>
+    <i class="fa-solid fa-user-circle"></i>
+  </div>
+</header>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main-container">
+
+  <!-- ===== SEARCH + FILTER BAR ===== -->
+  <section class="toolbar">
+    <input type="text" id="searchInput" placeholder="Search Job No, Bayan, Customer, Shipper…" />
+    <button id="searchBtn"><i class="fa fa-search"></i></button>
+
+    <div class="filters">
+      <label><input type="radio" name="filter" id="filterBayan"> Bayan</label>
+      <label><input type="radio" name="filter" id="filterInvoice"> Invoice</label>
+      <label><input type="radio" name="filter" id="filterCustomerRef"> Customer</label>
+      <label><input type="radio" name="filter" id="filterPortArrival"> Arrival</label>
+      <label><input type="radio" name="filter" id="filterShipper"> Shipper</label>
+    </div>
+
+    <div id="suggestionsDropdown" class="suggestions"></div>
+  </section>
+
+  <!-- ================= JOB BOARD ================= -->
+  <section class="board">
+
+    <!-- ===== IN TRANSIT ===== -->
+    <div class="board-column">
+      <div class="column-header">
+        <h3>🚚 In Transit</h3>
+      </div>
+      <div class="column-body" id="col-transit">
+        <!-- Job Cards injected here -->
+      </div>
+    </div>
+
+    <!-- ===== ARRIVED ===== -->
+    <div class="board-column">
+      <div class="column-header">
+        <h3>📦 Arrived</h3>
+      </div>
+      <div class="column-body" id="col-arrived">
+        <!-- Job Cards injected here -->
+      </div>
+    </div>
+
+    <!-- ===== COMPLETED ===== -->
+    <div class="board-column">
+      <div class="column-header">
+        <h3>✅ Completed</h3>
+      </div>
+      <div class="column-body" id="col-completed">
+        <!-- Job Cards injected here -->
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ================= JOB DETAILS MODAL (OPTIONAL) ================= -->
+<div class="modal hidden" id="jobModal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="jobDetailsContainer">
+      <!-- Full job info loaded dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ================= LOADING SKELETON TEMPLATE ================= -->
+<template id="skeletonCard">
+  <div class="job-card skeleton"></div>
+</template>
+
+<!-- ================= MAIN SCRIPT ================= -->
+<script src="scripts/invoice.js"></script>
+
+</body>
+</html>
