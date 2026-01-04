@@ -1172,7 +1172,13 @@ function showSuccessModal(jobNumber, invoiceNumber) {
     const modal = document.getElementById('successModal');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // NEW: Auto-close and reset form after 5 seconds
+    setTimeout(() => {
+        closeSuccessModal();
+    }, 5000); // 5000 milliseconds = 5 seconds
 }
+
 
 function closeSuccessModal() {
     const modal = document.getElementById('successModal');
