@@ -135,7 +135,7 @@ async function fetchNextJobNumber() {
             return;
         }
         
-        const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
+        const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
         const data = await response.json();
         
         console.log('Next job number response:', data);
@@ -183,7 +183,7 @@ async function fetchNextJobNumber() {
 // Add this helper function to check if job number already exists
 async function checkJobNumberExists(jobNumber) {
     try {
-        const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/check-number?jobNo=${encodeURIComponent(jobNumber)}`);
+        const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/check-number?jobNo=${encodeURIComponent(jobNumber)}`);
         const data = await response.json();
         return data.exists || false;
     } catch (error) {
@@ -632,7 +632,7 @@ function setupEnhancedCustomerAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const customers = await response.json();
                     showDropdown(customers);
@@ -673,7 +673,7 @@ function setupEnhancedShipperAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const shippers = await response.json();
                     currentSuggestions = shippers;
@@ -762,7 +762,7 @@ function setupEnhancedRequesterAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/requesters/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/requesters/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const requesters = await response.json();
                     showEnhancedRequesterDropdown(requesters, inputField);
@@ -1210,7 +1210,7 @@ async function saveJobCard() {
     submitBtn.disabled = true;
     
     try {
-        const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/save-draft', {
+        const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/save-draft', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1302,7 +1302,7 @@ async function handleJobCardSubmit(event) {
     submitBtn.disabled = true;
     
     try {
-        const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/submit', {
+        const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1447,7 +1447,7 @@ async function generateInvoice() {
     
     // Generate invoice from job card
     try {
-        const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/generate-invoice', {
+        const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/generate-invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1522,7 +1522,7 @@ function printJobCard(jobNumber) {
 
         async function generateInvoiceFromSuccess(jobNumber) {
             try {
-                const response = await fetch(`https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
+                const response = await fetch(`https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
                 if (response.ok) {
                     const result = await response.json();
                     sessionStorage.setItem('invoiceData', JSON.stringify(result));
@@ -1625,7 +1625,7 @@ function updateSystemTime() {
 
 async function updateStats() {
     try {
-        const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/stats/jobcards');
+        const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/stats/jobcards');
         if (response.ok) {
             const stats = await response.json();
             

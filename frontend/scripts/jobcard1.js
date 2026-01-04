@@ -66,7 +66,7 @@ class JobCardSystem {
 
     async fetchNextJobNumber() {
         try {
-            const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/next-number');
+            const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/next-number');
             if (!response.ok) throw new Error('Failed to fetch job number');
             
             const data = await response.json();
@@ -174,7 +174,7 @@ class JobCardSystem {
         this.customerSearchTimeout = setTimeout(async () => {
             try {
                 const response = await fetch(
-                    `https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`
+                    `https://trio-fonts-expressions-tanks.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`
                 );
                 
                 if (response.ok) {
@@ -281,7 +281,7 @@ class JobCardSystem {
         this.shipperSearchTimeout = setTimeout(async () => {
             try {
                 const response = await fetch(
-                    `https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`
+                    `https://trio-fonts-expressions-tanks.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`
                 );
                 
                 if (response.ok) {
@@ -528,7 +528,7 @@ class JobCardSystem {
 
     async initStats() {
         try {
-            const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/stats/jobcards');
+            const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/stats/jobcards');
             if (response.ok) {
                 const stats = await response.json();
                 
@@ -604,7 +604,7 @@ class JobCardSystem {
         submitBtn.disabled = true;
         
         try {
-            const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/submit', {
+            const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -664,7 +664,7 @@ class JobCardSystem {
         saveBtn.disabled = true;
         
         try {
-            const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/save-draft', {
+            const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/save-draft', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -743,7 +743,7 @@ class JobCardSystem {
         const formData = this.collectFormData();
         
         try {
-            const response = await fetch('https://mild-cooper-hollywood-miscellaneous.trycloudflare.com/api/jobcards/generate-invoice', {
+            const response = await fetch('https://trio-fonts-expressions-tanks.trycloudflare.com/api/jobcards/generate-invoice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
