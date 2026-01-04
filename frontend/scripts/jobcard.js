@@ -135,16 +135,12 @@ async function fetchNextJobNumber() {
             return;
         }
         
-        console.log('Fetching job number with mode:', mode, 'type:', type);
-        
         const response = await fetch(`https://owns-memo-postal-duration.trycloudflare.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
         const data = await response.json();
         
         console.log('Next job number response:', data);
         
         if (jobNoField && data.nextJobNumber) {
-            console.log('Setting job number to:', data.nextJobNumber);
-            
             // Only set if field is empty or contains a temporary number
             const currentValue = jobNoField.value;
             const isTemporary = !currentValue || 
@@ -168,7 +164,7 @@ async function fetchNextJobNumber() {
                     hint.style.marginTop = '5px';
                     hint.style.color = '#6b7280';
                     hint.style.fontSize = '12px';
-                    hint.textContent = `Auto-generated ${data.previewOnly ? '(Preview)' : ''}. You can edit if needed.`;
+                    hint.textContent = 'Auto-generated. You can edit if needed.';
                     jobNoField.parentNode.appendChild(hint);
                 }
             }
@@ -296,17 +292,14 @@ function createCostCenterDropdown(inputField) {
         existingWrapper.remove();
     }
     
-    // COMPLETELY REMOVE THIS: Don't show/hide the original input
-    // inputField.style.display = '';
+    // Show the original input field first
+    inputField.style.display = '';
     
-    // Create a simple select dropdown - use the SAME ID as original
+    // Create a simple select dropdown
     const select = document.createElement('select');
     select.className = 'form-control normal-dropdown';
     select.name = inputField.name;
-    select.id = inputField.id; // Use original ID, not modified
-    
-    // Set tabindex to ensure it's focusable
-    select.tabIndex = 0;
+    select.id = inputField.id + '-select';
     
     // Add placeholder option
     const placeholderOption = document.createElement('option');
@@ -352,27 +345,26 @@ function createCostCenterDropdown(inputField) {
         select.appendChild(option);
     });
     
-    // Set initial value from original input
+    // Set initial value if exists
     if (inputField.value) {
         select.value = inputField.value;
     }
     
-    // CRITICAL: Replace the original input with select
-    inputField.parentNode.replaceChild(select, inputField);
+    // Hide original input
+    inputField.style.display = 'none';
     
-    // Auto-focus on the new dropdown
-    setTimeout(() => {
-        select.focus();
-    }, 10);
+    // Insert dropdown after input field
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dropdown-wrapper';
+    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
+    wrapper.appendChild(select);
     
-    // Add event listener
+    // Update hidden input when dropdown changes
     select.addEventListener('change', function() {
-        // No need to update hidden input since we replaced it
+        inputField.value = this.value;
         // Trigger input event for preview
-        this.dispatchEvent(new Event('input', { bubbles: true }));
+        inputField.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    
-    return select;
 }
 
 function createPortDropdown(inputField) {
@@ -387,17 +379,14 @@ function createPortDropdown(inputField) {
         existingWrapper.remove();
     }
     
-    // REMOVE THIS LINE - Don't show the original input
-    // inputField.style.display = '';
+    // Show the original input field first
+    inputField.style.display = '';
     
-    // Create a simple select dropdown - Use original ID
+    // Create a simple select dropdown
     const select = document.createElement('select');
     select.className = 'form-control normal-dropdown';
     select.name = inputField.name;
-    select.id = inputField.id; // Use original ID, not modified
-    
-    // Ensure it's focusable
-    select.tabIndex = 0;
+    select.id = inputField.id + '-select';
     
     // Add placeholder option
     const placeholderOption = document.createElement('option');
@@ -448,26 +437,20 @@ function createPortDropdown(inputField) {
         select.value = inputField.value;
     }
     
-    // REMOVE THESE LINES - Don't hide input or create wrapper
-    // inputField.style.display = 'none';
-    // const wrapper = document.createElement('div');
-    // wrapper.className = 'dropdown-wrapper';
-    // inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
-    // wrapper.appendChild(select);
+    // Hide original input
+    inputField.style.display = 'none';
     
-    // CRITICAL FIX: Replace the original input with select
-    inputField.parentNode.replaceChild(select, inputField);
+    // Insert dropdown after input field
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dropdown-wrapper';
+    inputField.parentNode.insertBefore(wrapper, inputField.nextSibling);
+    wrapper.appendChild(select);
     
-    // Auto-focus for better UX
-    setTimeout(() => {
-        select.focus();
-    }, 10);
-    
-    // Update when dropdown changes
+    // Update hidden input when dropdown changes
     select.addEventListener('change', function() {
-        // No need to update hidden input - we replaced it
+        inputField.value = this.value;
         // Trigger input event for preview
-        this.dispatchEvent(new Event('input', { bubbles: true }));
+        inputField.dispatchEvent(new Event('input', { bubbles: true }));
     });
 }
 
@@ -1190,13 +1173,6 @@ async function saveJobCard() {
     const modeSelect = document.getElementById('modeOfTravel');
     const typeSelect = document.getElementById('shipmentType');
     
-    // CRITICAL: Add debug logging
-    console.log('=== DEBUG: Before Save ===');
-    console.log('Frontend job number:', jobNoField.value);
-    console.log('Mode:', modeSelect.value);
-    console.log('Type:', typeSelect.value);
-    console.log('=======================');
-    
     // Validate job number format
     const jobNoPattern = /^(ROA|AIR|SEA|MUL|JC)-[IED]-20\d{2}-\d{6}$/;
     if (!jobNoPattern.test(jobNoField.value)) {
@@ -1245,19 +1221,9 @@ async function saveJobCard() {
         if (response.ok) {
             const result = await response.json();
             
-            // CRITICAL FIX: Always update with backend's job number
-            console.log('=== DEBUG: After Save ===');
-            console.log('Frontend sent:', data.jobNo);
-            console.log('Backend returned:', result.jobNumber);
-            console.log('Invoice number:', result.invoiceNumber);
-            console.log('=======================');
-            
-            if (result.jobNumber) {
-                // IMPORTANT: Always update with what backend says
+            // If backend returns a new job number, update it
+            if (result.jobNumber && result.jobNumber !== jobNoField.value) {
                 jobNoField.value = result.jobNumber;
-                console.log('Updated job number to:', result.jobNumber);
-            } else {
-                console.warn('Backend did not return a job number');
             }
             
             // Store job card ID for later submission
@@ -1274,16 +1240,12 @@ async function saveJobCard() {
             closePreviewModal();
             
             // Show success modal with job number and invoice number
-            // Use the UPDATED job number from backend
             showSuccessModal(jobNoField.value, result.invoiceNumber);
             
         } else {
-            const errorText = await response.text();
-            console.error('Backend error response:', errorText);
-            throw new Error('Failed to save draft: ' + errorText);
+            throw new Error('Failed to save draft');
         }
     } catch (error) {
-        console.error('Save error details:', error);
         showNotification('Error saving draft: ' + error.message, 'error');
     } finally {
         submitBtn.innerHTML = originalText;
@@ -1351,12 +1313,6 @@ async function handleJobCardSubmit(event) {
         if (response.ok) {
             const result = await response.json();
             
-            // CRITICAL: Update job number with backend's response
-            if (result.jobNumber && result.jobNumber !== jobNoField.value) {
-                console.log('Updating job number on submit:', jobNoField.value, '→', result.jobNumber);
-                jobNoField.value = result.jobNumber;
-            }
-            
             // Make job number permanently read-only
             jobNoField.readOnly = true;
             jobNoField.classList.add('auto-filled');
@@ -1365,8 +1321,8 @@ async function handleJobCardSubmit(event) {
             const editBtn = jobNoField.parentNode.querySelector('.edit-auto-filled');
             if (editBtn) editBtn.remove();
             
-            // Show success widget with UPDATED job number
-            showSuccessWidget(result.jobNumber || jobNoField.value);
+            // Show success widget
+            showSuccessWidget(result.jobNumber);
             
             // Reset form for new entry after delay
             setTimeout(() => {
@@ -1381,12 +1337,10 @@ async function handleJobCardSubmit(event) {
             }, 3000);
         } else {
             const error = await response.json();
-            console.error('Submit error details:', error);
             showNotification('Error submitting job card: ' + (error.message || 'Unknown error'), 'error');
             throw new Error('Submission failed');
         }
     } catch (error) {
-        console.error('Submit catch error:', error);
         showNotification('Error submitting job card: ' + error.message, 'error');
     } finally {
         submitBtn.innerHTML = originalText;
