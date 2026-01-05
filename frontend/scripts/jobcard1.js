@@ -944,7 +944,6 @@ function setupLocationFields() {
             addEditButton(shipperRefNoField);
         }
     }
-}
 
 // Enhanced requester autocomplete
 function setupEnhancedRequesterAutocomplete(inputField) {
@@ -1445,11 +1444,54 @@ function printJobCard() {
 
 async function saveJobCard() {
     const form = document.getElementById('jobCardForm');
-
+    
+    // Sync all values
     syncDropdownValuesToForm();
-
+    
     if (!form.checkValidity()) {
         form.reportValidity();
+        return;
+    }
+    
+    const mode = document.getElementById('modeOfTravel')?.value;
+    
+    // Validate location fields based on mode
+    let locationValid = true;
+    let errorMessage = '';
+    
+    switch(mode) {
+        case 'AIR':
+            if (!document.getElementById('departureAirport')?.value || 
+                !document.getElementById('arrivalAirport')?.value) {
+                locationValid = false;
+                errorMessage = 'Please enter both departure and arrival airports';
+            }
+            break;
+        case 'SEA':
+            if (!document.getElementById('departurePort')?.value || 
+                !document.getElementById('arrivalPort')?.value) {
+                locationValid = false;
+                errorMessage = 'Please enter both departure and arrival ports';
+            }
+            break;
+        case 'ROA':
+            if (!document.getElementById('departureArea')?.value || 
+                !document.getElementById('arrivalArea')?.value) {
+                locationValid = false;
+                errorMessage = 'Please enter both departure and arrival areas';
+            }
+            break;
+        case 'MUL':
+            if (!document.getElementById('departurePoint')?.value || 
+                !document.getElementById('arrivalPoint')?.value) {
+                locationValid = false;
+                errorMessage = 'Please enter both departure and arrival points';
+            }
+            break;
+    }
+    
+    if (!locationValid) {
+        showNotification(errorMessage, 'error');
         return;
     }
     
@@ -2607,5 +2649,5 @@ function addEnhancedStyles() {
         document.head.appendChild(style);
     }
 }
-
+}
 
