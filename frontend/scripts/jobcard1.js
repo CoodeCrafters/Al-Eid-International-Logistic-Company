@@ -985,83 +985,27 @@ function updatePreview() {
         case 'MUL': modeDisplay = 'Multimodal'; break;
     }
 
-    // Determine which location fields to read
-    let locationDisplay = '';
-    switch(mode) {
-        case 'AIR':
-            const depAirport = document.getElementById('departureAirport')?.value || 'Not Set';
-            const arrAirport = document.getElementById('arrivalAirport')?.value || 'Not Set';
-            locationDisplay = `
-                <div class="preview-item">
-                    <span class="preview-label">DEPARTURE AIRPORT</span>
-                    <span class="preview-value">${depAirport}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">ARRIVAL AIRPORT</span>
-                    <span class="preview-value">${arrAirport}</span>
-                </div>
-            `;
-            break;
-            
-        case 'SEA':
-            const depPort = document.getElementById('departurePort')?.value || 'Not Set';
-            const arrPort = document.getElementById('arrivalPort')?.value || 'Not Set';
-            locationDisplay = `
-                <div class="preview-item">
-                    <span class="preview-label">DEPARTURE PORT</span>
-                    <span class="preview-value">${depPort}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">ARRIVAL PORT</span>
-                    <span class="preview-value">${arrPort}</span>
-                </div>
-            `;
-            break;
-            
-        case 'ROA':
-            const depArea = document.getElementById('departureArea')?.value || 'Not Set';
-            const arrArea = document.getElementById('arrivalArea')?.value || 'Not Set';
-            locationDisplay = `
-                <div class="preview-item">
-                    <span class="preview-label">DEPARTURE AREA</span>
-                    <span class="preview-value">${depArea}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">ARRIVAL AREA</span>
-                    <span class="preview-value">${arrArea}</span>
-                </div>
-            `;
-            break;
-            
-        case 'MUL':
-            const depPoint = document.getElementById('departurePoint')?.value || 'Not Set';
-            const arrPoint = document.getElementById('arrivalPoint')?.value || 'Not Set';
-            locationDisplay = `
-                <div class="preview-item">
-                    <span class="preview-label">DEPARTURE POINT</span>
-                    <span class="preview-value">${depPoint}</span>
-                </div>
-                <div class="preview-item">
-                    <span class="preview-label">ARRIVAL POINT</span>
-                    <span class="preview-value">${arrPoint}</span>
-                </div>
-            `;
-            break;
-            
-        default:
-            const port = document.getElementById('portArrival')?.value || 'Not Set';
-            locationDisplay = `
-                <div class="preview-item">
-                    <span class="preview-label">PORT OF ARRIVAL</span>
-                    <span class="preview-value">${port}</span>
-                </div>
-            `;
-    }
+    // Get generalized location data for preview
+    const { departureLocation, arrivalLocation } = getGeneralizedLocationData();
     
+    // Create location display for preview
+    let locationDisplay = '';
+    if (departureLocation || arrivalLocation) {
+        locationDisplay = `
+            <div class="preview-item">
+                <span class="preview-label">DEPARTURE</span>
+                <span class="preview-value">${departureLocation || 'Not Set'}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">ARRIVAL</span>
+                <span class="preview-value">${arrivalLocation || 'Not Set'}</span>
+            </div>
+        `;
+    }
     
     const allEmpty = Object.values(formData).every(value => 
         value === 'Not Set' || value === '0' || value === ''
-    ) && locationDisplay === '';
+    ) && departureLocation === '' && arrivalLocation === '';
     
     if (allEmpty) {
         previewDiv.innerHTML = `
@@ -1287,11 +1231,12 @@ async function saveJobCard() {
     let locationValid = true;
     let errorMessage = '';
     
+    // Replace the location validation section in saveJobCard with:
     const { departureLocation, arrivalLocation } = getGeneralizedLocationData();
     
     if (!departureLocation || !arrivalLocation) {
-        locationValid = false;
-        errorMessage = 'Please enter both departure and arrival locations';
+        showNotification('Please enter both departure and arrival locations', 'error');
+        return;
     }
     
     if (!locationValid) {
