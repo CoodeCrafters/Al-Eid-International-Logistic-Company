@@ -1287,35 +1287,11 @@ async function saveJobCard() {
     let locationValid = true;
     let errorMessage = '';
     
-    switch(mode) {
-        case 'AIR':
-            if (!document.getElementById('departureAirport')?.value || 
-                !document.getElementById('arrivalAirport')?.value) {
-                locationValid = false;
-                errorMessage = 'Please enter both departure and arrival airports';
-            }
-            break;
-        case 'SEA':
-            if (!document.getElementById('departurePort')?.value || 
-                !document.getElementById('arrivalPort')?.value) {
-                locationValid = false;
-                errorMessage = 'Please enter both departure and arrival ports';
-            }
-            break;
-        case 'ROA':
-            if (!document.getElementById('departureArea')?.value || 
-                !document.getElementById('arrivalArea')?.value) {
-                locationValid = false;
-                errorMessage = 'Please enter both departure and arrival areas';
-            }
-            break;
-        case 'MUL':
-            if (!document.getElementById('departurePoint')?.value || 
-                !document.getElementById('arrivalPoint')?.value) {
-                locationValid = false;
-                errorMessage = 'Please enter both departure and arrival points';
-            }
-            break;
+    const { departureLocation, arrivalLocation } = getGeneralizedLocationData();
+    
+    if (!departureLocation || !arrivalLocation) {
+        locationValid = false;
+        errorMessage = 'Please enter both departure and arrival locations';
     }
     
     if (!locationValid) {
@@ -1350,13 +1326,29 @@ async function saveJobCard() {
         }
     }
     
+    // Create form data with generalized location fields
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    
+    // Add generalized location fields
+    data.departureLocation = departureLocation;
+    data.arrivalLocation = arrivalLocation;
     
     // Add metadata
     data.status = 'draft';
     data.createdAt = new Date().toISOString();
     data.createdBy = document.getElementById('userName')?.textContent || 'Unknown';
+    
+    // Remove mode-specific fields to avoid conflicts
+    delete data.departureAirport;
+    delete data.arrivalAirport;
+    delete data.departurePort;
+    delete data.arrivalPort;
+    delete data.departureArea;
+    delete data.arrivalArea;
+    delete data.departurePoint;
+    delete data.arrivalPoint;
+    delete data.portArrival;
     
     const submitBtn = document.querySelector('button[onclick="saveJobCard()"]');
     const originalText = submitBtn.innerHTML;
@@ -1408,6 +1400,44 @@ async function saveJobCard() {
 }
 
 
+function getGeneralizedLocationData() {
+    const mode = document.getElementById('modeOfTravel')?.value || '';
+    let departureLocation = '';
+    let arrivalLocation = '';
+    
+    switch(mode) {
+        case 'AIR':
+            departureLocation = document.getElementById('departureAirport')?.value || '';
+            arrivalLocation = document.getElementById('arrivalAirport')?.value || '';
+            break;
+            
+        case 'SEA':
+            departureLocation = document.getElementById('departurePort')?.value || '';
+            arrivalLocation = document.getElementById('arrivalPort')?.value || '';
+            break;
+            
+        case 'ROA':
+            departureLocation = document.getElementById('departureArea')?.value || '';
+            arrivalLocation = document.getElementById('arrivalArea')?.value || '';
+            break;
+            
+        case 'MUL':
+            departureLocation = document.getElementById('departurePoint')?.value || '';
+            arrivalLocation = document.getElementById('arrivalPoint')?.value || '';
+            break;
+            
+        default:
+            // For backward compatibility
+            departureLocation = 'Kuwait'; // Default departure
+            arrivalLocation = document.getElementById('portArrival')?.value || '';
+    }
+    
+    return { departureLocation, arrivalLocation };
+}
+
+
+
+
 // Add this helper function to sync dropdown values
 function syncDropdownValuesToForm() {
     // Sync cost center dropdown
@@ -1449,8 +1479,16 @@ async function handleJobCardSubmit(event) {
         }
     }
     
+    // Get generalized location data
+    const { departureLocation, arrivalLocation } = getGeneralizedLocationData();
+    
+    // Create form data
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    
+    // Add generalized location fields
+    data.departureLocation = departureLocation;
+    data.arrivalLocation = arrivalLocation;
     
     // Add metadata
     data.status = 'submitted';
@@ -1461,6 +1499,17 @@ async function handleJobCardSubmit(event) {
     if (window.currentJobCardId) {
         data.id = window.currentJobCardId;
     }
+    
+    // Remove mode-specific fields to avoid conflicts
+    delete data.departureAirport;
+    delete data.arrivalAirport;
+    delete data.departurePort;
+    delete data.arrivalPort;
+    delete data.departureArea;
+    delete data.arrivalArea;
+    delete data.departurePoint;
+    delete data.arrivalPoint;
+    delete data.portArrival;
     
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
