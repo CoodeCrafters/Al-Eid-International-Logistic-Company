@@ -1866,10 +1866,28 @@ async function searchPlaces(query, type = '') {
         
         const data = await response.json();
         
-        return data.map(place => ({
-            name: place.display_name,
+        return data.map(place => {
+    // Prefer suburb name, fall back to city, then name
+    let locationName = place.address.suburb || 
+                      place.address.city || 
+                      place.address.town || 
+                      place.address.village ||
+                      place.name.split(',')[0];
+    
+    // For airports/seaports, clean up the name
+    if (place.type === 'aerodrome' || place.type === 'aeroway') {
+        locationName = locationName.replace('International Airport', '').trim();
+    }
+    if (place.type === 'port' || place.type === 'seaport') {
+        locationName = locationName.replace('Port', '').trim();
+    }
+    
+        return {
+            name: locationName,
+            full_name: place.display_name, // Keep full name if needed
             type: place.type || place.class,
             address: {
+                suburb: place.address.suburb,
                 city: place.address.city || place.address.town || place.address.village,
                 country: place.address.country,
                 state: place.address.state,
@@ -1878,7 +1896,8 @@ async function searchPlaces(query, type = '') {
             lat: place.lat,
             lon: place.lon,
             importance: place.importance
-        }));
+        };
+    });
         
     } catch (error) {
         console.error('Error searching places:', error);
@@ -1942,10 +1961,15 @@ function createCustomAutocomplete(inputElement, searchType = '') {
                 </div>
             `;
             
-            item.addEventListener('click', () => {
-                inputElement.value = place.name;
-                removeDropdown();
-            });
+                item.addEventListener('click', () => {
+            inputElement.value = place.name;
+            inputElement.dataset.lat = place.lat;
+            inputElement.dataset.lon = place.lon;
+            removeDropdown();
+            
+            // Trigger change event
+            inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        });
             
             item.addEventListener('mouseenter', () => {
                 highlightItem(index);
