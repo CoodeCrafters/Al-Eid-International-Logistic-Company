@@ -145,7 +145,7 @@ async function fetchNextJobNumber() {
             return;
         }
         
-        const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
+        const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/next-number?mode=${mode}&type=${type}`);
         const data = await response.json();
         
         console.log('Next job number response:', data);
@@ -193,7 +193,7 @@ async function fetchNextJobNumber() {
 // Add this helper function to check if job number already exists
 async function checkJobNumberExists(jobNumber) {
     try {
-        const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/check-number?jobNo=${encodeURIComponent(jobNumber)}`);
+        const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/check-number?jobNo=${encodeURIComponent(jobNumber)}`);
         const data = await response.json();
         return data.exists || false;
     } catch (error) {
@@ -669,7 +669,7 @@ function setupEnhancedCustomerAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/customers/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const customers = await response.json();
                     showDropdown(customers);
@@ -710,7 +710,7 @@ function setupEnhancedShipperAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/shippers/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const shippers = await response.json();
                     currentSuggestions = shippers;
@@ -799,7 +799,7 @@ function setupEnhancedRequesterAutocomplete(inputField) {
         
         timeout = setTimeout(async () => {
             try {
-                const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/requesters/search?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/requesters/search?q=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const requesters = await response.json();
                     showEnhancedRequesterDropdown(requesters, inputField);
@@ -1364,7 +1364,7 @@ async function saveJobCard() {
     submitBtn.disabled = true;
     
     try {
-        const response = await fetch('https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/save-draft', {
+        const response = await fetch('https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/save-draft', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1468,7 +1468,7 @@ async function handleJobCardSubmit(event) {
     submitBtn.disabled = true;
     
     try {
-        const response = await fetch('https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/submit', {
+        const response = await fetch('https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1616,7 +1616,7 @@ async function generateInvoice() {
     
     // Generate invoice from job card
     try {
-        const response = await fetch('https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/generate-invoice', {
+        const response = await fetch('https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/generate-invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1691,7 +1691,7 @@ function printJobCard(jobNumber) {
 
 async function generateInvoiceFromSuccess(jobNumber) {
     try {
-        const response = await fetch(`https://merger-velocity-gains-coastal.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
+        const response = await fetch(`https://ball-sent-epinions-protective.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
         if (response.ok) {
             const result = await response.json();
             sessionStorage.setItem('invoiceData', JSON.stringify(result));
@@ -1794,7 +1794,7 @@ function updateSystemTime() {
 
 async function updateStats() {
     try {
-        const response = await fetch('https://merger-velocity-gains-coastal.trycloudflare.com/api/stats/jobcards');
+        const response = await fetch('https://ball-sent-epinions-protective.trycloudflare.com/api/stats/jobcards');
         if (response.ok) {
             const stats = await response.json();
             
@@ -1809,13 +1809,15 @@ async function updateStats() {
     }
 }
 
-// OpenStreetMap Configuration
-const LOCATIONIQ_CONFIG = {
-    baseUrl: 'https://us1.locationiq.com/v1/search.php',
+// OpenStreetMap Nominatim Configuration
+const OPENSTREETMAP_CONFIG = {
+    baseUrl: 'https://nominatim.openstreetmap.org/search',
     format: 'json',
     limit: 10,
-    apiKey: 'pk.69aaf2ff693e38179cb21ee97b2fe1b6', // Get free key from locationiq.com
-    rateLimit: 100
+    // No API key needed for Nominatim (free tier)
+    rateLimit: 1000, // 1 request per second max
+    userAgent: 'AIEidLogistics/1.0 (your-email@domain.com)', // Required for Nominatim
+    email: 'your-email@domain.com' // Optional but recommended
 };
 
 // Debounce function to prevent too many API calls
@@ -1840,32 +1842,36 @@ async function searchPlaces(query, type = '') {
         let searchQuery = query;
         if (type === 'airport') {
             searchQuery += ' airport';
-        } else if (type === 'port') {
+        } else if (type === 'seaport') {
             searchQuery += ' port';
         }
         
+        // Build URL with proper Nominatim parameters
+        const params = new URLSearchParams({
+            q: searchQuery,
+            format: OPENSTREETMAP_CONFIG.format,
+            limit: OPENSTREETMAP_CONFIG.limit,
+            addressdetails: 1,
+            'accept-language': 'en'
+        });
+        
         const response = await fetch(
-            `${LOCATIONIQ_CONFIG.baseUrl}?` +
-            `key=${LOCATIONIQ_CONFIG.apiKey}&` +
-            `q=${encodeURIComponent(searchQuery)}&` +
-            `format=${LOCATIONIQ_CONFIG.format}&` +
-            `limit=${LOCATIONIQ_CONFIG.limit}&` +
-            `addressdetails=1&` +
-            `normalizeaddress=1`,
+            `${OPENSTREETMAP_CONFIG.baseUrl}?${params.toString()}`,
             {
                 headers: {
-                    'Accept-Language': 'en',
-                    'User-Agent': 'AIEidLogistics/1.0'
+                    'User-Agent': OPENSTREETMAP_CONFIG.userAgent,
+                    'Accept': 'application/json'
                 }
             }
         );
         
         if (!response.ok) {
-            console.error('LocationIQ API error:', response.status);
-            return [];
+            console.error('OpenStreetMap API error:', response.status);
+            return getFallbackSuggestions(query, type);
         }
         
         const data = await response.json();
+        
         return data.map(place => ({
             name: place.display_name,
             type: place.type || place.class,
