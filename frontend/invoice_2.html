@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Jobs | Al Eid International Logistics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Link to your existing sidebar styles -->
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --light-blue: #e8f0fe;
+            --dark-gray: #3c4043;
+            --medium-gray: #5f6368;
+            --light-gray: #f8f9fa;
+            --border-gray: #dadce0;
+            --green: #0d9d58;
+            --orange: #fa7b17;
+            --red: #ea4335;
+            --transit-color: #4285f4;
+            --arrived-color: #0d9d58;
+            --completed-color: #5f6368;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-gray);
+            overflow-x: hidden;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* ================= TOP HEADER ================= */
+        .top-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid var(--border-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 999;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--medium-gray);
+            cursor: pointer;
+        }
+
+        .company-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary-blue);
+        }
+
+        .company-logo i {
+            font-size: 24px;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-link {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--medium-gray);
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .nav-link.active {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            color: var(--medium-gray);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover {
+            background-color: var(--light-gray);
+        }
+
+        .notification-btn .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--red);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1001;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-blue);
+        }
+
+        .user-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* ================= PAGE CONTENT ================= */
+        .page-content {
+            padding: 30px;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--medium-gray);
+            font-size: 14px;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            color: var(--medium-gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary-blue);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d62d9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--medium-gray);
+            border: 1px solid var(--border-gray);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-gray);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--medium-gray);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            cursor: pointer;
+        }
+
+        .btn-search {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border: 1px solid var(--border-gray);
+        }
+
+        .btn-search:hover {
+            background-color: #e8eaed;
+        }
+
+        .filter-tabs {
+            border-top: 1px solid var(--border-gray);
+            padding-top: 15px;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-option input {
+            display: none;
+        }
+
+        .filter-label {
+            padding: 8px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--medium-gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .filter-option input:checked + .filter-label {
+            background-color: var(--light-blue);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        /* ================= JOB CARDS BOARD ================= */
+        .board-container {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-gray);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .board-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            min-height: 600px;
+        }
+
+        .board-column {
+            padding: 20px;
+            border-right: 1px solid var(--border-gray);
+        }
+
+        .board-column:last-child {
+            border-right: none;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .column-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .column-title i {
+            font-size: 18px;
+        }
+
+        .transit-column .column-title i {
+            color: var(--transit-color);
+        }
+
+        .arrived-column .column-title i {
+            color: var(--arrived-color);
+        }
+
+        .completed-column .column-title i {
+            color: var(--completed-color);
+        }
+
+        .column-count {
+            background-color: var(--light-gray);
+            color: var(--medium-gray);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .column-add-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border-gray);
+            background: white;
+            color: var(--medium-gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .column-add-btn:hover {
+            background-color: var(--light-gray);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .column-body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 500px;
+        }
+
+        /* ================= JOB CARD STYLING (Matching Screenshot) ================= */
+        .job-card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border-gray);
+            padding: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .job-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .job-number-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .job-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .job-type-air {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+
+        .job-type-sea {
+            background-color: #e6f4ea;
+            color: #0d9d58;
+        }
+
+        .job-type-road {
+            background-color: #fce8e6;
+            color: #ea4335;
+        }
+
+        .job-number {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .hbl-number {
+            font-size: 12px;
+            color: var(--medium-gray);
+            background: var(--light-gray);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .job-card-created-by {
+            font-size: 11px;
+            color: var(--medium-gray);
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .job-route {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--light-gray);
+            border-radius: 6px;
+        }
+
+        .route-icon {
+            font-size: 14px;
+            color: var(--primary-blue);
+        }
+
+        .route-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .job-parties {
+            margin-bottom: 15px;
+        }
+
+        .party-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .party-label {
+            min-width: 70px;
+            font-weight: 600;
+            color: var(--medium-gray);
+        }
+
+        .party-value {
+            flex: 1;
+            color: var(--dark-gray);
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .job-financials {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #eaeaea;
+        }
+
+        .financial-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .financial-label {
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .financial-value {
+            font-weight: 600;
+            color: var(--dark-gray);
+            font-family: 'Courier New', monospace;
+        }
+
+        .estimated-value {
+            color: #666;
+        }
+
+        .actual-value {
+            color: var(--green);
+        }
+
+        .job-card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-gray);
+        }
+
+        .job-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-in-transit {
+            background-color: #e8f0fe;
+            color: var(--transit-color);
+        }
+
+        .status-arrived {
+            background-color: #e6f4ea;
+            color: var(--arrived-color);
+        }
+
+        .status-completed {
+            background-color: #f1f3f4;
+            color: var(--completed-color);
+        }
+
+        .open-wizard-btn {
+            padding: 6px 12px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .open-wizard-btn:hover {
+            background-color: #0d62d9;
+            transform: translateY(-1px);
+        }
+
+        /* ================= STATS CARDS ================= */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-gray);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.transit {
+            background-color: #e8f0fe;
+            color: var(--transit-color);
+        }
+
+        .stat-icon.arrived {
+            background-color: #e6f4ea;
+            color: var(--arrived-color);
+        }
+
+        .stat-icon.completed {
+            background-color: #f1f3f4;
+            color: var(--completed-color);
+        }
+
+        .stat-icon.revenue {
+            background-color: #fef7e0;
+            color: #f9ab00;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--medium-gray);
+        }
+
+        /* ================= MODALS ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--medium-gray);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: var(--light-gray);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 80px);
+            overflow-y: auto;
+        }
+
+        /* Charges Wizard Modal */
+        .wizard-container {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .wizard-header {
+            margin-bottom: 20px;
+        }
+
+        .wizard-job-info {
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .wizard-section {
+            margin-bottom: 30px;
+        }
+
+        .wizard-section h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .charges-dropdown {
+            margin-bottom: 20px;
+        }
+
+        .charges-dropdown select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--dark-gray);
+            background: white;
+        }
+
+        .charges-table-container {
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .charges-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .charges-table th {
+            background-color: var(--light-gray);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--medium-gray);
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .charges-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-gray);
+            font-size: 13px;
+        }
+
+        .charges-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .charges-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        /* Table View */
+        .table-container {
+            display: none;
+        }
+
+        .table-container.active {
+            display: block;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background-color: var(--light-gray);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--medium-gray);
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-gray);
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.transit {
+            background-color: #e8f0fe;
+            color: var(--transit-color);
+        }
+
+        .status-badge.arrived {
+            background-color: #e6f4ea;
+            color: var(--arrived-color);
+        }
+
+        .status-badge.completed {
+            background-color: #f1f3f4;
+            color: var(--completed-color);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-gray);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ================= RESPONSIVE DESIGN ================= */
+        @media (max-width: 1200px) {
+            .board-columns {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-btn {
+                display: block;
+            }
+            
+            .board-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .board-column {
+                border-right: none;
+                border-bottom: 1px solid var(--border-gray);
+            }
+            
+            .board-column:last-child {
+                border-bottom: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .filter-options {
+                justify-content: center;
+            }
+            
+            .top-header {
+                padding: 0 15px;
+            }
+            
+            .page-content {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal-content {
+                width: 95%;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .filter-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Create Job Card Modal */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+<!-- ================= SIDEBAR NAVIGATION ================= -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-container">
+            <i class="fa-solid fa-truck-fast logo-icon"></i>
+            <h2 class="logo-text">HAVAL LAB</h2>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="menu-section">
+            <h3 class="menu-title">MAIN MENU</h3>
+            <a href="#" class="menu-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <h3 class="menu-title">OPERATIONS</h3>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-database"></i>
+                <span>Data sources</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>Targets</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Members</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-arrow-up"></i>
+                <span>Upgrade</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-circle-question"></i>
+                <span>Help center</span>
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <h3 class="menu-title">TEAMS</h3>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>All teams</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Finance</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-cube"></i>
+                <span>Product</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fa-solid fa-user-circle"></i>
+            </div>
+            <div class="user-info">
+                <span class="user-name">Admin User</span>
+                <span class="user-role">Administrator</span>
+            </div>
+        </div>
+        <button class="sidebar-toggle" id="toggleSidebar">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    </div>
+</nav>    
+    <!-- ================= MAIN CONTENT AREA ================= -->
+    <div class="main-content" id="mainContent">
+        <!-- ================= TOP HEADER ================= -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="menu-btn" id="mobileMenuToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="company-logo">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <span>Al Eid International Logistics</span>
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Service Jobs</span>
+                </a>
+                <a href="#" class="nav-link active">
+                    <i class="fa-solid fa-cogs"></i>
+                    <span>Operations</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Quotes</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <span>Reporting</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Configuration</span>
+                </a>
+            </nav>
+
+            <div class="header-right">
+                <button class="header-btn notification-btn">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                <div class="user-dropdown">
+                    <button class="header-btn user-btn">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span>Admin</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#"><i class="fa-solid fa-user"></i> Profile</a>
+                        <a href="#"><i class="fa-solid fa-cog"></i> Settings</a>
+                        <div class="divider"></div>
+                        <a href="#"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= PAGE CONTENT ================= -->
+        <main class="page-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>House Shipment</h1>
+                    <div class="page-subtitle">Manage and track all house shipments</div>
+                </div>
+                <div class="page-actions">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="board">
+                            <i class="fa-solid fa-grip"></i>
+                        </button>
+                        <button class="view-btn" data-view="table">
+                            <i class="fa-solid fa-list"></i>
+                        </button>
+                    </div>
+                    <button class="btn btn-secondary">
+                        <i class="fa-solid fa-filter"></i>
+                        <span>Filter</span>
+                    </button>
+                    <button class="btn btn-primary" id="createJobCardBtn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Create House Shipment</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-input-group">
+                        <i class="fa-solid fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="globalSearch" 
+                            class="search-input" 
+                            placeholder="Search Job No, HBL, Customer, Shipper..." 
+                            autocomplete="off"
+                        />
+                        <button class="search-clear" id="clearSearch">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <button class="btn btn-search">
+                        <i class="fa-solid fa-search"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <div class="filter-tabs">
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="radio" name="filterType" value="hbl" checked>
+                            <span class="filter-label">
+                                <i class="fa-solid fa-file-contract"></i>
+                                HBL
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="filterType" value="customer">
+                            <span class="filter-label">
+                                <i class="fa-solid fa-user-tie"></i>
+                                Customer
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="filterType" value="shipper">
+                            <span class="filter-label">
+                                <i class="fa-solid fa-truck-loading"></i>
+                                Shipper
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="filterType" value="consignee">
+                            <span class="filter-label">
+                                <i class="fa-solid fa-building"></i>
+                                Consignee
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Board View (Default) -->
+            <div class="board-container" id="boardView">
+                <div class="board-columns">
+                    <!-- In Transit Column -->
+                    <div class="board-column transit-column">
+                        <div class="column-header">
+                            <div class="column-title">
+                                <i class="fa-solid fa-plane"></i>
+                                <h3>In Transit</h3>
+                                <span class="column-count" id="transitCount">3</span>
+                            </div>
+                            <button class="column-add-btn">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="column-body" id="colTransit">
+                            <!-- Job cards will be loaded here from API -->
+                        </div>
+                    </div>
+
+                    <!-- Arrived Column -->
+                    <div class="board-column arrived-column">
+                        <div class="column-header">
+                            <div class="column-title">
+                                <i class="fa-solid fa-box"></i>
+                                <h3>Arrived</h3>
+                                <span class="column-count" id="arrivedCount">2</span>
+                            </div>
+                            <button class="column-add-btn">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="column-body" id="colArrived">
+                            <!-- Job cards will be loaded here from API -->
+                        </div>
+                    </div>
+
+                    <!-- Completed Column -->
+                    <div class="board-column completed-column">
+                        <div class="column-header">
+                            <div class="column-title">
+                                <i class="fa-solid fa-check-circle"></i>
+                                <h3>Completed</h3>
+                                <span class="column-count" id="completedCount">2</span>
+                            </div>
+                            <button class="column-add-btn">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="column-body" id="colCompleted">
+                            <!-- Job cards will be loaded here from API -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table View (Hidden by default) -->
+            <div class="table-container" id="tableView">
+                <div class="table-header">
+                    <h3>All House Shipments</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export</span>
+                        </button>
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-sync-alt"></i>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Job No</th>
+                                <th>HBL No</th>
+                                <th>Route</th>
+                                <th>Customer</th>
+                                <th>Shipper</th>
+                                <th>Consignee</th>
+                                <th>Status</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobCardsTableBody">
+                            <!-- Table rows will be loaded here from API -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon transit">
+                        <i class="fa-solid fa-plane"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statTransit">3</div>
+                        <div class="stat-label">In Transit</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon arrived">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statArrived">2</div>
+                        <div class="stat-label">Arrived</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statCompleted">2</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="statRevenue">0.000 KWD</div>
+                        <div class="stat-label">Total Margin</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+    
+    <!-- Charges Wizard Modal -->
+    <div class="modal-overlay" id="chargesWizardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Charges Wizard</h3>
+                <button class="modal-close" id="closeChargesWizard">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wizard-container">
+                    <div class="wizard-header">
+                        <div class="wizard-job-info">
+                            <h4 id="wizardJobNumber">AIR-I-2026-06850</h4>
+                            <p id="wizardJobRoute">Singapore → Kuwait</p>
+                            <p id="wizardJobCustomer">Customer: SCHLUMBERGER</p>
+                        </div>
+                    </div>
+                    
+                    <div class="wizard-section">
+                        <h4>Select Charge Type</h4>
+                        <div class="charges-dropdown">
+                            <select id="chargeTypeSelect">
+                                <option value="">Select a charge type...</option>
+                                <option value="freight">Freight Charges</option>
+                                <option value="customs">Customs Clearance</option>
+                                <option value="handling">Handling Charges</option>
+                                <option value="transport">Transportation</option>
+                                <option value="documentation">Documentation</option>
+                                <option value="other">Other Charges</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="wizard-section">
+                        <h4>Charges Details</h4>
+                        <div class="charges-table-container">
+                            <table class="charges-table">
+                                <thead>
+                                    <tr>
+                                        <th width="50">#</th>
+                                        <th>Description</th>
+                                        <th width="100">Quantity</th>
+                                        <th width="150">Unit Price (KWD)</th>
+                                        <th width="150">Amount (KWD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chargesTableBody">
+                                    <tr>
+                                        <td>1</td>
+                                        <td><input type="text" placeholder="Enter charge description" value="Ocean Freight"></td>
+                                        <td><input type="number" value="1" min="1"></td>
+                                        <td><input type="number" value="0.000" step="0.001"></td>
+                                        <td><input type="text" value="0.000" readonly></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="wizard-actions">
+                        <button class="btn btn-secondary" id="cancelChargesWizard">
+                            Cancel
+                        </button>
+                        <button class="btn btn-primary" id="saveCharges">
+                            Save Charges
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Job Card Modal -->
+    <div class="modal-overlay" id="createJobCardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New House Shipment</h3>
+                <button class="modal-close" id="closeCreateJobCardModal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newJobCardForm">
+                    <!-- Form content will be loaded here -->
+                    <div class="form-group mb-3">
+                        <label for="jobType">Shipment Type</label>
+                        <select class="form-control" id="jobType">
+                            <option value="AIR">Air Shipment</option>
+                            <option value="SEA">Sea Shipment</option>
+                            <option value="ROA">Road Shipment</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="customerName">Customer Name</label>
+                        <input type="text" class="form-control" id="customerName" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="shipperName">Shipper Name</label>
+                        <input type="text" class="form-control" id="shipperName" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="consigneeName">Consignee Name</label>
+                        <input type="text" class="form-control" id="consigneeName" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="departureLocation">Departure Location</label>
+                                <input type="text" class="form-control" id="departureLocation" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="arrivalLocation">Arrival Location</label>
+                                <input type="text" class="form-control" id="arrivalLocation" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="hblNumber">HBL Number</label>
+                        <input type="text" class="form-control" id="hblNumber" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelCreateJobCard">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Create Shipment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="jobCardTemplate">
+        <div class="job-card" data-id="{{id}}" data-status="{{status}}">
+            <div class="job-card-header">
+                <div class="job-number-section">
+                    <span class="job-type-badge {{type_class}}">{{type_icon}} {{type_display}}</span>
+                    <div class="job-number">{{job_no}}</div>
+                    <div class="hbl-number">HBL: {{hbl_number}}</div>
+                </div>
+                <div class="job-card-created-by">
+                    Created by<br>{{created_by}}
+                </div>
+            </div>
+            
+            <div class="job-route">
+                <i class="fa-solid fa-route route-icon"></i>
+                <span class="route-text">{{departure_location}} → {{arrival_location}}</span>
+            </div>
+            
+            <div class="job-parties">
+                <div class="party-row">
+                    <span class="party-label">Customer:</span>
+                    <span class="party-value">{{customer_name}}</span>
+                </div>
+                <div class="party-row">
+                    <span class="party-label">Shipper:</span>
+                    <span class="party-value">{{shipper_name}}</span>
+                </div>
+                <div class="party-row">
+                    <span class="party-label">Consignee:</span>
+                    <span class="party-value">{{consignee_name}}</span>
+                </div>
+            </div>
+            
+            <div class="job-financials">
+                <div class="financial-row">
+                    <span class="financial-label">Receivable</span>
+                    <div>
+                        <span class="financial-value estimated-value">{{receivable_estimated}}</span> /
+                        <span class="financial-value actual-value">{{receivable_actual}}</span>
+                    </div>
+                </div>
+                <div class="financial-row">
+                    <span class="financial-label">Payable</span>
+                    <div>
+                        <span class="financial-value estimated-value">{{payable_estimated}}</span> /
+                        <span class="financial-value actual-value">{{payable_actual}}</span>
+                    </div>
+                </div>
+                <div class="financial-row">
+                    <span class="financial-label">Margin</span>
+                    <div>
+                        <span class="financial-value estimated-value">{{margin_estimated}}</span> /
+                        <span class="financial-value actual-value">{{margin_actual}}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="job-card-actions">
+                <span class="job-status {{status_class}}">{{status_display}}</span>
+                <button class="open-wizard-btn" data-job-id="{{id}}">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Open Wizard
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="tableRowTemplate">
+        <tr data-id="{{id}}">
+            <td><strong>{{job_no}}</strong></td>
+            <td>{{hbl_number}}</td>
+            <td>{{departure_location}} → {{arrival_location}}</td>
+            <td>{{customer_name}}</td>
+            <td>{{shipper_name}}</td>
+            <td>{{consignee_name}}</td>
+            <td><span class="status-badge {{status_class}}">{{status_display}}</span></td>
+            <td>{{created_by}}</td>
+            <td>
+                <button class="btn btn-sm btn-secondary open-wizard-btn" data-job-id="{{id}}">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Wizard
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <!-- JavaScript -->
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://ball-sent-epinions-protective.trycloudflare.com/api';
+        
+        // DOM Elements
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const boardView = document.getElementById('boardView');
+        const tableView = document.getElementById('tableView');
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const createJobCardBtn = document.getElementById('createJobCardBtn');
+        const chargesWizardModal = document.getElementById('chargesWizardModal');
+        const closeChargesWizard = document.getElementById('closeChargesWizard');
+        const cancelChargesWizard = document.getElementById('cancelChargesWizard');
+        const createJobCardModal = document.getElementById('createJobCardModal');
+        const closeCreateJobCardModal = document.getElementById('closeCreateJobCardModal');
+        const cancelCreateJobCard = document.getElementById('cancelCreateJobCard');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Sample data - In production, this will come from API
+        const sampleJobCards = [
+            {
+                id: '1',
+                job_no: 'AIR-I-2026-06850',
+                hbl_number: '1576909112',
+                type: 'AIR',
+                departure_location: 'Singapore',
+                arrival_location: 'Kuwait',
+                customer_name: 'SCHLUMBERGER',
+                shipper_name: 'SCHLUMBERGER',
+                consignee_name: 'SCHLUMBERGER KUWAIT',
+                created_by: 'Admin User',
+                status: 'in-transit',
+                receivable_estimated: '0.000',
+                receivable_actual: '0.000',
+                payable_estimated: '0.000',
+                payable_actual: '0.000',
+                margin_estimated: '0.000',
+                margin_actual: '0.000'
+            },
+            {
+                id: '2',
+                job_no: 'SEA-I-2026-06829',
+                hbl_number: 'ONETOXRT53420800',
+                type: 'SEA',
+                departure_location: 'Jebel Ali',
+                arrival_location: 'Shuwaikh',
+                customer_name: 'PANAMA TRADING',
+                shipper_name: 'ROTANA CO. LTD',
+                consignee_name: 'PANAMA TRADING CO.',
+                created_by: 'Admin User',
+                status: 'in-transit',
+                receivable_estimated: '978.000',
+                receivable_actual: '0.000',
+                payable_estimated: '480.979',
+                payable_actual: '0.000',
+                margin_estimated: '164.684',
+                margin_actual: '0.000'
+            },
+            {
+                id: '3',
+                job_no: 'AIR-I-2026-06851',
+                hbl_number: 'UA10393039',
+                type: 'AIR',
+                departure_location: 'Houston',
+                arrival_location: 'Kuwait',
+                customer_name: 'BRONZE SERVICES',
+                shipper_name: 'BRONZE CO.',
+                consignee_name: 'BRONZE SERVICES KUWAIT',
+                created_by: 'Admin User',
+                status: 'in-transit',
+                receivable_estimated: '0.000',
+                receivable_actual: '0.000',
+                payable_estimated: '0.000',
+                payable_actual: '0.000',
+                margin_estimated: '0.000',
+                margin_actual: '0.000'
+            },
+            {
+                id: '4',
+                job_no: 'AIR-I-2025-06780',
+                hbl_number: '1575038996',
+                type: 'AIR',
+                departure_location: 'Guangzhou',
+                arrival_location: 'Kuwait',
+                customer_name: 'UNITED CO.',
+                shipper_name: 'LONGHAI SHIPPING',
+                consignee_name: 'UNITED CO. KUWAIT',
+                created_by: 'Admin User',
+                status: 'arrived',
+                receivable_estimated: '0.000',
+                receivable_actual: '0.000',
+                payable_estimated: '0.000',
+                payable_actual: '0.000',
+                margin_estimated: '0.000',
+                margin_actual: '0.000'
+            },
+            {
+                id: '5',
+                job_no: 'SEA-I-2025-06025',
+                hbl_number: 'NSZCC51091933',
+                type: 'SEA',
+                departure_location: 'Shekou Port',
+                arrival_location: 'Shuwaikh',
+                customer_name: 'OCEAN FREIGHT LTD',
+                shipper_name: 'CHINA SHIPPING',
+                consignee_name: 'OCEAN FREIGHT KUWAIT',
+                created_by: 'Admin User',
+                status: 'arrived',
+                receivable_estimated: '0.000',
+                receivable_actual: '0.000',
+                payable_estimated: '0.000',
+                payable_actual: '0.000',
+                margin_estimated: '0.000',
+                margin_actual: '0.000'
+            },
+            {
+                id: '6',
+                job_no: 'AIR-E-2025-06814',
+                hbl_number: '15767064502',
+                type: 'AIR',
+                departure_location: 'Kuwait',
+                arrival_location: 'Aksay',
+                customer_name: 'DIGITAL TRADING',
+                shipper_name: 'SCHLUMBERGER',
+                consignee_name: 'DIGITAL TRADING CO.',
+                created_by: 'Admin User',
+                status: 'completed',
+                receivable_estimated: '130.000',
+                receivable_actual: '130.000',
+                payable_estimated: '134.000',
+                payable_actual: '0.000',
+                margin_estimated: '0.000',
+                margin_actual: '10.000'
+            },
+            {
+                id: '7',
+                job_no: 'ROA-I-2025-06813',
+                hbl_number: '5350027111',
+                type: 'ROA',
+                departure_location: 'JEBEL ALI FREE ZONE',
+                arrival_location: 'KUWAIT',
+                customer_name: 'INTERNATIONAL TRADING',
+                shipper_name: 'GULF IMPORT CO.',
+                consignee_name: 'INTERNATIONAL TRADING CO.',
+                created_by: 'Admin User',
+                status: 'completed',
+                receivable_estimated: '2,123.140',
+                receivable_actual: '2,123.140',
+                payable_estimated: '2,126.140',
+                payable_actual: '0.000',
+                margin_estimated: '47.000',
+                margin_actual: '2,127.140'
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initViewToggle();
+            initModals();
+            loadJobCards();
+            initSearch();
+        });
+
+        // View toggle functionality
+        function initViewToggle() {
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    
+                    // Update active button
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show/hide views
+                    if (view === 'board') {
+                        boardView.style.display = 'block';
+                        tableView.classList.remove('active');
+                    } else if (view === 'table') {
+                        boardView.style.display = 'none';
+                        tableView.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Modal functionality
+        function initModals() {
+            // Open wizard buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.open-wizard-btn')) {
+                    const jobId = e.target.closest('.open-wizard-btn').getAttribute('data-job-id');
+                    const jobCard = sampleJobCards.find(card => card.id === jobId);
+                    
+                    if (jobCard) {
+                        document.getElementById('wizardJobNumber').textContent = jobCard.job_no;
+                        document.getElementById('wizardJobRoute').textContent = 
+                            `${jobCard.departure_location} → ${jobCard.arrival_location}`;
+                        document.getElementById('wizardJobCustomer').textContent = 
+                            `Customer: ${jobCard.customer_name}`;
+                    }
+                    
+                    chargesWizardModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+
+            // Close wizard modal
+            closeChargesWizard.addEventListener('click', closeChargesWizardModal);
+            cancelChargesWizard.addEventListener('click', closeChargesWizardModal);
+            chargesWizardModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeChargesWizardModal();
+                }
+            });
+
+            // Create job card modal
+            createJobCardBtn.addEventListener('click', function() {
+                createJobCardModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            closeCreateJobCardModal.addEventListener('click', closeCreateJobCardModal);
+            cancelCreateJobCard.addEventListener('click', closeCreateJobCardModal);
+            createJobCardModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCreateJobCardModal();
+                }
+            });
+
+            // Save charges
+            document.getElementById('saveCharges').addEventListener('click', function() {
+                // In production, this would save to API
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    closeChargesWizardModal();
+                    alert('Charges saved successfully!');
+                }, 1000);
+            });
+
+            // Create job card form submission
+            document.getElementById('newJobCardForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In production, this would submit to API
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    closeCreateJobCardModal();
+                    alert('House shipment created successfully!');
+                    // Refresh the job cards list
+                    loadJobCards();
+                }, 1500);
+            });
+        }
+
+        function closeChargesWizardModal() {
+            chargesWizardModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        
+
+        // Load job cards from API
+        async function loadJobCards() {
+            showLoading();
+            
+            try {
+                // In production, fetch from API:
+                // const response = await fetch(`${API_BASE_URL}/jobcards`);
+                // const jobCards = await response.json();
+                
+                // For demo, use sample data
+                const jobCards = sampleJobCards;
+                
+                // Clear existing cards
+                document.getElementById('colTransit').innerHTML = '';
+                document.getElementById('colArrived').innerHTML = '';
+                document.getElementById('colCompleted').innerHTML = '';
+                document.getElementById('jobCardsTableBody').innerHTML = '';
+                
+                // Counters
+                let transitCount = 0;
+                let arrivedCount = 0;
+                let completedCount = 0;
+                
+                // Process each job card
+                jobCards.forEach(card => {
+                    // Determine status and type
+                    const statusClass = `status-${card.status.replace('-', '')}`;
+                    const statusDisplay = card.status.replace('-', ' ').toUpperCase();
+                    
+                    let typeClass = '';
+                    let typeIcon = '';
+                    let typeDisplay = '';
+                    
+                    switch(card.type) {
+                        case 'AIR':
+                            typeClass = 'job-type-air';
+                            typeIcon = '✈️';
+                            typeDisplay = 'AIR';
+                            break;
+                        case 'SEA':
+                            typeClass = 'job-type-sea';
+                            typeIcon = '🚢';
+                            typeDisplay = 'SEA';
+                            break;
+                        case 'ROA':
+                            typeClass = 'job-type-road';
+                            typeIcon = '🚚';
+                            typeDisplay = 'ROAD';
+                            break;
+                    }
+                    
+                    // Prepare template data
+                    const templateData = {
+                        ...card,
+                        status_class: statusClass,
+                        status_display: statusDisplay,
+                        type_class: typeClass,
+                        type_icon: typeIcon,
+                        type_display: typeDisplay
+                    };
+                    
+                    // Create board card
+                    const template = document.getElementById('jobCardTemplate').innerHTML;
+                    const cardHtml = template.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+                    
+                    // Add to appropriate column
+                    switch(card.status) {
+                        case 'in-transit':
+                            document.getElementById('colTransit').insertAdjacentHTML('beforeend', cardHtml);
+                            transitCount++;
+                            break;
+                        case 'arrived':
+                            document.getElementById('colArrived').insertAdjacentHTML('beforeend', cardHtml);
+                            arrivedCount++;
+                            break;
+                        case 'completed':
+                            document.getElementById('colCompleted').insertAdjacentHTML('beforeend', cardHtml);
+                            completedCount++;
+                            break;
+                    }
+                    
+                    // Create table row
+                    const tableTemplate = document.getElementById('tableRowTemplate').innerHTML;
+                    const rowHtml = tableTemplate.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+                    document.getElementById('jobCardsTableBody').insertAdjacentHTML('beforeend', rowHtml);
+                });
+                
+                // Update counters
+                document.getElementById('transitCount').textContent = transitCount;
+                document.getElementById('arrivedCount').textContent = arrivedCount;
+                document.getElementById('completedCount').textContent = completedCount;
+                document.getElementById('statTransit').textContent = transitCount;
+                document.getElementById('statArrived').textContent = arrivedCount;
+                document.getElementById('statCompleted').textContent = completedCount;
+                
+            } catch (error) {
+                console.error('Error loading job cards:', error);
+                alert('Failed to load job cards. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Search functionality
+        function initSearch() {
+            const searchInput = document.getElementById('globalSearch');
+            const clearSearch = document.getElementById('clearSearch');
+            const searchBtn = document.querySelector('.btn-search');
+            
+            clearSearch.addEventListener('click', function() {
+                searchInput.value = '';
+                searchInput.focus();
+            });
+            
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                if (searchTerm) {
+                    filterJobCards(searchTerm);
+                } else {
+                    loadJobCards();
+                }
+            });
+            
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = searchInput.value.trim().toLowerCase();
+                    if (searchTerm) {
+                        filterJobCards(searchTerm);
+                    }
+                }
+            });
+        }
+
+        function filterJobCards(searchTerm) {
+            const filteredCards = sampleJobCards.filter(card => 
+                card.job_no.toLowerCase().includes(searchTerm) ||
+                card.hbl_number.toLowerCase().includes(searchTerm) ||
+                card.customer_name.toLowerCase().includes(searchTerm) ||
+                card.shipper_name.toLowerCase().includes(searchTerm) ||
+                card.consignee_name.toLowerCase().includes(searchTerm) ||
+                card.departure_location.toLowerCase().includes(searchTerm) ||
+                card.arrival_location.toLowerCase().includes(searchTerm)
+            );
+            
+            // Update display with filtered cards
+            // Similar to loadJobCards but with filtered array
+            console.log('Filtered cards:', filteredCards.length);
+            // In production, you would re-render with filtered data
+        }
+
+        // Loading overlay
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        // Simulate API call delay
+        function simulateAPICall(delay = 1000) {
+            return new Promise(resolve => setTimeout(resolve, delay));
+        }
+    </script>
+    
+    <!-- Load your existing sidebar script -->
+    <script type="module" src="scripts/sidebar.js"></script>
+</body>
+</html>
