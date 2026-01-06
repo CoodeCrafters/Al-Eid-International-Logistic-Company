@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://owns-memo-postal-duration.trycloudflare.com/api'; // Update with your backend URL
+const API_BASE_URL = 'https://merger-velocity-gains-coastal.trycloudflare.com/api'; // Update with your backend URL
 
 // Sample data for fallback
 let jobCards = []; // Will be populated from database

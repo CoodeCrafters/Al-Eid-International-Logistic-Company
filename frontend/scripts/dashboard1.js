@@ -3,7 +3,7 @@ import { SidebarManager } from './sidebar.js';
 // Dashboard Application
 class DashboardApp {
     constructor() {
-        this.API_BASE_URL = 'https://owns-memo-postal-duration.trycloudflare.com/api';
+        this.API_BASE_URL = 'https://merger-velocity-gains-coastal.trycloudflare.com/api';
         this.jobCards = [];
         this.currentJobCard = null;
         this.currentFilter = 'bayan';

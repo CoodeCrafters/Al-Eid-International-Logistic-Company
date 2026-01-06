@@ -23,7 +23,7 @@ class Utils {
 
 static getApiBaseUrl() {
     // Always use localhost:5000 for development
-    return 'https://owns-memo-postal-duration.trycloudflare.com/api';
+    return 'https://merger-velocity-gains-coastal.trycloudflare.com/api';
 }
 
 static showAlert(message, type = 'info') {
@@ -149,7 +149,7 @@ static async checkDatabaseConnection() {
     try {
         // Create a unique timestamp to prevent caching
         const timestamp = new Date().getTime();
-        const url = `https://owns-memo-postal-duration.trycloudflare.com/api/health?t=${timestamp}`;
+        const url = `https://merger-velocity-gains-coastal.trycloudflare.com/api/health?t=${timestamp}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -339,7 +339,7 @@ static updateDatabaseStatus(isOnline, errorMessage = '') {
     }
     
     static async fetchJobCardData(endpoint, data = null) {
-        const url = `https://owns-memo-postal-duration.trycloudflare.com${endpoint}`;
+        const url = `https://merger-velocity-gains-coastal.trycloudflare.com${endpoint}`;
         
         try {
             const options = {
