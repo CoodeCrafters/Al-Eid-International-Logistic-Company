@@ -271,11 +271,14 @@ function setupEnhancedAutocomplete() {
         setupEnhancedRequesterAutocomplete(requesterField);
     }
     
-    // Port of arrival - Use normal dropdown
+    // Port of arrival - Use normal dropdown (for default mode only)
     const portField = document.getElementById('portArrival');
     if (portField) {
-        // Make it a simple dropdown, not autocomplete
-        createPortDropdown(portField);
+        // Only create dropdown if it exists and we're not in dynamic mode
+        const modeSelect = document.getElementById('modeOfTravel');
+        if (!modeSelect || !modeSelect.value) {
+            createPortDropdown(portField);
+        }
     }
     
     // Shipper name suggestions
@@ -501,43 +504,41 @@ function setupEnhancedCustomerAutocomplete(inputField) {
         if (!suggestions || suggestions.length === 0) return;
         
         dropdown = document.createElement('div');
-        dropdown.className = 'custom-autocomplete-dropdown';
-        dropdown.style.width = inputElement.offsetWidth + 'px';
+        dropdown.className = 'autocomplete-dropdown enhanced-dropdown';
+        dropdown.style.width = inputField.offsetWidth + 'px';
         dropdown.style.position = 'absolute';
         dropdown.style.zIndex = '1000';
-        dropdown.style.backgroundColor = 'white';
-        dropdown.style.border = '1px solid #ddd';
-        dropdown.style.borderRadius = '4px';
-        dropdown.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-        dropdown.style.maxHeight = '300px';
-        dropdown.style.overflowY = 'auto';
-        dropdown.style.marginTop = '2px';
         
-        suggestions.forEach((place, index) => {
+        // Create search header
+        const searchHeader = document.createElement('div');
+        searchHeader.className = 'dropdown-search-header';
+        searchHeader.innerHTML = `
+            <i class="fas fa-search"></i>
+            <input type="text" class="dropdown-search-input" placeholder="Search customers...">
+        `;
+        dropdown.appendChild(searchHeader);
+        
+        // Create suggestions container
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.className = 'dropdown-suggestions';
+        
+        suggestions.forEach((customer, index) => {
             const item = document.createElement('div');
             item.className = 'autocomplete-item';
             item.dataset.index = index;
-            item.style.padding = '10px 15px';
-            item.style.cursor = 'pointer';
-            item.style.borderBottom = '1px solid #eee';
-            item.style.transition = 'background-color 0.2s';
-            
-            // Truncate long place names
-            let displayName = place.name;
-            if (displayName.length > 100) {
-                displayName = displayName.substring(0, 100) + '...';
-            }
-            
             item.innerHTML = `
-                <div style="font-weight: 500; color: #333; margin-bottom: 4px;">${displayName}</div>
-                <div style="font-size: 12px; color: #666;">
-                    ${place.address.city ? place.address.city + ', ' : ''}
-                    ${place.address.country || ''}
+                <div class="item-main">
+                    <strong>${customer.name}</strong>
+                    <span class="item-badge">${customer.company || 'No Company'}</span>
+                </div>
+                <div class="item-details">
+                    <small><i class="fas fa-envelope"></i> ${customer.email || 'No email'}</small>
+                    <small><i class="fas fa-phone"></i> ${customer.phone || 'No phone'}</small>
                 </div>
             `;
             
             item.addEventListener('click', () => {
-                inputElement.value = place.name;
+                selectCustomer(customer, inputField);
                 removeDropdown();
             });
             
@@ -545,27 +546,30 @@ function setupEnhancedCustomerAutocomplete(inputField) {
                 highlightItem(index);
             });
             
-            dropdown.appendChild(item);
+            suggestionsContainer.appendChild(item);
         });
         
-        // Position dropdown
-        const rect = inputElement.getBoundingClientRect();
-        dropdown.style.top = (rect.bottom + window.scrollY) + 'px';
-        dropdown.style.left = (rect.left + window.scrollX) + 'px';
+        dropdown.appendChild(suggestionsContainer);
+        
+        // Position dropdown below input field
+        positionDropdown(dropdown, inputField);
         
         document.body.appendChild(dropdown);
         
-        // Close dropdown when clicking outside
+        // Setup search in dropdown
+        const searchInput = dropdown.querySelector('.dropdown-search-input');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.addEventListener('input', function (e) {
+                filterDropdownSuggestions(e.target.value);
+                selectedIndex = -1;
+                highlightVisibleItem(-1);
+            });
+            searchInput.addEventListener('keydown', handleDropdownNavigation);
+        }
+        
+        // Handle click outside
         document.addEventListener('click', handleClickOutside);
-    }
-
-
-    function highlightItem(index) {
-        const items = dropdown.querySelectorAll('.autocomplete-item');
-        items.forEach((item, i) => {
-            item.style.backgroundColor = i === index ? '#f0f7ff' : 'white';
-        });
-        selectedIndex = index;
     }
     
     function filterDropdownSuggestions(searchTerm) {
@@ -624,9 +628,8 @@ function setupEnhancedCustomerAutocomplete(inputField) {
     }
     
     function handleClickOutside(e) {
-        if (dropdown && !dropdown.contains(e.target) && e.target !== inputElement) {
+        if (dropdown && !dropdown.contains(e.target) && e.target !== inputField) {
             removeDropdown();
-            document.removeEventListener('click', handleClickOutside);
         }
     }
     
@@ -763,173 +766,7 @@ function setupEnhancedShipperAutocomplete(inputField) {
             }
         });
     }
-    function handleKeyDown(e) {
-        if (!dropdown) return;
-        
-        const items = dropdown.querySelectorAll('.autocomplete-item');
-        if (!items.length) return;
-        
-        switch(e.key) {
-            case 'ArrowDown':
-                e.preventDefault();
-                selectedIndex = (selectedIndex + 1) % items.length;
-                highlightItem(selectedIndex);
-                items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                break;
-                
-            case 'ArrowUp':
-                e.preventDefault();
-                selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-                highlightItem(selectedIndex);
-                items[selectedIndex].scrollIntoView({ block: 'nearest' });
-                break;
-                
-            case 'Enter':
-                if (selectedIndex >= 0) {
-                    e.preventDefault();
-                    items[selectedIndex].click();
-                }
-                break;
-                
-            case 'Escape':
-                removeDropdown();
-                break;
-        }
-    }
     
-    // Search function with debounce
-    const performSearch = debounce(async (query) => {
-        const suggestions = await searchPlaces(query, searchType);
-        currentSuggestions = suggestions;
-        showDropdown(suggestions);
-    }, 500); // 500ms debounce
-    
-    // Setup event listeners
-    inputElement.addEventListener('input', (e) => {
-        const query = e.target.value.trim();
-        selectedIndex = -1;
-        
-        if (query.length < 3) {
-            removeDropdown();
-            return;
-        }
-        
-        performSearch(query);
-    });
-    
-    inputElement.addEventListener('keydown', handleKeyDown);
-    inputElement.addEventListener('focus', () => {
-        if (inputElement.value.length >= 3) {
-            performSearch(inputElement.value.trim());
-        }
-    });
-    
-    // Return cleanup function
-    return () => {
-        removeDropdown();
-        inputElement.removeEventListener('keydown', handleKeyDown);
-    };
-}
-
-// Setup location fields based on mode
-function setupLocationFields() {
-    const modeSelect = document.getElementById('modeOfTravel');
-    const container = document.getElementById('locationFieldsContainer');
-    
-    if (!modeSelect || !container) return;
-    
-    // Clear existing location fields and cleanups
-    if (window.locationCleanups) {
-        window.locationCleanups.forEach(cleanup => cleanup());
-    }
-    window.locationCleanups = [];
-    
-    container.innerHTML = '';
-    
-    const mode = modeSelect.value;
-
-    // Helper function to create location field
-    function createLocationField(id, label, icon, placeholder, searchType = '') {
-        const html = `
-            <div class="form-group">
-                <label for="${id}">
-                    <i class="fas ${icon}"></i> ${label}
-                </label>
-                <input type="text" id="${id}" name="${id}" required 
-                       placeholder="${placeholder}"
-                       class="location-autocomplete-input">
-            </div>
-        `;
-        
-        // Insert HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        container.appendChild(tempDiv.firstElementChild);
-        
-        // Setup autocomplete after DOM is updated
-        setTimeout(() => {
-            const input = document.getElementById(id);
-            if (input) {
-                const cleanup = createCustomAutocomplete(input, searchType);
-                window.locationCleanups.push(cleanup);
-            }
-        }, 0);
-    }
-    
-    // Add location fields based on mode
-    switch(mode) {
-        case 'AIR':
-            createLocationField('departureAirport', 'DEPARTURE AIRPORT', 
-                              'fa-plane-departure', 'Type airport name...', 'airport');
-            createLocationField('arrivalAirport', 'ARRIVAL AIRPORT', 
-                              'fa-plane-arrival', 'Type airport name...', 'airport');
-            break;
-            
-        case 'SEA':
-            createLocationField('departurePort', 'DEPARTURE PORT', 
-                              'fa-ship', 'Type port name...', 'seaport');
-            createLocationField('arrivalPort', 'ARRIVAL PORT', 
-                              'fa-anchor', 'Type port name...', 'seaport');
-            break;
-            
-        case 'ROA':
-            createLocationField('departureArea', 'DEPARTURE AREA', 
-                              'fa-map-marker-alt', 'Type city/area name...');
-            createLocationField('arrivalArea', 'ARRIVAL AREA', 
-                              'fa-map-marker-alt', 'Type city/area name...');
-            break;
-            
-        case 'MUL':
-            createLocationField('departurePoint', 'DEPARTURE POINT', 
-                              'fa-map-pin', 'Type location name...');
-            createLocationField('arrivalPoint', 'ARRIVAL POINT', 
-                              'fa-map-pin', 'Type location name...');
-            break;
-            
-        default:
-            // Fallback to original port field
-            container.innerHTML = `
-                <div class="form-group">
-                    <label for="portArrival">
-                        <i class="fas fa-anchor"></i> PORT OF ARRIVAL
-                    </label>
-                    <input type="text" id="portArrival" name="portArrival" required 
-                           placeholder="Select or type port">
-                </div>
-            `;
-            
-            // Setup autocomplete for port
-            setTimeout(() => {
-                const input = document.getElementById('portArrival');
-                if (input) {
-                    const cleanup = createCustomAutocomplete(input, 'seaport');
-                    window.locationCleanups.push(cleanup);
-                }
-            }, 0);
-            break;
-    }
-}
-
     function selectEnhancedShipper(shipper, inputField) {
         inputField.value = shipper.name;
         
@@ -944,6 +781,7 @@ function setupLocationFields() {
             addEditButton(shipperRefNoField);
         }
     }
+}
 
 // Enhanced requester autocomplete
 function setupEnhancedRequesterAutocomplete(inputField) {
@@ -1091,15 +929,6 @@ function setupEditButtons() {
     });
 }
 
-// function setupRealTimePreview() {
-//     const inputs = document.querySelectorAll('#jobCardForm input, #jobCardForm select, #jobCardForm textarea');
-    
-//     inputs.forEach(input => {
-//         input.addEventListener('input', updatePreview);
-//         input.addEventListener('change', updatePreview);
-//     });
-// }
-
 function setupRealTimePreview() {
     // Don't auto-update modal preview constantly
     // We'll update it when modal opens
@@ -1108,13 +937,16 @@ function setupRealTimePreview() {
 function updatePreview() {
     const previewDiv = document.getElementById('jobCardPreview');
     
-    // IMPORTANT: Read from the original input fields (which are hidden but have values)
+    // Get mode first
+    const mode = document.getElementById('modeOfTravel')?.value || '';
+    
+    // Get other form data
     const formData = {
         jobNo: document.getElementById('jobNo')?.value || 'Not Set',
         date: document.getElementById('date')?.value || 'Not Set',
-        modeOfTravel: document.getElementById('modeOfTravel')?.value || 'Not Set',
+        modeOfTravel: mode,
         shipmentType: document.getElementById('shipmentType')?.value || 'Not Set',
-        costCenter: document.getElementById('costCenter')?.value || 'Not Set', // This reads from hidden input
+        costCenter: document.getElementById('costCenter')?.value || 'Not Set',
         bayanNo: document.getElementById('bayanNo')?.value || 'Not Set',
         bayanDate: document.getElementById('bayanDate')?.value || 'Not Set',
         grossWeight: document.getElementById('grossWeight')?.value || '0',
@@ -1128,7 +960,6 @@ function updatePreview() {
         requesterName: document.getElementById('requesterName')?.value || 'Not Set',
         shipperName: document.getElementById('shipperName')?.value || 'Not Set',
         truckWaybillNo: document.getElementById('truckWaybillNo')?.value || 'Not Set',
-        portArrival: document.getElementById('portArrival')?.value || 'Not Set', // This reads from hidden input
         estd: document.getElementById('estd')?.value || 'Not Set',
         eta: document.getElementById('eta')?.value || 'Not Set',
         shipperRefNo: document.getElementById('shipperRefNo')?.value || 'Not Set',
@@ -1230,7 +1061,7 @@ function updatePreview() {
     
     const allEmpty = Object.values(formData).every(value => 
         value === 'Not Set' || value === '0' || value === ''
-    );
+    ) && locationDisplay === '';
     
     if (allEmpty) {
         previewDiv.innerHTML = `
@@ -1333,10 +1164,7 @@ function updatePreview() {
                         <span class="preview-label">WAYBILL / TRUCK NO</span>
                         <span class="preview-value">${formData.truckWaybillNo}</span>
                     </div>
-                    <div class="preview-item">
-                        <span class="preview-label">PORT OF ARRIVAL</span>
-                        <span class="preview-value">${formData.portArrival}</span>
-                    </div>
+                    ${locationDisplay}
                     <div class="preview-item">
                         <span class="preview-label">ESTD</span>
                         <span class="preview-value">${formatDateTime(formData.estd)}</span>
@@ -1582,9 +1410,6 @@ async function saveJobCard() {
 
 // Add this helper function to sync dropdown values
 function syncDropdownValuesToForm() {
-    // Sync port arrival dropdown
-    
-    
     // Sync cost center dropdown
     const costCenterSelect = document.getElementById('costCenter-select');
     const costCenterInput = document.getElementById('costCenter');
@@ -1721,101 +1546,6 @@ function showErrorWidget(message = 'Submission failed') {
     document.body.appendChild(widget);
 }
 
-
-const OSM_CONFIG = {
-    baseUrl: 'https://nominatim.openstreetmap.org/search',
-    format: 'json',
-    limit: 10,
-    // Rate limiting: Max 1 request per second
-    rateLimit: 1000
-};
-
-// Debounce function to prevent too many API calls
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Search places using OpenStreetMap Nominatim API
-async function searchPlaces(query, type = '') {
-    if (!query || query.length < 3) return [];
-    
-    try {
-        // Add type-specific filters
-        let queryParams = {
-            q: query,
-            format: OSM_CONFIG.format,
-            limit: OSM_CONFIG.limit,
-            addressdetails: 1
-        };
-        
-        // Add type-specific filters
-        if (type === 'airport') {
-            queryParams.q += ' airport';
-        } else if (type === 'port') {
-            queryParams.q += ' port';
-        } else if (type === 'seaport') {
-            queryParams.q += ' seaport';
-        }
-        
-        const response = await fetch(
-            `${OSM_CONFIG.baseUrl}?${new URLSearchParams(queryParams)}`,
-            {
-                headers: {
-                    'Accept-Language': 'en',
-                    'User-Agent': 'AIEidLogistics/1.0' // Required by Nominatim
-                }
-            }
-        );
-        
-        if (!response.ok) {
-            console.error('OSM API error:', response.status);
-            return [];
-        }
-        
-        const data = await response.json();
-        return data.map(place => ({
-            name: place.display_name,
-            type: place.type,
-            category: place.category,
-            address: {
-                city: place.address.city || place.address.town || place.address.village,
-                country: place.address.country,
-                state: place.address.state
-            },
-            lat: place.lat,
-            lon: place.lon
-        }));
-        
-    } catch (error) {
-        console.error('Error searching places:', error);
-        return [];
-    }
-}
-
-// Create a custom autocomplete dropdown
-function createCustomAutocomplete(inputElement, searchType = '') {
-    let dropdown = null;
-    let currentSuggestions = [];
-    let selectedIndex = -1;
-    
-    // Remove existing dropdown
-    function removeDropdown() {
-        if (dropdown) {
-            dropdown.remove();
-            dropdown = null;
-        }
-    }
-
-
-
 function resetForm() {
     if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
         const form = document.getElementById('jobCardForm');
@@ -1834,6 +1564,9 @@ function resetForm() {
         // Reset mode and type to empty
         if (modeSelect) modeSelect.value = '';
         if (typeSelect) typeSelect.value = '';
+        
+        // Reset location fields
+        setupLocationFields();
         
         // Keep the job number if it's already set, but clear if mode/type changed
         if (currentJobNo && currentMode && currentType) {
@@ -1956,84 +1689,84 @@ function printJobCard(jobNumber) {
     window.print();
 }
 
-        async function generateInvoiceFromSuccess(jobNumber) {
-            try {
-                const response = await fetch(`https://owns-memo-postal-duration.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
-                if (response.ok) {
-                    const result = await response.json();
-                    sessionStorage.setItem('invoiceData', JSON.stringify(result));
-                    window.location.href = 'invoice-generator.html';
-                }
-            } catch (error) {
-                showNotification('Error generating invoice: ' + error.message, 'error');
-            }
+async function generateInvoiceFromSuccess(jobNumber) {
+    try {
+        const response = await fetch(`https://owns-memo-postal-duration.trycloudflare.com/api/jobcards/${jobNumber}/invoice`);
+        if (response.ok) {
+            const result = await response.json();
+            sessionStorage.setItem('invoiceData', JSON.stringify(result));
+            window.location.href = 'invoice-generator.html';
         }
-
-            function closeModernWidget() {
-        const widget = document.querySelector('.modern-notification-widget');
-        if (widget) {
-            widget.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => {
-                if (widget.parentNode) {
-                    widget.remove();
-                }
-            }, 300);
-        }
+    } catch (error) {
+        showNotification('Error generating invoice: ' + error.message, 'error');
     }
+}
 
-        function showNotification(message, type = 'info') {
-            // Remove existing notification
-            const existing = document.querySelector('.modern-notification-widget');
-            if (existing) {
-                existing.remove();
+function closeModernWidget() {
+    const widget = document.querySelector('.modern-notification-widget');
+    if (widget) {
+        widget.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => {
+            if (widget.parentNode) {
+                widget.remove();
             }
-            
-            let title, icon, btnText;
-            
-            if (type === 'success') {
-                title = 'SUCCESS';
-                icon = 'fa-check-circle';
-                btnText = 'Continue';
-            } else if (type === 'error') {
-                title = 'ERROR!';
-                icon = 'fa-exclamation-circle';
-                btnText = 'Try Again';
-            } else {
-                title = 'INFO';
-                icon = 'fa-info-circle';
-                btnText = 'OK';
-            }
-            
-            // Create modern notification widget
-            const widget = document.createElement('div');
-            widget.className = `modern-notification-widget ${type}`;
-            widget.innerHTML = `
-                <div class="modern-widget-content">
-                    <div class="modern-widget-icon">
-                        <i class="fas ${icon}"></i>
-                    </div>
-                    <div class="modern-widget-details">
-                        <h3>${title}</h3>
-                        <p>${message}</p>
-                        <div class="modern-widget-actions">
-                            <button onclick="closeModernWidget()" class="modern-btn modern-btn-primary">
-                                ${btnText}
-                            </button>
-                        </div>
-                    </div>
+        }, 300);
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Remove existing notification
+    const existing = document.querySelector('.modern-notification-widget');
+    if (existing) {
+        existing.remove();
+    }
+    
+    let title, icon, btnText;
+    
+    if (type === 'success') {
+        title = 'SUCCESS';
+        icon = 'fa-check-circle';
+        btnText = 'Continue';
+    } else if (type === 'error') {
+        title = 'ERROR!';
+        icon = 'fa-exclamation-circle';
+        btnText = 'Try Again';
+    } else {
+        title = 'INFO';
+        icon = 'fa-info-circle';
+        btnText = 'OK';
+    }
+    
+    // Create modern notification widget
+    const widget = document.createElement('div');
+    widget.className = `modern-notification-widget ${type}`;
+    widget.innerHTML = `
+        <div class="modern-widget-content">
+            <div class="modern-widget-icon">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="modern-widget-details">
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <div class="modern-widget-actions">
+                    <button onclick="closeModernWidget()" class="modern-btn modern-btn-primary">
+                        ${btnText}
+                    </button>
                 </div>
-            `;
-            
-            document.body.appendChild(widget);
-            
-            // Auto-hide after 8 seconds for success/info, 10 seconds for error
-            const autoHideTime = type === 'error' ? 10000 : 8000;
-            setTimeout(() => {
-                if (widget.parentNode) {
-                    closeModernWidget();
-                }
-            }, autoHideTime);
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(widget);
+    
+    // Auto-hide after 8 seconds for success/info, 10 seconds for error
+    const autoHideTime = type === 'error' ? 10000 : 8000;
+    setTimeout(() => {
+        if (widget.parentNode) {
+            closeModernWidget();
         }
+    }, autoHideTime);
+}
 
 function updateSystemTime() {
     const now = new Date();
@@ -2076,6 +1809,348 @@ async function updateStats() {
     }
 }
 
+// OpenStreetMap Configuration
+const LOCATIONIQ_CONFIG = {
+    baseUrl: 'https://us1.locationiq.com/v1/search.php',
+    format: 'json',
+    limit: 10,
+    apiKey: 'pk.69aaf2ff693e38179cb21ee97b2fe1b6', // Get free key from locationiq.com
+    rateLimit: 100
+};
+
+// Debounce function to prevent too many API calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Search places using OpenStreetMap Nominatim API
+async function searchPlaces(query, type = '') {
+    if (!query || query.length < 3) return [];
+    
+    try {
+        // Add type-specific filters
+        let searchQuery = query;
+        if (type === 'airport') {
+            searchQuery += ' airport';
+        } else if (type === 'port') {
+            searchQuery += ' port';
+        }
+        
+        const response = await fetch(
+            `${LOCATIONIQ_CONFIG.baseUrl}?` +
+            `key=${LOCATIONIQ_CONFIG.apiKey}&` +
+            `q=${encodeURIComponent(searchQuery)}&` +
+            `format=${LOCATIONIQ_CONFIG.format}&` +
+            `limit=${LOCATIONIQ_CONFIG.limit}&` +
+            `addressdetails=1&` +
+            `normalizeaddress=1`,
+            {
+                headers: {
+                    'Accept-Language': 'en',
+                    'User-Agent': 'AIEidLogistics/1.0'
+                }
+            }
+        );
+        
+        if (!response.ok) {
+            console.error('LocationIQ API error:', response.status);
+            return [];
+        }
+        
+        const data = await response.json();
+        return data.map(place => ({
+            name: place.display_name,
+            type: place.type || place.class,
+            address: {
+                city: place.address.city || place.address.town || place.address.village,
+                country: place.address.country,
+                state: place.address.state,
+                postcode: place.address.postcode
+            },
+            lat: place.lat,
+            lon: place.lon,
+            importance: place.importance
+        }));
+        
+    } catch (error) {
+        console.error('Error searching places:', error);
+        return getFallbackSuggestions(query, type);
+    }
+}
+
+// Create a custom autocomplete dropdown
+function createCustomAutocomplete(inputElement, searchType = '') {
+    let dropdown = null;
+    let currentSuggestions = [];
+    let selectedIndex = -1;
+    
+    // Remove existing dropdown
+    function removeDropdown() {
+        if (dropdown) {
+            dropdown.remove();
+            dropdown = null;
+        }
+    }
+    
+    // Show dropdown with suggestions
+    function showDropdown(suggestions) {
+        removeDropdown();
+        
+        if (!suggestions || suggestions.length === 0) return;
+        
+        dropdown = document.createElement('div');
+        dropdown.className = 'custom-autocomplete-dropdown';
+        dropdown.style.width = inputElement.offsetWidth + 'px';
+        dropdown.style.position = 'absolute';
+        dropdown.style.zIndex = '1000';
+        dropdown.style.backgroundColor = 'white';
+        dropdown.style.border = '1px solid #ddd';
+        dropdown.style.borderRadius = '4px';
+        dropdown.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        dropdown.style.maxHeight = '300px';
+        dropdown.style.overflowY = 'auto';
+        dropdown.style.marginTop = '2px';
+        
+        suggestions.forEach((place, index) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.dataset.index = index;
+            item.style.padding = '10px 15px';
+            item.style.cursor = 'pointer';
+            item.style.borderBottom = '1px solid #eee';
+            item.style.transition = 'background-color 0.2s';
+            
+            // Truncate long place names
+            let displayName = place.name;
+            if (displayName.length > 100) {
+                displayName = displayName.substring(0, 100) + '...';
+            }
+            
+            item.innerHTML = `
+                <div style="font-weight: 500; color: #333; margin-bottom: 4px;">${displayName}</div>
+                <div style="font-size: 12px; color: #666;">
+                    ${place.address && place.address.city ? place.address.city + ', ' : ''}
+                    ${place.address && place.address.country ? place.address.country : ''}
+                </div>
+            `;
+            
+            item.addEventListener('click', () => {
+                inputElement.value = place.name;
+                removeDropdown();
+            });
+            
+            item.addEventListener('mouseenter', () => {
+                highlightItem(index);
+            });
+            
+            dropdown.appendChild(item);
+        });
+        
+        // Position dropdown
+        const rect = inputElement.getBoundingClientRect();
+        dropdown.style.top = (rect.bottom + window.scrollY) + 'px';
+        dropdown.style.left = (rect.left + window.scrollX) + 'px';
+        
+        document.body.appendChild(dropdown);
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', handleClickOutside);
+    }
+    
+    // Highlight item
+    function highlightItem(index) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        items.forEach((item, i) => {
+            item.style.backgroundColor = i === index ? '#f0f7ff' : 'white';
+        });
+        selectedIndex = index;
+    }
+    
+    // Handle click outside
+    function handleClickOutside(e) {
+        if (dropdown && !dropdown.contains(e.target) && e.target !== inputElement) {
+            removeDropdown();
+            document.removeEventListener('click', handleClickOutside);
+        }
+    }
+    
+    // Handle keyboard navigation
+    function handleKeyDown(e) {
+        if (!dropdown) return;
+        
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        if (!items.length) return;
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = (selectedIndex + 1) % items.length;
+                highlightItem(selectedIndex);
+                items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                break;
+                
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+                highlightItem(selectedIndex);
+                items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                break;
+                
+            case 'Enter':
+                if (selectedIndex >= 0) {
+                    e.preventDefault();
+                    items[selectedIndex].click();
+                }
+                break;
+                
+            case 'Escape':
+                removeDropdown();
+                break;
+        }
+    }
+    
+    // Search function with debounce
+    const performSearch = debounce(async (query) => {
+        const suggestions = await searchPlaces(query, searchType);
+        currentSuggestions = suggestions;
+        showDropdown(suggestions);
+    }, 500); // 500ms debounce
+    
+    // Setup event listeners
+    inputElement.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        selectedIndex = -1;
+        
+        if (query.length < 3) {
+            removeDropdown();
+            return;
+        }
+        
+        performSearch(query);
+    });
+    
+    inputElement.addEventListener('keydown', handleKeyDown);
+    inputElement.addEventListener('focus', () => {
+        if (inputElement.value.length >= 3) {
+            performSearch(inputElement.value.trim());
+        }
+    });
+    
+    // Return cleanup function
+    return () => {
+        removeDropdown();
+        inputElement.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('click', handleClickOutside);
+    };
+}
+
+// Setup location fields based on mode
+function setupLocationFields() {
+    const modeSelect = document.getElementById('modeOfTravel');
+    const container = document.getElementById('locationFieldsContainer');
+    
+    if (!modeSelect || !container) return;
+    
+    // Clear existing location fields and cleanups
+    if (window.locationCleanups) {
+        window.locationCleanups.forEach(cleanup => cleanup());
+    }
+    window.locationCleanups = [];
+    
+    container.innerHTML = '';
+    
+    const mode = modeSelect.value;
+
+    // Helper function to create location field
+    function createLocationField(id, label, icon, placeholder, searchType = '') {
+        const html = `
+            <div class="form-group">
+                <label for="${id}">
+                    <i class="fas ${icon}"></i> ${label}
+                </label>
+                <input type="text" id="${id}" name="${id}" required 
+                       placeholder="${placeholder}"
+                       class="location-autocomplete-input">
+            </div>
+        `;
+        
+        // Insert HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        container.appendChild(tempDiv.firstElementChild);
+        
+        // Setup autocomplete after DOM is updated
+        setTimeout(() => {
+            const input = document.getElementById(id);
+            if (input) {
+                const cleanup = createCustomAutocomplete(input, searchType);
+                window.locationCleanups.push(cleanup);
+            }
+        }, 0);
+    }
+    
+    // Add location fields based on mode
+    switch(mode) {
+        case 'AIR':
+            createLocationField('departureAirport', 'DEPARTURE AIRPORT', 
+                              'fa-plane-departure', 'Type airport name...', 'airport');
+            createLocationField('arrivalAirport', 'ARRIVAL AIRPORT', 
+                              'fa-plane-arrival', 'Type airport name...', 'airport');
+            break;
+            
+        case 'SEA':
+            createLocationField('departurePort', 'DEPARTURE PORT', 
+                              'fa-ship', 'Type port name...', 'seaport');
+            createLocationField('arrivalPort', 'ARRIVAL PORT', 
+                              'fa-anchor', 'Type port name...', 'seaport');
+            break;
+            
+        case 'ROA':
+            createLocationField('departureArea', 'DEPARTURE AREA', 
+                              'fa-map-marker-alt', 'Type city/area name...');
+            createLocationField('arrivalArea', 'ARRIVAL AREA', 
+                              'fa-map-marker-alt', 'Type city/area name...');
+            break;
+            
+        case 'MUL':
+            createLocationField('departurePoint', 'DEPARTURE POINT', 
+                              'fa-map-pin', 'Type location name...');
+            createLocationField('arrivalPoint', 'ARRIVAL POINT', 
+                              'fa-map-pin', 'Type location name...');
+            break;
+            
+        default:
+            // Fallback to original port field
+            container.innerHTML = `
+                <div class="form-group">
+                    <label for="portArrival">
+                        <i class="fas fa-anchor"></i> PORT OF ARRIVAL
+                    </label>
+                    <input type="text" id="portArrival" name="portArrival" required 
+                           placeholder="Select or type port">
+                </div>
+            `;
+            
+            // Setup autocomplete for port
+            setTimeout(() => {
+                const input = document.getElementById('portArrival');
+                if (input) {
+                    const cleanup = createCustomAutocomplete(input, 'seaport');
+                    window.locationCleanups.push(cleanup);
+                }
+            }, 0);
+            break;
+    }
+}
+
 function addEnhancedStyles() {
     if (!document.querySelector('#enhanced-autocomplete-styles')) {
         const style = document.createElement('style');
@@ -2105,8 +2180,51 @@ function addEnhancedStyles() {
                 --transition-base: 0.24s ease;
             }
             
+            /* Custom Autocomplete Styles */
+            .custom-autocomplete-dropdown {
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 9999;
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .custom-autocomplete-dropdown .autocomplete-item {
+                padding: 12px 16px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            
+            .custom-autocomplete-dropdown .autocomplete-item:last-child {
+                border-bottom: none;
+            }
+            
+            .custom-autocomplete-dropdown .autocomplete-item:hover {
+                background-color: #f0f7ff;
+            }
+            
+            /* Location input fields */
+            .location-autocomplete-input {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                font-size: 14px;
+                font-family: 'Inter', sans-serif;
+                transition: border-color 0.2s;
+            }
+            
+            .location-autocomplete-input:focus {
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+            
             /* CUSTOMER DROPDOWN SPECIFIC STYLES */
-            /* These styles apply only to customer dropdown autocomplete items */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item {
                 font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
                 margin: 0;
@@ -2117,35 +2235,29 @@ function addEnhancedStyles() {
                 border-bottom: 1px solid var(--border-subtle);
             }
             
-            /* Customer dropdown highlighted item */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted {
                 background: var(--primary);
                 color: white;
                 border-bottom: none;
             }
             
-            /* Customer dropdown item hover */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item:hover {
                 background: var(--primary-soft);
             }
             
-            /* Customer dropdown highlighted item hover */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted:hover {
                 background: var(--primary-dark);
             }
             
-            /* Customer dropdown item main content */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item .item-main strong {
                 color: var(--text-main);
                 font-weight: 500;
             }
             
-            /* Customer dropdown highlighted item main content */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted .item-main strong {
                 color: white;
             }
             
-            /* Customer dropdown badges */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item .item-badge {
                 background: var(--bg-muted);
                 color: var(--text-muted);
@@ -2155,190 +2267,184 @@ function addEnhancedStyles() {
                 font-weight: 500;
             }
             
-            /* Customer dropdown highlighted badges */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted .item-badge {
                 background: rgba(255, 255, 255, 0.25);
                 color: rgba(255, 255, 255, 0.95);
             }
             
-            /* Customer dropdown details */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item .item-details small {
                 color: var(--text-muted);
             }
             
-            /* Customer dropdown highlighted details */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted .item-details small {
                 color: rgba(255, 255, 255, 0.85);
             }
             
-            /* Customer dropdown icons */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item .item-details i {
                 color: var(--text-soft);
             }
             
-            /* Customer dropdown highlighted icons */
             .autocomplete-dropdown.enhanced-dropdown .autocomplete-item.highlighted .item-details i {
                 color: rgba(255, 255, 255, 0.8);
             }
 
-            /* MODERN NOTIFICATION WIDGET STYLES - Like in the image */
-.modern-notification-widget {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 380px;
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-soft);
-    z-index: 9999;
-    animation: slideInRight 0.4s ease;
-    border-left: 5px solid transparent;
-    overflow: hidden;
-    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.modern-notification-widget.success {
-    border-left-color: var(--accent);
-    background: linear-gradient(to right, rgba(16, 185, 129, 0.05), var(--bg-card));
-}
-
-.modern-notification-widget.error {
-    border-left-color: #ef4444;
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--bg-card));
-}
-
-.modern-notification-widget.info {
-    border-left-color: var(--primary);
-    background: linear-gradient(to right, rgba(37, 99, 235, 0.05), var(--bg-card));
-}
-
-.modern-widget-content {
-    padding: 25px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-.modern-widget-icon {
-    font-size: 36px;
-    flex-shrink: 0;
-    margin-top: 5px;
-}
-
-.modern-notification-widget.success .modern-widget-icon {
-    color: var(--accent);
-}
-
-.modern-notification-widget.error .modern-widget-icon {
-    color: #ef4444;
-}
-
-.modern-notification-widget.info .modern-widget-icon {
-    color: var(--primary);
-}
-
-.modern-widget-details {
-    flex: 1;
-}
-
-.modern-widget-details h3 {
-    margin: 0 0 15px 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.modern-notification-widget.success .modern-widget-details h3 {
-    color: var(--accent);
-}
-
-.modern-notification-widget.error .modern-widget-details h3 {
-    color: #ef4444;
-}
-
-.modern-notification-widget.info .modern-widget-details h3 {
-    color: var(--primary);
-}
-
-.modern-widget-details p {
-    margin: 0 0 10px 0;
-    color: var(--text-muted);
-    line-height: 1.5;
-    font-size: 14px;
-}
-
-.modern-widget-details p:last-child {
-    margin-bottom: 20px;
-}
-
-.modern-widget-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.modern-btn {
-    padding: 10px 24px;
-    border-radius: var(--radius-sm);
-    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    border: none;
-    outline: none;
-}
-
-.modern-btn-primary {
-    background: var(--primary);
-    color: white;
-}
-
-.modern-btn-primary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-}
-
-.modern-btn-secondary {
-    background: var(--bg-muted);
-    color: var(--text-muted);
-    border: 1px solid var(--border-subtle);
-}
-
-.modern-btn-secondary:hover {
-    background: var(--border-subtle);
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOutRight {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-/* Remove old notification styles */
-.notification,
-.success-widget {
-    display: none !important;
-}
+            /* MODERN NOTIFICATION WIDGET STYLES */
+            .modern-notification-widget {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 380px;
+                background: var(--bg-card);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-soft);
+                z-index: 9999;
+                animation: slideInRight 0.4s ease;
+                border-left: 5px solid transparent;
+                overflow: hidden;
+                font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            }
             
-            /* GENERAL DROPDOWN STYLES (for other dropdowns) */
-            /* Normal dropdown styles - simple like in the image */
+            .modern-notification-widget.success {
+                border-left-color: var(--accent);
+                background: linear-gradient(to right, rgba(16, 185, 129, 0.05), var(--bg-card));
+            }
+            
+            .modern-notification-widget.error {
+                border-left-color: #ef4444;
+                background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--bg-card));
+            }
+            
+            .modern-notification-widget.info {
+                border-left-color: var(--primary);
+                background: linear-gradient(to right, rgba(37, 99, 235, 0.05), var(--bg-card));
+            }
+            
+            .modern-widget-content {
+                padding: 25px;
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .modern-widget-icon {
+                font-size: 36px;
+                flex-shrink: 0;
+                margin-top: 5px;
+            }
+            
+            .modern-notification-widget.success .modern-widget-icon {
+                color: var(--accent);
+            }
+            
+            .modern-notification-widget.error .modern-widget-icon {
+                color: #ef4444;
+            }
+            
+            .modern-notification-widget.info .modern-widget-icon {
+                color: var(--primary);
+            }
+            
+            .modern-widget-details {
+                flex: 1;
+            }
+            
+            .modern-widget-details h3 {
+                margin: 0 0 15px 0;
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+            
+            .modern-notification-widget.success .modern-widget-details h3 {
+                color: var(--accent);
+            }
+            
+            .modern-notification-widget.error .modern-widget-details h3 {
+                color: #ef4444;
+            }
+            
+            .modern-notification-widget.info .modern-widget-details h3 {
+                color: var(--primary);
+            }
+            
+            .modern-widget-details p {
+                margin: 0 0 10px 0;
+                color: var(--text-muted);
+                line-height: 1.5;
+                font-size: 14px;
+            }
+            
+            .modern-widget-details p:last-child {
+                margin-bottom: 20px;
+            }
+            
+            .modern-widget-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 20px;
+            }
+            
+            .modern-btn {
+                padding: 10px 24px;
+                border-radius: var(--radius-sm);
+                font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+                font-weight: 500;
+                font-size: 14px;
+                cursor: pointer;
+                transition: var(--transition-fast);
+                border: none;
+                outline: none;
+            }
+            
+            .modern-btn-primary {
+                background: var(--primary);
+                color: white;
+            }
+            
+            .modern-btn-primary:hover {
+                background: var(--primary-dark);
+                transform: translateY(-1px);
+            }
+            
+            .modern-btn-secondary {
+                background: var(--bg-muted);
+                color: var(--text-muted);
+                border: 1px solid var(--border-subtle);
+            }
+            
+            .modern-btn-secondary:hover {
+                background: var(--border-subtle);
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            /* Remove old notification styles */
+            .notification,
+            .success-widget {
+                display: none !important;
+            }
+                        
+            /* GENERAL DROPDOWN STYLES */
             .normal-dropdown {
                 width: 100%;
                 padding: 12px 15px;
@@ -2440,7 +2546,7 @@ function addEnhancedStyles() {
                 font-size: 14px;
             }
             
-            /* Shipper dropdown specific styles (different from customer) */
+            /* Shipper dropdown specific styles */
             .shipper-dropdown .autocomplete-item {
                 padding: 10px 15px;
                 font-family: inherit;
@@ -2625,29 +2731,32 @@ function addEnhancedStyles() {
             }
             
             /* Scrollbar styling for dropdown */
-            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar {
+            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar,
+            .custom-autocomplete-dropdown::-webkit-scrollbar {
                 width: 6px;
             }
             
-            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-track {
+            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-track,
+            .custom-autocomplete-dropdown::-webkit-scrollbar-track {
                 background: var(--bg-muted);
-                border-radius: 0 var(--radius-md) var(--radius-md) 0;
+                border-radius: 3px;
             }
             
-            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-thumb {
+            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-thumb,
+            .custom-autocomplete-dropdown::-webkit-scrollbar-thumb {
                 background: var(--border-strong);
                 border-radius: 3px;
             }
             
-            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-thumb:hover {
+            .autocomplete-dropdown.enhanced-dropdown::-webkit-scrollbar-thumb:hover,
+            .custom-autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
                 background: var(--text-muted);
             }
             
             /* Ensure proper font loading */
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         `;
         document.head.appendChild(style);
     }
 }
-}
-
