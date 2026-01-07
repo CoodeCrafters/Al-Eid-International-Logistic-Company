@@ -39,6 +39,9 @@ function initJobCardSystem() {
     
     // Initialize location fields
     setupLocationFields();
+
+    setupBillingDocumentFields();
+
     
     // Setup form submission
     const jobCardForm = document.getElementById('jobCardForm');
@@ -113,6 +116,8 @@ function setupModeTypeListeners() {
         modeSelect.addEventListener('change', function() {
             // Update location fields when mode changes
             setupLocationFields();
+            setupBillingDocumentFields(); // NEW: Call the new function
+
             
             if (modeSelect.value && document.getElementById('shipmentType').value) {
                 fetchNextJobNumber();
@@ -126,6 +131,66 @@ function setupModeTypeListeners() {
                 fetchNextJobNumber();
             }
         });
+    }
+}
+
+// Separate function to handle billing document fields based on mode
+function setupBillingDocumentFields() {
+    const modeSelect = document.getElementById('modeOfTravel');
+    const billingContainer = document.getElementById('billingFieldsContainer');
+    
+    if (!modeSelect || !billingContainer) return;
+    
+    billingContainer.innerHTML = '';
+    
+    const mode = modeSelect.value;
+
+    // Helper function to create billing document field
+    function createBillingField(id, label, icon, placeholder) {
+        const html = `
+            <div class="form-group">
+                <label for="${id}">
+                    <i class="fas ${icon}"></i> ${label}
+                </label>
+                <input type="text" id="${id}" name="${id}" 
+                       placeholder="${placeholder}">
+            </div>
+        `;
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        billingContainer.appendChild(tempDiv.firstElementChild);
+    }
+    
+    // Add billing document fields based on mode
+    switch(mode) {
+        case 'AIR':
+            createBillingField('habw', 'HOUSE AIR WAYBILL (HAWB)', 
+                             'fa-file-alt', 'Enter HAWB Number (Optional)');
+            createBillingField('mabw', 'MASTER AIR WAYBILL (MAWB)', 
+                             'fa-file-contract', 'Enter MAWB Number (Optional)');
+            break;
+            
+        case 'SEA':
+            createBillingField('hbl', 'HOUSE BILL OF LADING (HBL)', 
+                             'fa-file-alt', 'Enter HBL Number (Optional)');
+            createBillingField('mbl', 'MASTER BILL OF LADING (MBL)', 
+                             'fa-file-contract', 'Enter MBL Number (Optional)');
+            break;
+            
+        case 'ROA':
+            createBillingField('roadWaybill', 'ROAD WAYBILL', 
+                             'fa-truck', 'Enter Road Waybill Number (Optional)');
+            break;
+            
+        case 'MUL':
+            createBillingField('multimodalRef', 'MULTIMODAL REFERENCE', 
+                             'fa-exchange-alt', 'Enter Multimodal Reference (Optional)');
+            break;
+            
+        default:
+            // No billing fields for default mode
+            break;
     }
 }
 
@@ -868,6 +933,45 @@ function positionDropdown(dropdown, inputField) {
     dropdown.style.width = inputField.offsetWidth + 'px';
 }
 
+// Function to get billing document data
+// Function to get billing document data
+function getBillingDocumentData() {
+    const mode = document.getElementById('modeOfTravel')?.value || '';
+    const billingData = {};
+    
+    // Only include fields that have values
+    switch(mode) {
+        case 'AIR':
+            const habw = document.getElementById('habw')?.value?.trim();
+            const mabw = document.getElementById('mabw')?.value?.trim();
+            if (habw) billingData.habw = habw;
+            if (mabw) billingData.mabw = mabw;
+            break;
+            
+        case 'SEA':
+            const hbl = document.getElementById('hbl')?.value?.trim();
+            const mbl = document.getElementById('mbl')?.value?.trim();
+            if (hbl) billingData.hbl = hbl;
+            if (mbl) billingData.mbl = mbl;
+            break;
+            
+        case 'ROA':
+            const roadWaybill = document.getElementById('roadWaybill')?.value?.trim();
+            if (roadWaybill) billingData.roadWaybill = roadWaybill;
+            break;
+            
+        case 'MUL':
+            const multimodalRef = document.getElementById('multimodalRef')?.value?.trim();
+            if (multimodalRef) billingData.multimodalRef = multimodalRef;
+            break;
+    }
+    
+    return billingData;
+}
+
+
+
+
 function markAutoFilled(field) {
     if (field) {
         field.classList.add('auto-filled');
@@ -940,6 +1044,9 @@ function updatePreview() {
     // Get mode first
     const mode = document.getElementById('modeOfTravel')?.value || '';
     
+    // Get billing document data
+    const billingData = getBillingDocumentData();
+    
     // Get other form data
     const formData = {
         jobNo: document.getElementById('jobNo')?.value || 'Not Set',
@@ -967,6 +1074,9 @@ function updatePreview() {
         specialInstructions: document.getElementById('specialInstructions')?.value || 'Not Set',
         dimensions: document.getElementById('dimensions')?.value || 'Not Set'
     };
+    
+    // Add billing data to formData
+    Object.assign(formData, billingData);
     
     // Format shipment type for display
     let shipmentTypeDisplay = formData.shipmentType;
@@ -1003,8 +1113,49 @@ function updatePreview() {
         `;
     }
     
+    // Create billing document display for preview
+    let billingDisplay = '';
+    if (mode === 'SEA' && (formData.hbl || formData.mbl)) {
+        billingDisplay = `
+            <div class="preview-item">
+                <span class="preview-label">HOUSE B/L (HBL)</span>
+                <span class="preview-value">${formData.hbl || 'Not Provided'}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">MASTER B/L (MBL)</span>
+                <span class="preview-value">${formData.mbl || 'Not Provided'}</span>
+            </div>
+        `;
+    } else if (mode === 'AIR' && (formData.habw || formData.mabw)) {
+        billingDisplay = `
+            <div class="preview-item">
+                <span class="preview-label">HOUSE AWB (HAWB)</span>
+                <span class="preview-value">${formData.habw || 'Not Provided'}</span>
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">MASTER AWB (MAWB)</span>
+                <span class="preview-value">${formData.mabw || 'Not Provided'}</span>
+            </div>
+        `;
+    } else if (mode === 'ROA' && formData.roadWaybill) {
+        billingDisplay = `
+            <div class="preview-item">
+                <span class="preview-label">ROAD WAYBILL</span>
+                <span class="preview-value">${formData.roadWaybill}</span>
+            </div>
+        `;
+    } else if (mode === 'MUL' && formData.multimodalRef) {
+        billingDisplay = `
+            <div class="preview-item">
+                <span class="preview-label">MULTIMODAL REF</span>
+                <span class="preview-value">${formData.multimodalRef}</span>
+            </div>
+        `;
+    }
+    
     const allEmpty = Object.values(formData).every(value => 
-        value === 'Not Set' || value === '0' || value === ''
+        value === 'Not Set' || value === '0' || value === '' || 
+        value === 'Not Provided' || value === null || value === undefined
     ) && departureLocation === '' && arrivalLocation === '';
     
     if (allEmpty) {
@@ -1109,6 +1260,7 @@ function updatePreview() {
                         <span class="preview-value">${formData.truckWaybillNo}</span>
                     </div>
                     ${locationDisplay}
+                    ${billingDisplay}
                     <div class="preview-item">
                         <span class="preview-label">ESTD</span>
                         <span class="preview-value">${formatDateTime(formData.estd)}</span>
@@ -1144,6 +1296,8 @@ function updatePreview() {
         </div>
     `;
 }
+
+
 
 function formatDate(dateString) {
     if (!dateString || dateString === 'Not Set') return 'Not Set';
@@ -1231,7 +1385,6 @@ async function saveJobCard() {
     let locationValid = true;
     let errorMessage = '';
     
-    // Replace the location validation section in saveJobCard with:
     const { departureLocation, arrivalLocation } = getGeneralizedLocationData();
     
     if (!departureLocation || !arrivalLocation) {
@@ -1271,6 +1424,9 @@ async function saveJobCard() {
         }
     }
     
+    // Get billing document data (optional fields)
+    const billingData = getBillingDocumentData();
+    
     // Create form data with generalized location fields
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
@@ -1278,6 +1434,9 @@ async function saveJobCard() {
     // Add generalized location fields
     data.departureLocation = departureLocation;
     data.arrivalLocation = arrivalLocation;
+    
+    // Add billing document data (optional)
+    Object.assign(data, billingData);
     
     // Add metadata
     data.status = 'draft';
@@ -1343,6 +1502,7 @@ async function saveJobCard() {
         submitBtn.disabled = false;
     }
 }
+
 
 
 function getGeneralizedLocationData() {
@@ -1562,6 +1722,9 @@ function resetForm() {
         // Reset location fields
         setupLocationFields();
         
+        // Reset billing fields
+        setupBillingDocumentFields();
+        
         // Keep the job number if it's already set, but clear if mode/type changed
         if (currentJobNo && currentMode && currentType) {
             jobNoField.value = currentJobNo;
@@ -1577,6 +1740,8 @@ function resetForm() {
         showNotification('Form has been reset', 'info');
     }
 }
+
+
 
 
 

@@ -1098,3 +1098,69 @@ select.normal-dropdown:focus {
 .custom-autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
     background: #a1a1a1;
 }
+
+
+/* Billing document fields styling */
+#billingFieldsContainer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+#billingFieldsContainer .form-group {
+    margin-bottom: 15px;
+}
+
+#billingFieldsContainer label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+#billingFieldsContainer input {
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+/* Mode-specific border colors */
+#hbl, #mbl {
+    border-left-color: #0066cc;
+}
+
+#habw, #mabw {
+    border-left-color: #009688;
+}
+
+#roadWaybill {
+    border-left-color: #795548;
+}
+
+#multimodalRef {
+    border-left-color: #9c27b0;
+}
+
+/* Optional field styling */
+#billingFieldsContainer input::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+#billingFieldsContainer input:not(:placeholder-shown) {
+    background-color: #f0f9ff;
+    border-left-color: #3b82f6;
+}
+
+/* Make optional fields visually distinct */
+#billingFieldsContainer .form-group label::after {
+    content: ' (Optional)';
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: normal;
+    margin-left: 4px;
+}
