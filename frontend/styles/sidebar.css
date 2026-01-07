@@ -1,7 +1,7 @@
 /* ================= SIDEBAR STYLES ================= */
 :root {
-  --sidebar-width: 280px;
-  --sidebar-collapsed: 80px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 70px;
   --sidebar-bg: #1e293b;
   --sidebar-text: #e2e8f0;
   --sidebar-hover: #334155;
@@ -255,15 +255,7 @@
   margin-left: var(--sidebar-collapsed);
 }
 
-/* For expanded sidebar width */
-.sidebar {
-  width: 240px; /* Change from var(--sidebar-width) */
-}
 
-/* For collapsed sidebar width */
-.sidebar.collapsed {
-  width: 70px; /* Change from var(--sidebar-collapsed) */
-}
 
 /* Responsive */
 @media (max-width: 1024px) {
