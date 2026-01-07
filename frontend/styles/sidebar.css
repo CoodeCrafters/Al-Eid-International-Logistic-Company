@@ -255,6 +255,16 @@
   margin-left: var(--sidebar-collapsed);
 }
 
+/* For expanded sidebar width */
+.sidebar {
+  width: 240px; /* Change from var(--sidebar-width) */
+}
+
+/* For collapsed sidebar width */
+.sidebar.collapsed {
+  width: 70px; /* Change from var(--sidebar-collapsed) */
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .sidebar {
