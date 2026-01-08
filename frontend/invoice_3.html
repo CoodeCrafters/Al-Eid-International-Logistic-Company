@@ -1897,12 +1897,12 @@
                     type_class: typeClass,
                     type_icon: typeIcon,
                     type_display: typeDisplay,
-                    receivable_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
-                    receivable_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                    receivable_estimated: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
+                    receivable_actual: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
                     payable_estimated: '0.000', // You can calculate this later
                     payable_actual: '0.000', // You can calculate this later
-                    margin_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
-                    margin_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000'
+                    margin_estimated: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
+                    margin_actual: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000'
                 };
                 
                 // Create board card
@@ -2150,12 +2150,12 @@ async function openChargesWizard(jobId) {
                 type_class: typeClass,
                 type_icon: typeIcon,
                 type_display: typeDisplay,
-                receivable_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
-                receivable_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                receivable_estimated: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
+                receivable_actual: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
                 payable_estimated: '0.000',
                 payable_actual: '0.000',
-                margin_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
-                margin_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000'
+                margin_estimated: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000',
+                margin_actual: card.invoice_total ? parseFloat(card.invoice_total).toFixed(3) : '0.000'
             };
             
             // Create board card
