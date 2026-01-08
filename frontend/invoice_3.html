@@ -1,0 +1,1067 @@
+<!-- JavaScript -->
+<script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5000/api'; // Update with your actual backend URL
+    
+    // DOM Elements
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const boardView = document.getElementById('boardView');
+    const tableView = document.getElementById('tableView');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const createJobCardBtn = document.getElementById('createJobCardBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    // State management
+    let currentJobCards = [];
+    let chargeTypes = [];
+    
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        initViewToggle();
+        loadJobCards();
+        initSearch();
+        loadChargeTypes();
+    });
+
+    // View toggle functionality
+    function initViewToggle() {
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const view = this.getAttribute('data-view');
+                
+                // Update active button
+                viewButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show/hide views
+                if (view === 'board') {
+                    boardView.style.display = 'block';
+                    tableView.classList.remove('active');
+                } else if (view === 'table') {
+                    boardView.style.display = 'none';
+                    tableView.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // Load job cards from API
+    async function loadJobCards() {
+        showLoading();
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/jobcards`);
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+            
+            currentJobCards = result.data;
+            
+            // Clear existing cards
+            document.getElementById('colTransit').innerHTML = '';
+            document.getElementById('colArrived').innerHTML = '';
+            document.getElementById('colCompleted').innerHTML = '';
+            document.getElementById('jobCardsTableBody').innerHTML = '';
+            
+            // Counters
+            let transitCount = 0;
+            let arrivedCount = 0;
+            let completedCount = 0;
+            let totalMargin = 0;
+            
+            // Process each job card
+            currentJobCards.forEach(card => {
+                // Determine status based on database status
+                let status = 'in-transit';
+                let statusDisplay = 'IN TRANSIT';
+                
+                switch(card.status) {
+                    case 'draft':
+                    case 'submitted':
+                        status = 'in-transit';
+                        statusDisplay = 'IN TRANSIT';
+                        break;
+                    case 'approved':
+                        status = 'arrived';
+                        statusDisplay = 'ARRIVED';
+                        break;
+                    case 'completed':
+                        status = 'completed';
+                        statusDisplay = 'COMPLETED';
+                        break;
+                }
+                
+                // Determine type from job number
+                let type = 'AIR';
+                let typeClass = 'job-type-air';
+                let typeIcon = '✈️';
+                let typeDisplay = 'AIR';
+                
+                if (card.job_no.includes('SEA')) {
+                    type = 'SEA';
+                    typeClass = 'job-type-sea';
+                    typeIcon = '🚢';
+                    typeDisplay = 'SEA';
+                } else if (card.job_no.includes('ROA')) {
+                    type = 'ROA';
+                    typeClass = 'job-type-road';
+                    typeIcon = '🚚';
+                    typeDisplay = 'ROAD';
+                } else if (card.job_no.includes('MUL')) {
+                    type = 'MUL';
+                    typeClass = 'job-type-road';
+                    typeIcon = '🚚';
+                    typeDisplay = 'MULTI';
+                }
+                
+                // Get HBL number
+                const hblNumber = card.hbl || card.habw || card.truck_waybill_no || 'N/A';
+                
+                // Prepare template data
+                const templateData = {
+                    id: card.id,
+                    job_no: card.job_no,
+                    hbl_number: hblNumber,
+                    type: type,
+                    departure_location: card.departure_location || 'N/A',
+                    arrival_location: card.arrival_location || 'N/A',
+                    customer_name: card.customer_name || 'N/A',
+                    shipper_name: card.shipper_name || 'N/A',
+                    consignee_name: card.customer_name || 'N/A', // Using customer as consignee
+                    created_by: card.created_by || 'System',
+                    status: status,
+                    status_class: `status-${status}`,
+                    status_display: statusDisplay,
+                    type_class: typeClass,
+                    type_icon: typeIcon,
+                    type_display: typeDisplay,
+                    receivable_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                    receivable_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                    payable_estimated: '0.000', // You can calculate this later
+                    payable_actual: '0.000', // You can calculate this later
+                    margin_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                    margin_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000'
+                };
+                
+                // Create board card
+                const template = document.getElementById('jobCardTemplate').innerHTML;
+                const cardHtml = template.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+                
+                // Add to appropriate column
+                switch(status) {
+                    case 'in-transit':
+                        document.getElementById('colTransit').insertAdjacentHTML('beforeend', cardHtml);
+                        transitCount++;
+                        break;
+                    case 'arrived':
+                        document.getElementById('colArrived').insertAdjacentHTML('beforeend', cardHtml);
+                        arrivedCount++;
+                        break;
+                    case 'completed':
+                        document.getElementById('colCompleted').insertAdjacentHTML('beforeend', cardHtml);
+                        completedCount++;
+                        break;
+                }
+                
+                // Create table row
+                const tableTemplate = document.getElementById('tableRowTemplate').innerHTML;
+                const rowHtml = tableTemplate.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+                document.getElementById('jobCardsTableBody').insertAdjacentHTML('beforeend', rowHtml);
+                
+                // Add to total margin
+                if (card.invoice_total) {
+                    totalMargin += parseFloat(card.invoice_total);
+                }
+            });
+            
+            // Update counters
+            document.getElementById('transitCount').textContent = transitCount;
+            document.getElementById('arrivedCount').textContent = arrivedCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('statTransit').textContent = transitCount;
+            document.getElementById('statArrived').textContent = arrivedCount;
+            document.getElementById('statCompleted').textContent = completedCount;
+            document.getElementById('statRevenue').textContent = `${totalMargin.toFixed(3)} KWD`;
+            
+            // Attach event listeners to wizard buttons
+            attachWizardListeners();
+            
+        } catch (error) {
+            console.error('Error loading job cards:', error);
+            alert('Failed to load job cards. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // Load charge types from API
+    async function loadChargeTypes() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/charge-types`);
+            const result = await response.json();
+            
+            if (result.success) {
+                chargeTypes = result.data;
+            }
+        } catch (error) {
+            console.error('Error loading charge types:', error);
+        }
+    }
+
+    // Attach wizard button listeners
+    function attachWizardListeners() {
+        document.querySelectorAll('.open-wizard-btn').forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const jobId = this.getAttribute('data-job-id');
+                await openChargesWizard(jobId);
+            });
+        });
+    }
+
+    // Open charges wizard in new window
+    async function openChargesWizard(jobId) {
+        try {
+            // Fetch job card details
+            const response = await fetch(`${API_BASE_URL}/jobcards/${jobId}/details`);
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+            
+            const jobCard = result.data;
+            
+            // Create wizard window
+            const wizardWindow = window.open('', '_blank', 
+                'width=1200,height=800,scrollbars=yes,resizable=yes');
+            
+            if (!wizardWindow) {
+                alert('Please allow popups for this site');
+                return;
+            }
+            
+            // Generate wizard HTML
+            wizardWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Charges Wizard - ${jobCard.job_no}</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        :root {
+                            --primary-blue: #1a73e8;
+                            --secondary-blue: #4285f4;
+                            --light-blue: #e8f0fe;
+                            --dark-gray: #3c4043;
+                            --medium-gray: #5f6368;
+                            --light-gray: #f8f9fa;
+                            --border-gray: #dadce0;
+                            --green: #0d9d58;
+                            --red: #ea4335;
+                        }
+                        
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                        }
+                        
+                        body {
+                            background-color: #f5f7fa;
+                            color: var(--dark-gray);
+                            padding: 20px;
+                        }
+                        
+                        .container {
+                            max-width: 1200px;
+                            margin: 0 auto;
+                        }
+                        
+                        .header {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            margin-bottom: 30px;
+                            border: 1px solid var(--border-gray);
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                        }
+                        
+                        .job-info-grid {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 20px;
+                            margin-top: 20px;
+                        }
+                        
+                        .info-card {
+                            background: var(--light-gray);
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: 4px solid var(--primary-blue);
+                        }
+                        
+                        .info-label {
+                            font-size: 12px;
+                            color: var(--medium-gray);
+                            margin-bottom: 5px;
+                        }
+                        
+                        .info-value {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: var(--dark-gray);
+                        }
+                        
+                        .charges-section {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            margin-bottom: 30px;
+                            border: 1px solid var(--border-gray);
+                        }
+                        
+                        .section-title {
+                            font-size: 20px;
+                            font-weight: 600;
+                            color: var(--dark-gray);
+                            margin-bottom: 25px;
+                            padding-bottom: 10px;
+                            border-bottom: 2px solid var(--light-gray);
+                        }
+                        
+                        .charge-row {
+                            display: grid;
+                            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+                            gap: 15px;
+                            align-items: center;
+                            padding: 15px;
+                            border-bottom: 1px solid var(--light-gray);
+                        }
+                        
+                        .charge-row.header {
+                            background: var(--light-gray);
+                            font-weight: 600;
+                            color: var(--medium-gray);
+                            border-radius: 8px;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .charge-input {
+                            width: 100%;
+                            padding: 10px;
+                            border: 1px solid var(--border-gray);
+                            border-radius: 6px;
+                            font-size: 14px;
+                        }
+                        
+                        .charge-input:focus {
+                            outline: none;
+                            border-color: var(--primary-blue);
+                        }
+                        
+                        .add-charge-btn {
+                            background: var(--primary-blue);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            padding: 10px 20px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-top: 20px;
+                        }
+                        
+                        .add-charge-btn:hover {
+                            background: #0d62d9;
+                        }
+                        
+                        .advance-payment-section {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            margin-bottom: 30px;
+                            border: 1px solid var(--border-gray);
+                        }
+                        
+                        .payment-grid {
+                            display: grid;
+                            grid-template-columns: repeat(4, 1fr);
+                            gap: 15px;
+                        }
+                        
+                        .totals-section {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 30px;
+                            margin-bottom: 30px;
+                            border: 1px solid var(--border-gray);
+                        }
+                        
+                        .totals-grid {
+                            display: grid;
+                            grid-template-columns: repeat(2, 1fr);
+                            gap: 20px;
+                        }
+                        
+                        .total-card {
+                            background: var(--light-gray);
+                            padding: 20px;
+                            border-radius: 8px;
+                            text-align: center;
+                        }
+                        
+                        .total-label {
+                            font-size: 14px;
+                            color: var(--medium-gray);
+                            margin-bottom: 10px;
+                        }
+                        
+                        .total-value {
+                            font-size: 28px;
+                            font-weight: 700;
+                            color: var(--dark-gray);
+                        }
+                        
+                        .actions-section {
+                            display: flex;
+                            justify-content: flex-end;
+                            gap: 15px;
+                            padding: 30px 0;
+                        }
+                        
+                        .btn {
+                            padding: 12px 30px;
+                            border-radius: 8px;
+                            border: none;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        }
+                        
+                        .btn-primary {
+                            background: var(--primary-blue);
+                            color: white;
+                        }
+                        
+                        .btn-primary:hover {
+                            background: #0d62d9;
+                        }
+                        
+                        .btn-secondary {
+                            background: white;
+                            color: var(--medium-gray);
+                            border: 1px solid var(--border-gray);
+                        }
+                        
+                        .btn-secondary:hover {
+                            background: var(--light-gray);
+                        }
+                        
+                        .remove-btn {
+                            color: var(--red);
+                            background: none;
+                            border: none;
+                            cursor: pointer;
+                            font-size: 18px;
+                        }
+                        
+                        .loading {
+                            display: none;
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: rgba(255,255,255,0.9);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 1000;
+                        }
+                        
+                        .spinner {
+                            width: 50px;
+                            height: 50px;
+                            border: 4px solid var(--border-gray);
+                            border-top-color: var(--primary-blue);
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        }
+                        
+                        @keyframes spin {
+                            to { transform: rotate(360deg); }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <!-- Header -->
+                        <div class="header">
+                            <h1><i class="fa-solid fa-wand-magic-sparkles"></i> Charges Wizard</h1>
+                            <p class="text-muted">Manage charges and advance payment for job card</p>
+                            
+                            <div class="job-info-grid">
+                                <div class="info-card">
+                                    <div class="info-label">Job Number</div>
+                                    <div class="info-value">${jobCard.job_no}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Customer</div>
+                                    <div class="info-value">${jobCard.customer_name}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Route</div>
+                                    <div class="info-value">${jobCard.departure_location} → ${jobCard.arrival_location}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Shipper</div>
+                                    <div class="info-value">${jobCard.shipper_name}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">HBL Number</div>
+                                    <div class="info-value">${jobCard.hbl || 'N/A'}</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Invoice Number</div>
+                                    <div class="info-value">${jobCard.invoice_no || 'Not Generated'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Charges Section -->
+                        <div class="charges-section">
+                            <h2 class="section-title">Charges</h2>
+                            <div class="charge-row header">
+                                <div>Description</div>
+                                <div>Quantity</div>
+                                <div>Unit</div>
+                                <div>Unit Price (KWD)</div>
+                                <div>Amount (KWD)</div>
+                                <div>Action</div>
+                            </div>
+                            <div id="chargesContainer">
+                                <!-- Charges will be added here -->
+                            </div>
+                            <button class="add-charge-btn" onclick="addChargeRow()">
+                                <i class="fa-solid fa-plus"></i>
+                                Add Charge
+                            </button>
+                        </div>
+                        
+                        <!-- Advance Payment Section -->
+                        <div class="advance-payment-section">
+                            <h2 class="section-title">Advance Payment</h2>
+                            <div class="payment-grid">
+                                <div>
+                                    <label>Amount (KWD)</label>
+                                    <input type="number" class="charge-input" id="advanceAmount" step="0.001" min="0">
+                                </div>
+                                <div>
+                                    <label>Payment Date</label>
+                                    <input type="date" class="charge-input" id="paymentDate" value="${new Date().toISOString().split('T')[0]}">
+                                </div>
+                                <div>
+                                    <label>Payment Method</label>
+                                    <select class="charge-input" id="paymentMethod">
+                                        <option value="cash">Cash</option>
+                                        <option value="cheque">Cheque</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="credit_card">Credit Card</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Reference Number</label>
+                                    <input type="text" class="charge-input" id="paymentReference">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Totals Section -->
+                        <div class="totals-section">
+                            <h2 class="section-title">Invoice Summary</h2>
+                            <div class="totals-grid">
+                                <div class="total-card">
+                                    <div class="total-label">Total Charges</div>
+                                    <div class="total-value" id="totalCharges">0.000 KWD</div>
+                                </div>
+                                <div class="total-card">
+                                    <div class="total-label">Advance Payment</div>
+                                    <div class="total-value" id="totalAdvance">0.000 KWD</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="actions-section">
+                            <button class="btn btn-secondary" onclick="window.close()">
+                                <i class="fa-solid fa-times"></i>
+                                Cancel
+                            </button>
+                            <button class="btn btn-primary" onclick="saveInvoice()">
+                                <i class="fa-solid fa-save"></i>
+                                Save Invoice & Generate PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Overlay -->
+                    <div class="loading" id="loadingOverlay">
+                        <div class="spinner"></div>
+                    </div>
+                    
+                    <script>
+                        // Store job card data
+                        const jobCardData = ${JSON.stringify(jobCard)};
+                        const jobId = '${jobId}';
+                        const API_BASE_URL = '${API_BASE_URL}';
+                        
+                        // Charge types data
+                        const chargeTypes = ${JSON.stringify(chargeTypes)};
+                        
+                        // Initialize
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Load existing charges if any
+                            if (jobCardData.invoice_items && jobCardData.invoice_items.length > 0) {
+                                jobCardData.invoice_items.forEach(item => {
+                                    addChargeRow(item.description, item.quantity, item.unit || 'each', item.rate, item.amount);
+                                });
+                            }
+                            
+                            // Load advance payment if any
+                            if (jobCardData.advance_payments && jobCardData.advance_payments.length > 0) {
+                                const payment = jobCardData.advance_payments[0];
+                                document.getElementById('advanceAmount').value = payment.amount;
+                                document.getElementById('paymentDate').value = payment.payment_date.split('T')[0];
+                                document.getElementById('paymentMethod').value = payment.payment_method;
+                                document.getElementById('paymentReference').value = payment.reference_number || '';
+                            }
+                            
+                            updateTotals();
+                        });
+                        
+                        // Add charge row
+                        function addChargeRow(description = '', quantity = 1, unit = 'each', rate = 0, amount = 0) {
+                            const container = document.getElementById('chargesContainer');
+                            const chargeId = Date.now();
+                            
+                            const chargeRow = document.createElement('div');
+                            chargeRow.className = 'charge-row';
+                            chargeRow.id = 'charge-' + chargeId;
+                            chargeRow.innerHTML = \`
+                                <div>
+                                    <select class="charge-input charge-description" onchange="updateChargeDescription(this)">
+                                        <option value="">Select charge type...</option>
+                                        \${chargeTypes.map(type => \`
+                                            <option value="\${type.name}" \${description === type.name ? 'selected' : ''}>\${type.name}</option>
+                                        \`).join('')}
+                                        <option value="custom" \${!chargeTypes.find(t => t.name === description) ? 'selected' : ''}>Custom...</option>
+                                    </select>
+                                    <input type="text" 
+                                           class="charge-input charge-custom" 
+                                           placeholder="Enter custom description"
+                                           value="\${!chargeTypes.find(t => t.name === description) ? description : ''}"
+                                           style="margin-top: 5px; display: \${!chargeTypes.find(t => t.name === description) ? 'block' : 'none'}"
+                                           oninput="updateCustomDescription(this)">
+                                </div>
+                                <div>
+                                    <input type="number" 
+                                           class="charge-input charge-quantity" 
+                                           value="\${quantity}" 
+                                           min="1" 
+                                           step="0.001"
+                                           oninput="calculateAmount(this)">
+                                </div>
+                                <div>
+                                    <input type="text" 
+                                           class="charge-input charge-unit" 
+                                           value="\${unit}"
+                                           oninput="calculateAmount(this)">
+                                </div>
+                                <div>
+                                    <input type="number" 
+                                           class="charge-input charge-rate" 
+                                           value="\${rate}" 
+                                           step="0.001"
+                                           oninput="calculateAmount(this)">
+                                </div>
+                                <div>
+                                    <input type="text" 
+                                           class="charge-input charge-amount" 
+                                           value="\${amount.toFixed(3)}" 
+                                           readonly>
+                                </div>
+                                <div>
+                                    <button class="remove-btn" onclick="removeChargeRow('\${chargeId}')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            \`;
+                            
+                            container.appendChild(chargeRow);
+                            calculateAmount(chargeRow.querySelector('.charge-rate'));
+                        }
+                        
+                        // Update charge description
+                        function updateChargeDescription(select) {
+                            const row = select.closest('.charge-row');
+                            const customInput = row.querySelector('.charge-custom');
+                            
+                            if (select.value === 'custom') {
+                                customInput.style.display = 'block';
+                                customInput.focus();
+                            } else {
+                                customInput.style.display = 'none';
+                                customInput.value = '';
+                            }
+                            
+                            calculateAmount(select);
+                        }
+                        
+                        // Update custom description
+                        function updateCustomDescription(input) {
+                            const row = input.closest('.charge-row');
+                            const select = row.querySelector('.charge-description');
+                            if (input.value) {
+                                select.value = 'custom';
+                            }
+                            calculateAmount(input);
+                        }
+                        
+                        // Calculate amount
+                        function calculateAmount(input) {
+                            const row = input.closest('.charge-row');
+                            const quantity = parseFloat(row.querySelector('.charge-quantity').value) || 1;
+                            const rate = parseFloat(row.querySelector('.charge-rate').value) || 0;
+                            const amount = quantity * rate;
+                            
+                            row.querySelector('.charge-amount').value = amount.toFixed(3);
+                            updateTotals();
+                        }
+                        
+                        // Remove charge row
+                        function removeChargeRow(chargeId) {
+                            const row = document.getElementById('charge-' + chargeId);
+                            if (row) {
+                                row.remove();
+                                updateTotals();
+                            }
+                        }
+                        
+                        // Update totals
+                        function updateTotals() {
+                            let totalCharges = 0;
+                            
+                            document.querySelectorAll('.charge-amount').forEach(input => {
+                                totalCharges += parseFloat(input.value) || 0;
+                            });
+                            
+                            const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+                            
+                            document.getElementById('totalCharges').textContent = totalCharges.toFixed(3) + ' KWD';
+                            document.getElementById('totalAdvance').textContent = advanceAmount.toFixed(3) + ' KWD';
+                        }
+                        
+                        // Show loading
+                        function showLoading() {
+                            document.getElementById('loadingOverlay').style.display = 'flex';
+                        }
+                        
+                        // Hide loading
+                        function hideLoading() {
+                            document.getElementById('loadingOverlay').style.display = 'none';
+                        }
+                        
+                        // Save invoice
+                        async function saveInvoice() {
+                            try {
+                                showLoading();
+                                
+                                // Collect charges
+                                const charges = [];
+                                document.querySelectorAll('.charge-row:not(.header)').forEach(row => {
+                                    const descriptionSelect = row.querySelector('.charge-description');
+                                    const customInput = row.querySelector('.charge-custom');
+                                    const description = customInput.style.display === 'block' ? 
+                                        customInput.value : descriptionSelect.value;
+                                    
+                                    if (description && description.trim() !== '') {
+                                        charges.push({
+                                            description: description.trim(),
+                                            quantity: parseFloat(row.querySelector('.charge-quantity').value) || 1,
+                                            unit: row.querySelector('.charge-unit').value || 'each',
+                                            rate: parseFloat(row.querySelector('.charge-rate').value) || 0,
+                                            amount: parseFloat(row.querySelector('.charge-amount').value) || 0
+                                        });
+                                    }
+                                });
+                                
+                                if (charges.length === 0) {
+                                    alert('Please add at least one charge');
+                                    hideLoading();
+                                    return;
+                                }
+                                
+                                // Collect advance payment
+                                const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+                                const advancePayment = advanceAmount > 0 ? {
+                                    amount: advanceAmount,
+                                    date: document.getElementById('paymentDate').value,
+                                    method: document.getElementById('paymentMethod').value,
+                                    reference: document.getElementById('paymentReference').value
+                                } : null;
+                                
+                                // Prepare invoice data
+                                const invoiceData = {
+                                    date: new Date().toISOString().split('T')[0],
+                                    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                                    notes: 'Generated via Charges Wizard'
+                                };
+                                
+                                // Send to backend
+                                const response = await fetch(\`\${API_BASE_URL}/jobcards/\${jobId}/save-invoice\`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        charges,
+                                        advancePayment,
+                                        invoiceData
+                                    })
+                                });
+                                
+                                const result = await response.json();
+                                
+                                if (!result.success) {
+                                    throw new Error(result.message);
+                                }
+                                
+                                // Generate PDF
+                                const pdfResponse = await fetch(\`\${API_BASE_URL}/invoices/\${result.invoiceId}/pdf\`);
+                                
+                                if (pdfResponse.ok) {
+                                    // Open PDF in new tab
+                                    const pdfBlob = await pdfResponse.blob();
+                                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                                    window.open(pdfUrl, '_blank');
+                                    
+                                    alert('Invoice saved successfully! PDF generated.');
+                                    window.close();
+                                } else {
+                                    alert('Invoice saved but PDF generation failed. Invoice Number: ' + result.invoiceNumber);
+                                    window.close();
+                                }
+                                
+                            } catch (error) {
+                                console.error('Save invoice error:', error);
+                                alert('Failed to save invoice: ' + error.message);
+                            } finally {
+                                hideLoading();
+                            }
+                        }
+                        
+                        // Auto-update totals when advance amount changes
+                        document.getElementById('advanceAmount').addEventListener('input', updateTotals);
+                        );
+            
+            wizardWindow.focus();
+            
+        } catch (error) {
+            console.error('Error opening wizard:', error);
+            alert('Failed to open charges wizard: ' + error.message);
+        }
+    }
+
+    // Search functionality
+    function initSearch() {
+        const searchInput = document.getElementById('globalSearch');
+        const clearSearch = document.getElementById('clearSearch');
+        const searchBtn = document.querySelector('.btn-search');
+        
+        clearSearch.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.focus();
+        });
+        
+        searchBtn.addEventListener('click', function() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            if (searchTerm) {
+                filterJobCards(searchTerm);
+            } else {
+                loadJobCards();
+            }
+        });
+        
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                if (searchTerm) {
+                    filterJobCards(searchTerm);
+                }
+            }
+        });
+    }
+
+    function filterJobCards(searchTerm) {
+        const filteredCards = currentJobCards.filter(card => 
+            card.job_no.toLowerCase().includes(searchTerm) ||
+            (card.hbl && card.hbl.toLowerCase().includes(searchTerm)) ||
+            (card.habw && card.habw.toLowerCase().includes(searchTerm)) ||
+            (card.truck_waybill_no && card.truck_waybill_no.toLowerCase().includes(searchTerm)) ||
+            card.customer_name.toLowerCase().includes(searchTerm) ||
+            card.shipper_name.toLowerCase().includes(searchTerm) ||
+            card.departure_location.toLowerCase().includes(searchTerm) ||
+            card.arrival_location.toLowerCase().includes(searchTerm)
+        );
+        
+        // Update display with filtered cards
+        renderFilteredJobCards(filteredCards);
+    }
+
+    function renderFilteredJobCards(cards) {
+        // Clear existing cards
+        document.getElementById('colTransit').innerHTML = '';
+        document.getElementById('colArrived').innerHTML = '';
+        document.getElementById('colCompleted').innerHTML = '';
+        document.getElementById('jobCardsTableBody').innerHTML = '';
+        
+        // Counters
+        let transitCount = 0;
+        let arrivedCount = 0;
+        let completedCount = 0;
+        
+        // Process each filtered card
+        cards.forEach(card => {
+            // Determine status based on database status
+            let status = 'in-transit';
+            let statusDisplay = 'IN TRANSIT';
+            
+            switch(card.status) {
+                case 'draft':
+                case 'submitted':
+                    status = 'in-transit';
+                    statusDisplay = 'IN TRANSIT';
+                    break;
+                case 'approved':
+                    status = 'arrived';
+                    statusDisplay = 'ARRIVED';
+                    break;
+                case 'completed':
+                    status = 'completed';
+                    statusDisplay = 'COMPLETED';
+                    break;
+            }
+            
+            // Determine type from job number
+            let type = 'AIR';
+            let typeClass = 'job-type-air';
+            let typeIcon = '✈️';
+            let typeDisplay = 'AIR';
+            
+            if (card.job_no.includes('SEA')) {
+                type = 'SEA';
+                typeClass = 'job-type-sea';
+                typeIcon = '🚢';
+                typeDisplay = 'SEA';
+            } else if (card.job_no.includes('ROA')) {
+                type = 'ROA';
+                typeClass = 'job-type-road';
+                typeIcon = '🚚';
+                typeDisplay = 'ROAD';
+            } else if (card.job_no.includes('MUL')) {
+                type = 'MUL';
+                typeClass = 'job-type-road';
+                typeIcon = '🚚';
+                typeDisplay = 'MULTI';
+            }
+            
+            // Get HBL number
+            const hblNumber = card.hbl || card.habw || card.truck_waybill_no || 'N/A';
+            
+            // Prepare template data
+            const templateData = {
+                id: card.id,
+                job_no: card.job_no,
+                hbl_number: hblNumber,
+                type: type,
+                departure_location: card.departure_location || 'N/A',
+                arrival_location: card.arrival_location || 'N/A',
+                customer_name: card.customer_name || 'N/A',
+                shipper_name: card.shipper_name || 'N/A',
+                consignee_name: card.customer_name || 'N/A',
+                created_by: card.created_by || 'System',
+                status: status,
+                status_class: `status-${status}`,
+                status_display: statusDisplay,
+                type_class: typeClass,
+                type_icon: typeIcon,
+                type_display: typeDisplay,
+                receivable_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                receivable_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                payable_estimated: '0.000',
+                payable_actual: '0.000',
+                margin_estimated: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000',
+                margin_actual: card.invoice_total ? card.invoice_total.toFixed(3) : '0.000'
+            };
+            
+            // Create board card
+            const template = document.getElementById('jobCardTemplate').innerHTML;
+            const cardHtml = template.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+            
+            // Add to appropriate column
+            switch(status) {
+                case 'in-transit':
+                    document.getElementById('colTransit').insertAdjacentHTML('beforeend', cardHtml);
+                    transitCount++;
+                    break;
+                case 'arrived':
+                    document.getElementById('colArrived').insertAdjacentHTML('beforeend', cardHtml);
+                    arrivedCount++;
+                    break;
+                case 'completed':
+                    document.getElementById('colCompleted').insertAdjacentHTML('beforeend', cardHtml);
+                    completedCount++;
+                    break;
+            }
+            
+            // Create table row
+            const tableTemplate = document.getElementById('tableRowTemplate').innerHTML;
+            const rowHtml = tableTemplate.replace(/{{(\w+)}}/g, (match, key) => templateData[key] || '');
+            document.getElementById('jobCardsTableBody').insertAdjacentHTML('beforeend', rowHtml);
+        });
+        
+        // Update counters
+        document.getElementById('transitCount').textContent = transitCount;
+        document.getElementById('arrivedCount').textContent = arrivedCount;
+        document.getElementById('completedCount').textContent = completedCount;
+        document.getElementById('statTransit').textContent = transitCount;
+        document.getElementById('statArrived').textContent = arrivedCount;
+        document.getElementById('statCompleted').textContent = completedCount;
+        
+        // Attach event listeners to wizard buttons
+        attachWizardListeners();
+    }
+
+    // Loading overlay
+    function showLoading() {
+        loadingOverlay.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingOverlay.classList.remove('active');
+    }
+                    </script>
+                </body>
+                </html>
+            `
