@@ -3,7 +3,7 @@ import { SidebarManager } from './sidebar.js';
 // Dashboard Application
 class DashboardApp {
     constructor() {
-        this.API_BASE_URL = 'https://ball-sent-epinions-protective.trycloudflare.com/api';
+        this.API_BASE_URL = 'https://blogs-visited-pct-look.trycloudflare.com/api';
         this.jobCards = [];
         this.currentJobCard = null;
         this.currentFilter = 'bayan';

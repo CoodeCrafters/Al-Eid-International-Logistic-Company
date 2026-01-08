@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://ball-sent-epinions-protective.trycloudflare.com/api'; // Update with your backend URL
+const API_BASE_URL = 'https://blogs-visited-pct-look.trycloudflare.com/api'; // Update with your backend URL
 
 // Sample data for fallback
 let jobCards = []; // Will be populated from database
