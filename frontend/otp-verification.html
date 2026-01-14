@@ -866,7 +866,7 @@ body {
                         }
                     } else {
                         // Fallback to direct API call
-                        const response = await fetch(`${Utils.getApiBaseUrl()}/verify-otp`, {
+                        const response = await fetch(`${Utils.getApiBaseUrl()}/api/verify-otp`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -976,7 +976,7 @@ body {
                         }
                     } else {
                         // Fallback to direct API call
-                        const response = await fetch(`${Utils.getApiBaseUrl()}/send-verification`, {
+                        const response = await fetch(`${Utils.getApiBaseUrl()}/api/send-verification`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -1286,5 +1286,9 @@ body {
             window.otpPage = otpPage;
         });
     </script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/login.js"></script>
+    <script type="module" src="scripts/utils.js"></script>
+    <script type="module" src="scripts/config.js"></script>
 </body>
 </html>

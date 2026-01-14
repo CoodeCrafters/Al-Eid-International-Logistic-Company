@@ -1,3 +1,4 @@
+
 class Signup {
     constructor() {
         this.currentUser = null;
@@ -254,7 +255,7 @@ class Signup {
         localStorage.setItem('pendingRegistration', JSON.stringify(userData));
         
         // 1️⃣ FIRST: REGISTER THE USER (creates user in database)
-        const registerResponse = await fetch(`${Utils.getApiBaseUrl()}/register`, {
+        const registerResponse = await fetch(`${Utils.getApiBaseUrl()}/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

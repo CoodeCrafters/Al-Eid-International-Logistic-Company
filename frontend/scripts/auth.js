@@ -1,4 +1,5 @@
 
+
 class Auth {
     constructor() {
         this.loginAttempts = 0;
@@ -59,7 +60,7 @@ class Auth {
     Utils.hideAlert();
 
     try {
-        const response = await fetch(`${Utils.getApiBaseUrl()}/login`, {
+        const response = await fetch(`${Utils.getApiBaseUrl()}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -163,10 +164,12 @@ class Auth {
     }
 }
 
-// Initialize auth when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    new Auth();
+// Option 1: Instance-based
+document.addEventListener('DOMContentLoaded', async function() {
+    new Auth(); // Create Auth instance
 });
+
+
 
 // Global logout function
 window.logout = Auth.logout;

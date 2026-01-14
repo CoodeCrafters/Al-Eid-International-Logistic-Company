@@ -1,4 +1,6 @@
+
 // utils.js - Enhanced version with job card integration
+
 class Utils {
     static async initialize() {
     console.log('🔧 Initializing utilities...');
@@ -22,8 +24,9 @@ class Utils {
    // ==================== AUTH/ALERT FUNCTIONS ====================
 
 static getApiBaseUrl() {
+
     // Always use localhost:5000 for development
-    return 'https://before-approach-rubber-liabilities.trycloudflare.com/api';
+    return window.CONFIG.API_BASE_URL;
 }
 
 static showAlert(message, type = 'info') {
@@ -149,7 +152,7 @@ static async checkDatabaseConnection() {
     try {
         // Create a unique timestamp to prevent caching
         const timestamp = new Date().getTime();
-        const url = `https://before-approach-rubber-liabilities.trycloudflare.com/api/health?t=${timestamp}`;
+        const url = `${this.getApiBaseUrl()}/api/health?t=${timestamp}`;
         
         const response = await fetch(url, {
             method: 'GET',
@@ -339,7 +342,7 @@ static updateDatabaseStatus(isOnline, errorMessage = '') {
     }
     
     static async fetchJobCardData(endpoint, data = null) {
-        const url = `https://before-approach-rubber-liabilities.trycloudflare.com${endpoint}`;
+        const url = `${this.getApiBaseUrl()}${endpoint}`;
         
         try {
             const options = {
@@ -876,7 +879,9 @@ static updateDatabaseStatus(isOnline, errorMessage = '') {
     }
 }
 
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     Utils.initialize().catch(console.error);
 });
+
