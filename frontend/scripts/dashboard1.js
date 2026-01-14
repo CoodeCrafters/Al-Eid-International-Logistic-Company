@@ -3,7 +3,7 @@ import { SidebarManager } from './sidebar.js';
 // Dashboard Application
 class DashboardApp {
     constructor() {
-        this.API_BASE_URL = 'https://powerpoint-fruit-valves-succeed.trycloudflare.com/api';
+        this.API_BASE_URL = 'https://before-approach-rubber-liabilities.trycloudflare.com/api';
         this.jobCards = [];
         this.currentJobCard = null;
         this.currentFilter = 'bayan';
