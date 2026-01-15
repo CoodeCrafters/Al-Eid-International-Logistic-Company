@@ -131,7 +131,7 @@
                     arrival_location: card.arrival_location || 'N/A',
                     customer_name: card.customer_name || 'N/A',
                     shipper_name: card.shipper_name || 'N/A',
-                    consignee_name: card.customer_name || 'N/A', // Using customer as consignee
+                    consignee_name: card.requester_name || 'N/A', // Using customer as consignee
                     created_by: card.created_by || 'System',
                     status: status,
                     status_class: `status-${status}`,
