@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charges Wizard - Job Card System</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/invoice_charges.css">
+    
+    <!-- Inline CSS for wizard (Updated) -->
+    
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo-circle">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="company-info">
+                <h1 class="company-title">AI Eid International Logistic Company</h1>
+                <p class="company-tagline">Global Logistics & Transport Solutions</p>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="system-info">
+                <div class="system-time" id="systemTime">00:00:00</div>
+                <div class="system-date" id="systemDate">Saturday, January 3, 2026</div>
+            </div>
+            
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="profile-name" id="userName">Admin User</span>
+            </div>
+        </div>
+    </header>
+    <br><br></br>
+
+    <!-- Sidebar (From your sidebar.js style) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="logo-text">JBCroWn</div>
+            </div>
+            <button class="sidebar-toggle" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <!-- Menu Section -->
+            <div class="menu-section">
+                <div class="menu-title">Navigation</div>
+                <a href="home.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="charges-wizard.html" class="menu-item active">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <span>Charges Wizard</span>
+                </a>
+                <a href="job-cards.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Job Cards</span>
+                </a>
+                <a href="create-job-card.html" class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Job Card</span>
+                </a>
+                <a href="invoices.html" class="menu-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoices</span>
+                </a>
+            </div>
+            
+            <!-- Tools Section -->
+            <div class="menu-section">
+                <div class="menu-title">Tools</div>
+                <a href="reports.html" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </div>
+
+        
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">Administrator</span>
+                </div>
+            </div>
+            
+        </div>
+    </aside>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-btn" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="wizard-header">
+            <div class="header-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h1>Charges Wizard</h1>
+            </div>
+            <div class="header-subtitle" id="jobInfoSubtitle">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="job-info-grid" id="jobInfoGrid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="wizard-main">
+            <!-- Charges Section -->
+            <div class="charges-section">
+                <div class="section-title">
+                    <h2>Charges</h2>
+                    <span class="text-muted">Add, edit, or remove charges</span>
+                </div>
+                
+                <div class="charges-table-container">
+                    <table class="charges-table">
+                        <thead>
+                            <tr>
+                                <th width="30%">Description</th>
+                                <th width="15%">Quantity</th>
+                                <th width="15%">Unit</th>
+                                <th width="20%">Unit Price (KWD)</th>
+                                <th width="15%">Amount (KWD)</th>
+                                <th width="5%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chargesTableBody">
+                            <!-- Charges will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="add-charge-btn" id="addChargeBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add New Charge
+                </button>
+            </div>
+            
+            <!-- Wizard Panel (Right Panel) -->
+            <div class="wizard-panel">
+                <!-- Payment Section -->
+                <div class="payment-section">
+                    <h3><i class="fa-solid fa-credit-card"></i> Advance Payment</h3>
+                    
+                    <div class="form-group">
+                        <label for="advanceAmount">Amount (KWD)</label>
+                        <input type="number" 
+                               class="charge-input" 
+                               id="advanceAmount" 
+                               step="0.001" 
+                               min="0" 
+                               placeholder="0.000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentDate">Payment Date</label>
+                        <input type="date" 
+                               class="charge-input" 
+                               id="paymentDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select class="charge-select" id="paymentMethod">
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentReference">Reference Number</label>
+                        <input type="text" 
+                               class="charge-input" 
+                               id="paymentReference" 
+                               placeholder="Optional">
+                    </div>
+                </div>
+                
+                <!-- Totals Section -->
+                <div class="totals-section">
+                    <h3><i class="fa-solid fa-calculator"></i> Invoice Summary</h3>
+                    
+                    <div class="totals-card">
+                        <div class="total-row">
+                            <span class="total-label">Total Charges:</span>
+                            <span class="total-value" id="totalCharges">0.000</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="total-label">Advance Payment:</span>
+                            <span class="total-value" id="totalAdvance">0.000</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="total-label">Tax (0%):</span>
+                            <span class="total-value" id="totalTax">0.000</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span class="total-label">Balance Due:</span>
+                            <span class="total-value" id="balanceDue">0.000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="invoiceNotes"><i class="fa-solid fa-sticky-note"></i> Notes</label>
+                        <textarea class="charge-input" 
+                                  id="invoiceNotes" 
+                                  rows="3" 
+                                  placeholder="Add any notes for the invoice..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="wizard-actions">
+            <button class="btn btn-secondary" id="cancelBtn">
+                <i class="fa-solid fa-times"></i>
+                Cancel
+            </button>
+            <button class="btn btn-primary" id="saveBtn">
+                <i class="fa-solid fa-save"></i>
+                Save Invoice
+            </button>
+            <button class="btn btn-primary" id="saveAndGenerateBtn">
+                <i class="fa-solid fa-file-pdf"></i>
+                Save & Generate PDF
+            </button>
+        </div>
+    </main>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notification success" id="successMessage">
+        <i class="fa-solid fa-check-circle"></i>
+        <span>Operation completed successfully!</span>
+    </div>
+    
+    <div class="notification error" id="errorMessage">
+        <i class="fa-solid fa-exclamation-circle"></i>
+        <span id="errorMessageText">An error occurred!</span>
+    </div>
+    
+    <!-- Templates -->
+    <template id="chargeRowTemplate">
+        <tr data-charge-id="{{id}}">
+            <td>
+                <select class="charge-select charge-description">
+                    <option value="">Select charge type...</option>
+                    {{#each chargeTypes}}
+                    <option value="{{this.name}}">{{this.name}}</option>
+                    {{/each}}
+                    <option value="custom">Custom...</option>
+                </select>
+                <input type="text" 
+                       class="charge-input custom-description mt-2" 
+                       placeholder="Enter custom description"
+                       style="display: none;">
+            </td>
+            <td>
+                <input type="number" 
+                       class="charge-input charge-quantity" 
+                       value="1" 
+                       min="0.001" 
+                       step="0.001">
+            </td>
+            <td>
+                <input type="text" 
+                       class="charge-input charge-unit" 
+                       value="each">
+            </td>
+            <td>
+                <input type="number" 
+                       class="charge-input charge-rate" 
+                       value="0.000" 
+                       min="0" 
+                       step="0.001">
+            </td>
+            <td>
+                <input type="text" 
+                       class="charge-input charge-amount readonly" 
+                       value="0.000" 
+                       readonly>
+            </td>
+            <td>
+                <button class="remove-charge-btn">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+    
+    <!-- JavaScript Files -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/auth.js" defer></script>
+    
+    <!-- Main JavaScript -->
+    <script type="module">
+        // Import SidebarManager from sidebar.js
+        import { SidebarManager } from './scripts/sidebar.js';
+        
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Sidebar
+            window.sidebarManager = new SidebarManager();
+            
+            // Load user data for sidebar
+            loadUserData();
+            
+            // Now initialize the wizard
+            initializeWizard();
+        });
+        
+        // Wizard JavaScript
+        let wizardData = {
+            jobData: null,
+            chargeTypes: [],
+            chargeCounter: 1
+        };
+        
+        function initializeWizard() {
+            // Parse URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobCardParam = urlParams.get('jobCard');
+            const chargeTypesParam = urlParams.get('chargeTypes');
+            
+            if (jobCardParam) {
+                try {
+                    wizardData.jobData = JSON.parse(decodeURIComponent(jobCardParam));
+                    initializeJobInfo();
+                } catch (e) {
+                    console.error('Error parsing job data:', e);
+                    showError('Invalid job data');
+                }
+            }
+            
+            if (chargeTypesParam) {
+                try {
+                    wizardData.chargeTypes = JSON.parse(decodeURIComponent(chargeTypesParam));
+                } catch (e) {
+                    console.error('Error parsing charge types:', e);
+                }
+            }
+            
+            // Set today's date as default payment date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+            
+            // Add event listeners
+            document.getElementById('addChargeBtn').addEventListener('click', addChargeRow);
+            document.getElementById('advanceAmount').addEventListener('input', updateTotals);
+            document.getElementById('cancelBtn').addEventListener('click', cancelWizard);
+            document.getElementById('saveBtn').addEventListener('click', () => saveInvoice(false));
+            document.getElementById('saveAndGenerateBtn').addEventListener('click', () => saveInvoice(true));
+            
+            // Add initial charge row
+            addChargeRow();
+            
+            // Set page title
+            if (wizardData.jobData) {
+                document.title = `Charges Wizard - ${wizardData.jobData.job_no}`;
+            }
+            
+            // Initialize totals
+            updateTotals();
+        }
+        
+        function loadUserData() {
+            try {
+                const userData = sessionStorage.getItem('pos_user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    const userName = document.getElementById('userName');
+                    const userRole = document.getElementById('userRole');
+                    
+                    if (userName) userName.textContent = user.name || 'User';
+                    if (userRole) userRole.textContent = user.role || 'User';
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        function initializeJobInfo() {
+            if (!wizardData.jobData) return;
+            
+            const subtitle = document.getElementById('jobInfoSubtitle');
+            subtitle.textContent = `Manage charges and advance payment for ${wizardData.jobData.job_no}`;
+            
+            const infoGrid = document.getElementById('jobInfoGrid');
+            const infoCards = [
+                {
+                    label: 'Job Number',
+                    value: wizardData.jobData.job_no || 'N/A',
+                    icon: 'fa-hashtag'
+                },
+                {
+                    label: 'Customer',
+                    value: wizardData.jobData.customer_name || 'N/A',
+                    icon: 'fa-user-tie'
+                },
+                {
+                    label: 'Route',
+                    value: `${wizardData.jobData.departure_location || 'N/A'} → ${wizardData.jobData.arrival_location || 'N/A'}`,
+                    icon: 'fa-route'
+                },
+                {
+                    label: 'Shipper',
+                    value: wizardData.jobData.shipper_name || 'N/A',
+                    icon: 'fa-truck-loading'
+                },
+                {
+                    label: wizardData.jobData.type === 'SEA' ? 'HBL Number' : 
+                           wizardData.jobData.type === 'AIR' ? 'HAWB Number' : 'Waybill',
+                    value: wizardData.jobData.hbl || wizardData.jobData.habw || wizardData.jobData.truck_waybill_no || 'N/A',
+                    icon: 'fa-file-contract'
+                },
+                {
+                    label: 'Status',
+                    value: getStatusDisplay(wizardData.jobData.status),
+                    icon: 'fa-circle-info'
+                }
+            ];
+            
+            infoCards.forEach(card => {
+                const cardHtml = `
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid ${card.icon}"></i> ${card.label}
+                        </div>
+                        <div class="info-value">${card.value}</div>
+                    </div>
+                `;
+                infoGrid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+        
+        function getStatusDisplay(status) {
+            const statusMap = {
+                'draft': 'Draft',
+                'submitted': 'Submitted',
+                'approved': 'Approved',
+                'completed': 'Completed',
+                'cancelled': 'Cancelled'
+            };
+            return statusMap[status] || status;
+        }
+        
+        function addChargeRow() {
+            const tableBody = document.getElementById('chargesTableBody');
+            const template = document.getElementById('chargeRowTemplate').innerHTML;
+            
+            // Prepare charge options
+            let chargeOptions = '';
+            wizardData.chargeTypes.forEach(type => {
+                chargeOptions += `<option value="${type.name}">${type.name}</option>`;
+            });
+            
+            // Replace placeholders in template
+            let rowHtml = template
+                .replace('{{#each chargeTypes}}', '')
+                .replace('{{/each}}', '')
+                .replace(/{{chargeTypes}}/g, chargeOptions)
+                .replace(/{{id}}/g, wizardData.chargeCounter++);
+            
+            tableBody.insertAdjacentHTML('beforeend', rowHtml);
+            
+            // Get the new row
+            const newRow = tableBody.lastElementChild;
+            
+            // Add event listeners to the new row
+            setupChargeRowEvents(newRow);
+            
+            // Focus on description
+            newRow.querySelector('.charge-description').focus();
+            
+            // Update totals
+            updateTotals();
+        }
+        
+        function setupChargeRowEvents(row) {
+            // Description change
+            const descriptionSelect = row.querySelector('.charge-description');
+            const customInput = row.querySelector('.custom-description');
+            
+            descriptionSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customInput.style.display = 'block';
+                    customInput.focus();
+                } else {
+                    customInput.style.display = 'none';
+                    customInput.value = '';
+                }
+            });
+            
+            // Custom description input
+            customInput.addEventListener('input', function() {
+                if (this.value) {
+                    descriptionSelect.value = 'custom';
+                }
+            });
+            
+            // Quantity and rate inputs
+            const quantityInput = row.querySelector('.charge-quantity');
+            const rateInput = row.querySelector('.charge-rate');
+            
+            const calculateRowAmount = () => {
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const rate = parseFloat(rateInput.value) || 0;
+                const amount = quantity * rate;
+                row.querySelector('.charge-amount').value = amount.toFixed(3);
+                updateTotals();
+            };
+            
+            quantityInput.addEventListener('input', calculateRowAmount);
+            rateInput.addEventListener('input', calculateRowAmount);
+            
+            // Remove button
+            const removeBtn = row.querySelector('.remove-charge-btn');
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                updateTotals();
+            });
+        }
+        
+        function updateTotals() {
+            let totalCharges = 0;
+            
+            // Calculate total charges
+            document.querySelectorAll('.charge-amount').forEach(input => {
+                totalCharges += parseFloat(input.value) || 0;
+            });
+            
+            // Get advance payment
+            const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            
+            // Calculate tax (0% for now)
+            const taxRate = 0;
+            const taxAmount = totalCharges * taxRate;
+            
+            // Calculate balance due
+            const balanceDue = totalCharges - advanceAmount;
+            
+            // Update display
+            document.getElementById('totalCharges').textContent = totalCharges.toFixed(3);
+            document.getElementById('totalAdvance').textContent = advanceAmount.toFixed(3);
+            document.getElementById('totalTax').textContent = taxAmount.toFixed(3);
+            document.getElementById('balanceDue').textContent = balanceDue.toFixed(3);
+        }
+        
+        function showLoading(message = 'Processing...') {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+        
+        function showSuccess(message = 'Operation completed successfully!') {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.querySelector('span').textContent = message;
+            successMsg.classList.add('show');
+            
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+        
+        function showError(message = 'An error occurred!') {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.querySelector('span').textContent = message;
+            errorMsg.classList.add('show');
+            
+            setTimeout(() => {
+                errorMsg.classList.remove('show');
+            }, 5000);
+        }
+        
+        function cancelWizard() {
+            if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+                window.history.back();
+            }
+        }
+        
+        async function saveInvoice(generatePDF = false) {
+            try {
+                if (!wizardData.jobData) {
+                    showError('Job data not found');
+                    return;
+                }
+                
+                // Validate charges
+                const charges = [];
+                let hasEmptyDescription = false;
+                
+                document.querySelectorAll('tr[data-charge-id]').forEach(row => {
+                    const descriptionSelect = row.querySelector('.charge-description');
+                    const customInput = row.querySelector('.custom-description');
+                    let description = '';
+                    
+                    if (descriptionSelect.value === 'custom') {
+                        description = customInput.value.trim();
+                    } else {
+                        description = descriptionSelect.value;
+                    }
+                    
+                    if (!description) {
+                        hasEmptyDescription = true;
+                        descriptionSelect.focus();
+                        return;
+                    }
+                    
+                    const quantity = parseFloat(row.querySelector('.charge-quantity').value) || 0;
+                    const unit = row.querySelector('.charge-unit').value.trim() || 'each';
+                    const rate = parseFloat(row.querySelector('.charge-rate').value) || 0;
+                    const amount = parseFloat(row.querySelector('.charge-amount').value) || 0;
+                    
+                    if (quantity <= 0 || rate <= 0) {
+                        showError('Quantity and unit price must be greater than 0');
+                        return;
+                    }
+                    
+                    charges.push({
+                        description,
+                        quantity,
+                        unit,
+                        rate,
+                        amount
+                    });
+                });
+                
+                if (hasEmptyDescription) {
+                    showError('Please enter description for all charges');
+                    return;
+                }
+                
+                if (charges.length === 0) {
+                    showError('Please add at least one charge');
+                    return;
+                }
+                
+                // Collect advance payment
+                const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+                let advancePayment = null;
+                
+                if (advanceAmount > 0) {
+                    advancePayment = {
+                        amount: advanceAmount,
+                        date: document.getElementById('paymentDate').value,
+                        method: document.getElementById('paymentMethod').value,
+                        reference: document.getElementById('paymentReference').value || null
+                    };
+                }
+                
+                // Prepare invoice data
+                const invoiceData = {
+                    jobCardId: wizardData.jobData.id,
+                    date: new Date().toISOString().split('T')[0],
+                    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    notes: document.getElementById('invoiceNotes').value.trim(),
+                    charges,
+                    advancePayment
+                };
+                
+                // Get API base URL
+                const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+                
+                // Show loading
+                showLoading(generatePDF ? 'Saving and generating PDF...' : 'Saving invoice...');
+                
+                // Send to backend
+                const endpoint = generatePDF ? '/api/invoices/create-with-pdf' : '/api/invoices/create';
+                const response = await fetch(apiBaseUrl + endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    body: JSON.stringify(invoiceData)
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                
+                // Handle success
+                hideLoading();
+                showSuccess(generatePDF ? 'Invoice saved and PDF generated!' : 'Invoice saved successfully!');
+                
+                if (generatePDF && result.pdfUrl) {
+                    // Open PDF in new tab
+                    setTimeout(() => {
+                        window.open(result.pdfUrl, '_blank');
+                    }, 1000);
+                }
+                
+                // Redirect back to main page after success
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Save invoice error:', error);
+                showError('Failed to save invoice: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

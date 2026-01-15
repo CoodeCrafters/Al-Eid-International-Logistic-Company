@@ -245,27 +245,15 @@ async function openChargesWizard(jobId) {
         const encodedJobCard = encodeURIComponent(JSON.stringify(jobCard));
         const encodedChargeTypes = encodeURIComponent(JSON.stringify(chargeTypes));
         
-        // Open wizard in new window
-        const wizardUrl = `charges-wizard.html?jobId=${jobId}&jobCard=${encodedJobCard}&chargeTypes=${encodedChargeTypes}`;
-        const wizardWindow = window.open(
-            wizardUrl, 
-            '_blank',
-            'width=1400,height=900,scrollbars=yes,resizable=yes,location=no,menubar=no,toolbar=no,status=no'
-        );
-        
-        if (!wizardWindow) {
-            alert('Please allow popups for this site to use the Charges Wizard');
-            return;
+        // Open wizard in SAME TAB
+        const wizardUrl = `charges-wizard1.html?jobId=${jobId}&jobCard=${encodedJobCard}&chargeTypes=${encodedChargeTypes}`;
+        window.location.href = wizardUrl;
+            
+        } catch (error) {
+            console.error('Error opening wizard:', error);
+            alert('Failed to open charges wizard: ' + error.message);
         }
-        
-        // Focus the new window
-        wizardWindow.focus();
-        
-    } catch (error) {
-        console.error('Error opening wizard:', error);
-        alert('Failed to open charges wizard: ' + error.message);
     }
-}
 
 
     // Search functionality

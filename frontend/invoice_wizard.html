@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charges Wizard - Job Card System</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/invoice_charges.css">
+    
+    <!-- Inline CSS -->
+    <style>
+        /* ==============================================
+           ULTIMATE INVOICE CHARGES WIZARD STYLING
+           Professional Business Design
+           ============================================== */
+        
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'SF Mono', 'Roboto Mono', monospace;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            --sidebar-width: 240px;
+            --sidebar-collapsed: 70px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--gray-50) 0%, #f0f7ff 100%);
+            transition: margin-left 0.3s ease;
+            padding: 1.5rem;
+        }
+        
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-btn {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Wizard Header */
+        .wizard-header {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wizard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple), var(--accent-green));
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .header-title i {
+            color: white;
+            font-size: 1.75rem;
+            background: var(--primary-blue);
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .header-subtitle {
+            color: var(--gray-600);
+            font-size: 0.9375rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Job Info Cards - Single Row Layout */
+        .job-info-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-card-compact {
+            background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-height: 80px;
+        }
+        
+        .info-card-compact:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+        
+        .info-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .info-icon i {
+            color: var(--primary-blue);
+            font-size: 1.25rem;
+        }
+        
+        .info-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .info-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        
+        /* Two Column Layout */
+        .wizard-main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Charges Section */
+        .charges-section {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .section-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-title h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary-blue);
+            border-radius: var(--radius-sm);
+        }
+        
+        /* Table Container */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        .invoice-table thead {
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--primary-light) 100%);
+        }
+        
+        .invoice-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .invoice-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+        
+        .invoice-table tbody tr:hover {
+            background-color: rgba(37, 99, 235, 0.02);
+        }
+        
+        /* Table Inputs */
+        .table-input, .table-select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            background: var(--white);
+            transition: all 0.2s ease;
+        }
+        
+        .table-input:focus, .table-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Section Headers in Table */
+        .section-header {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+        
+        .section-header td {
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        /* Subtotal Rows */
+        .subtotal-row {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-add, .btn-add-margin {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add:hover, .btn-add-margin:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-add-margin {
+            background: var(--accent-purple);
+        }
+        
+        .btn-add-margin:hover {
+            background: #7c3aed;
+        }
+        
+        .btn-remove {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--error);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-remove:hover {
+            background: var(--error);
+            color: white;
+        }
+        
+        /* Wizard Panel */
+        .wizard-panel {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+            height: fit-content;
+            position: sticky;
+            top: 1.5rem;
+        }
+        
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+        
+        .panel-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .panel-section h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Totals Card */
+        .totals-card-compact {
+            background: var(--gray-50);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+        
+        .total-row-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed var(--gray-300);
+        }
+        
+        .total-row-compact:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .total-label-compact {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .total-value-compact {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            font-family: var(--font-mono);
+        }
+        
+        .grand-total-compact {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #ffffff 100%);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 0.75rem;
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .grand-total-compact .total-label-compact {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        .grand-total-compact .total-value-compact {
+            font-size: 1.25rem;
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        
+        /* Form Groups */
+        .form-group-compact {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-group-compact label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.8125rem;
+        }
+        
+        .form-input-compact {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            background: var(--white);
+        }
+        
+        .form-input-compact:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Wizard Actions */
+        .wizard-actions {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1e40af 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-primary.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Premium Spinner */
+        .spinner {
+            width: 70px;
+            height: 70px;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(37, 99, 235, 0.1);
+            border-radius: 50%;
+        }
+        
+        .spinner::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            width: calc(100% + 6px);
+            height: calc(100% + 6px);
+            border: 3px solid transparent;
+            border-top-color: var(--primary-blue);
+            border-right-color: var(--accent-purple);
+            border-bottom-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.125rem;
+            color: var(--gray-800);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow-xl);
+            z-index: 10000;
+            transform: translateX(calc(100% + 2rem));
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+            color: white;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
+            color: white;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-draft {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        
+        .status-submitted {
+            background: var(--primary-light);
+            color: var(--primary-blue);
+        }
+        
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-completed {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .wizard-main {
+                grid-template-columns: 1fr;
+            }
+            
+            .wizard-panel {
+                position: static;
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .menu-btn {
+                display: flex;
+            }
+            
+            .job-info-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .job-info-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .wizard-header {
+                padding: 1.5rem;
+            }
+            
+            .charges-section, .wizard-panel {
+                padding: 1.5rem;
+            }
+            
+            .wizard-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .action-buttons-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .invoice-table {
+                min-width: 100%;
+            }
+            
+            .invoice-table th, .invoice-table td {
+                padding: 0.75rem;
+                font-size: 0.8125rem;
+            }
+            
+            .table-input, .table-select {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        /* Invoice Summary */
+        .invoice-summary {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            margin-top: 1.5rem;
+        }
+        
+        .summary-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: right;
+            font-family: var(--font-mono);
+        }
+        
+        /* Error State */
+        .error-input {
+            border-color: var(--error) !important;
+            background-color: rgba(239, 68, 68, 0.05) !important;
+        }
+        
+        .error-message {
+            font-size: 0.75rem;
+            color: var(--error);
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="logo-text">JBCroWn</div>
+            </div>
+            <button class="sidebar-toggle" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-title">Navigation</div>
+                <a href="home.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="charges-wizard.html" class="menu-item active">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <span>Charges Wizard</span>
+                </a>
+                <a href="job-cards.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Job Cards</span>
+                </a>
+                <a href="create-job-card.html" class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Job Card</span>
+                </a>
+                <a href="invoices.html" class="menu-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoices</span>
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <div class="menu-title">Tools</div>
+                <a href="reports.html" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">Administrator</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-btn" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="wizard-header">
+            <div class="header-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h1>Charges Wizard</h1>
+            </div>
+            <div class="header-subtitle" id="jobInfoSubtitle">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <!-- Single Row Job Info Cards -->
+            <div class="job-info-row" id="jobInfoRow">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="wizard-main">
+            <!-- Left Column: Charges Tables -->
+            <div class="charges-section">
+                <div class="section-title">
+                    <h2>Service Charges</h2>
+                    <span class="text-muted">Add, edit, or remove service charges</span>
+                </div>
+                
+                <!-- Service Charges Table -->
+                <div class="table-container">
+                    <table class="invoice-table" id="serviceChargesTable">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="15%">Type</th>
+                                <th width="30%">Description</th>
+                                <th width="10%">Unit</th>
+                                <th width="15%">Price/Qty (KWD)</th>
+                                <th width="10%">Qty</th>
+                                <th width="15%">Total (KWD)</th>
+                                <th width="5%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviceChargesBody">
+                            <!-- Service charges will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-add" id="addServiceChargeBtn">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Service Charge
+                    </button>
+                </div>
+                
+                <!-- Margin Charges Section -->
+                <div class="section-title" style="margin-top: 2rem;">
+                    <h2>Margin Charges</h2>
+                    <span class="text-muted">Add margin charges to the invoice</span>
+                </div>
+                
+                <!-- Margin Charges Table -->
+                <div class="table-container">
+                    <table class="invoice-table" id="marginChargesTable">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="15%">Type</th>
+                                <th width="30%">Description</th>
+                                <th width="10%">Unit</th>
+                                <th width="15%">Price/Qty (KWD)</th>
+                                <th width="10%">Qty</th>
+                                <th width="15%">Total (KWD)</th>
+                                <th width="5%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="marginChargesBody">
+                            <!-- Margin charges will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-add-margin" id="addMarginChargeBtn">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Margin Charge
+                    </button>
+                </div>
+                
+                <!-- Subtotal Summary -->
+                <div class="invoice-summary">
+                    <div class="summary-row">
+                        <div class="summary-label">Service Charges Subtotal:</div>
+                        <div class="summary-value" id="serviceSubtotal">0.000 KWD</div>
+                        <div class="summary-label">Margin Charges Subtotal:</div>
+                        <div class="summary-value" id="marginSubtotal">0.000 KWD</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label"></div>
+                        <div class="summary-value"></div>
+                        <div class="summary-label" style="font-weight: 600;">Total Charges:</div>
+                        <div class="summary-value" style="font-weight: 700; color: var(--primary-blue);" id="totalCharges">0.000 KWD</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Wizard Panel -->
+            <div class="wizard-panel">
+                <!-- Advance Payment Section -->
+                <div class="panel-section">
+                    <h3><i class="fa-solid fa-credit-card"></i> Advance Payment</h3>
+                    
+                    <div class="form-group-compact">
+                        <label for="advanceAmount">Amount (KWD)</label>
+                        <input type="number" 
+                               class="form-input-compact" 
+                               id="advanceAmount" 
+                               step="0.001" 
+                               min="0" 
+                               placeholder="0.000">
+                    </div>
+                    
+                    <div class="form-group-compact">
+                        <label for="paymentDate">Payment Date</label>
+                        <input type="date" 
+                               class="form-input-compact" 
+                               id="paymentDate">
+                    </div>
+                    
+                    <div class="form-group-compact">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select class="form-input-compact" id="paymentMethod">
+                            <option value="cash">Cash</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-compact">
+                        <label for="paymentReference">Reference Number</label>
+                        <input type="text" 
+                               class="form-input-compact" 
+                               id="paymentReference" 
+                               placeholder="Optional">
+                    </div>
+                </div>
+                
+                <!-- Invoice Summary Section -->
+                <div class="panel-section">
+                    <h3><i class="fa-solid fa-calculator"></i> Invoice Summary</h3>
+                    
+                    <div class="totals-card-compact">
+                        <div class="total-row-compact">
+                            <span class="total-label-compact">Service Charges:</span>
+                            <span class="total-value-compact" id="panelServiceSubtotal">0.000</span>
+                        </div>
+                        <div class="total-row-compact">
+                            <span class="total-label-compact">Margin Charges:</span>
+                            <span class="total-value-compact" id="panelMarginSubtotal">0.000</span>
+                        </div>
+                        <div class="total-row-compact">
+                            <span class="total-label-compact">Total Charges:</span>
+                            <span class="total-value-compact" id="panelTotalCharges">0.000</span>
+                        </div>
+                        <div class="total-row-compact">
+                            <span class="total-label-compact">Advance Payment:</span>
+                            <span class="total-value-compact" id="panelAdvance">0.000</span>
+                        </div>
+                        <div class="total-row-compact">
+                            <span class="total-label-compact">Tax (0%):</span>
+                            <span class="total-value-compact" id="panelTax">0.000</span>
+                        </div>
+                        <div class="total-row-compact grand-total-compact">
+                            <span class="total-label-compact">Balance Due:</span>
+                            <span class="total-value-compact" id="panelBalanceDue">0.000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group-compact">
+                        <label for="invoiceNotes"><i class="fa-solid fa-sticky-note"></i> Notes</label>
+                        <textarea class="form-input-compact" 
+                                  id="invoiceNotes" 
+                                  rows="3" 
+                                  placeholder="Add any notes for the invoice..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="wizard-actions">
+            <div class="action-buttons-group">
+                <button class="btn btn-secondary" id="cancelBtn">
+                    <i class="fa-solid fa-times"></i>
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fa-solid fa-save"></i>
+                    Save Invoice
+                </button>
+                <button class="btn btn-primary" id="saveAndGenerateBtn">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    Save & Generate PDF
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notification success" id="successMessage">
+        <i class="fa-solid fa-check-circle"></i>
+        <span>Operation completed successfully!</span>
+    </div>
+    
+    <div class="notification error" id="errorMessage">
+        <i class="fa-solid fa-exclamation-circle"></i>
+        <span id="errorMessageText">An error occurred!</span>
+    </div>
+    
+    <!-- Templates -->
+    <template id="serviceChargeRowTemplate">
+        <tr data-charge-id="{{id}}" data-type="service">
+            <td>{{serial}}</td>
+            <td>
+                <select class="table-select charge-type">
+                    <option value="Work">Work</option>
+                    <option value="Material">Material</option>
+                    <option value="Service">Service</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Other">Other</option>
+                    <option value="custom">Custom...</option>
+                </select>
+                <input type="text" 
+                       class="table-input custom-type mt-1" 
+                       placeholder="Enter custom type"
+                       style="display: none;">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input charge-description" 
+                       placeholder="Add description">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input charge-unit" 
+                       value="each" 
+                       placeholder="Unit">
+            </td>
+            <td>
+                <input type="number" 
+                       class="table-input charge-price" 
+                       value="0.000" 
+                       min="0" 
+                       step="0.001"
+                       placeholder="0.000">
+            </td>
+            <td>
+                <input type="number" 
+                       class="table-input charge-quantity" 
+                       value="1" 
+                       min="0.001" 
+                       step="0.001">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input charge-total readonly" 
+                       value="0.000" 
+                       readonly>
+            </td>
+            <td>
+                <button class="btn-remove remove-charge-btn">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+    
+    <template id="marginChargeRowTemplate">
+        <tr data-charge-id="{{id}}" data-type="margin">
+            <td>{{serial}}</td>
+            <td>
+                <select class="table-select margin-type">
+                    <option value="Profit Margin">Profit Margin</option>
+                    <option value="Service Fee">Service Fee</option>
+                    <option value="Administration">Administration</option>
+                    <option value="Other Margin">Other Margin</option>
+                    <option value="custom">Custom...</option>
+                </select>
+                <input type="text" 
+                       class="table-input custom-type mt-1" 
+                       placeholder="Enter custom type"
+                       style="display: none;">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input margin-description" 
+                       placeholder="Add margin description">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input margin-unit" 
+                       value="each" 
+                       placeholder="Unit">
+            </td>
+            <td>
+                <input type="number" 
+                       class="table-input margin-price" 
+                       value="0.000" 
+                       min="0" 
+                       step="0.001"
+                       placeholder="0.000">
+            </td>
+            <td>
+                <input type="number" 
+                       class="table-input margin-quantity" 
+                       value="1" 
+                       min="0.001" 
+                       step="0.001">
+            </td>
+            <td>
+                <input type="text" 
+                       class="table-input margin-total readonly" 
+                       value="0.000" 
+                       readonly>
+            </td>
+            <td>
+                <button class="btn-remove remove-margin-btn">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+    
+    <!-- JavaScript Files -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/auth.js" defer></script>
+    
+    <!-- Main JavaScript -->
+    <script type="module">
+        import { SidebarManager } from './scripts/sidebar.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            window.sidebarManager = new SidebarManager();
+            loadUserData();
+            initializeWizard();
+        });
+        
+        let wizardData = {
+            jobData: null,
+            chargeCounter: 1,
+            marginCounter: 1,
+            serviceCharges: [],
+            marginCharges: []
+        };
+        
+        function initializeWizard() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobCardParam = urlParams.get('jobCard');
+            
+            if (jobCardParam) {
+                try {
+                    wizardData.jobData = JSON.parse(decodeURIComponent(jobCardParam));
+                    initializeJobInfo();
+                } catch (e) {
+                    console.error('Error parsing job data:', e);
+                    showError('Invalid job data');
+                }
+            }
+            
+            // Set today's date as default payment date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+            
+            // Add event listeners
+            document.getElementById('addServiceChargeBtn').addEventListener('click', () => addChargeRow('service'));
+            document.getElementById('addMarginChargeBtn').addEventListener('click', () => addChargeRow('margin'));
+            document.getElementById('advanceAmount').addEventListener('input', updateTotals);
+            document.getElementById('cancelBtn').addEventListener('click', cancelWizard);
+            document.getElementById('saveBtn').addEventListener('click', () => saveInvoice(false));
+            document.getElementById('saveAndGenerateBtn').addEventListener('click', () => saveInvoice(true));
+            
+            // Add initial charge rows
+            addChargeRow('service');
+            addChargeRow('margin');
+            
+            // Set page title
+            if (wizardData.jobData) {
+                document.title = `Charges Wizard - ${wizardData.jobData.job_no}`;
+            }
+            
+            // Initialize totals
+            updateTotals();
+        }
+        
+        function loadUserData() {
+            try {
+                const userData = sessionStorage.getItem('pos_user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    document.getElementById('userName').textContent = user.name || 'User';
+                    document.getElementById('userRole').textContent = user.role || 'User';
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        function initializeJobInfo() {
+            if (!wizardData.jobData) return;
+            
+            const subtitle = document.getElementById('jobInfoSubtitle');
+            subtitle.textContent = `Manage charges and advance payment for ${wizardData.jobData.job_no}`;
+            
+            const infoRow = document.getElementById('jobInfoRow');
+            const infoCards = [
+                {
+                    label: 'Job Number',
+                    value: wizardData.jobData.job_no || 'N/A',
+                    icon: 'fa-hashtag'
+                },
+                {
+                    label: 'Customer',
+                    value: wizardData.jobData.customer_name || 'N/A',
+                    icon: 'fa-user-tie'
+                },
+                {
+                    label: 'Route',
+                    value: `${wizardData.jobData.departure_location || 'N/A'} → ${wizardData.jobData.arrival_location || 'N/A'}`,
+                    icon: 'fa-route'
+                },
+                {
+                    label: 'Shipper',
+                    value: wizardData.jobData.shipper_name || 'N/A',
+                    icon: 'fa-truck-loading'
+                },
+                {
+                    label: 'Waybill',
+                    value: wizardData.jobData.hbl || wizardData.jobData.habw || wizardData.jobData.truck_waybill_no || 'N/A',
+                    icon: 'fa-file-contract'
+                },
+                {
+                    label: 'Consignee',
+                    value: wizardData.jobData.consignee_name || 'N/A',
+                    icon: 'fa-user-check'
+                },
+                {
+                    label: 'Invoice Number',
+                    value: wizardData.jobData.invoice_no || 'Auto-generated',
+                    icon: 'fa-file-invoice'
+                },
+                {
+                    label: 'Status',
+                    value: getStatusDisplay(wizardData.jobData.status),
+                    icon: 'fa-circle-info',
+                    isStatus: true
+                }
+            ];
+            
+            infoCards.forEach(card => {
+                const cardHtml = `
+                    <div class="info-card-compact">
+                        <div class="info-icon">
+                            <i class="fa-solid ${card.icon}"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">${card.label}</div>
+                            <div class="info-value">${card.value}</div>
+                        </div>
+                    </div>
+                `;
+                infoRow.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+        
+        function getStatusDisplay(status) {
+            const statusMap = {
+                'draft': '<span class="status-badge status-draft">Draft</span>',
+                'submitted': '<span class="status-badge status-submitted">Submitted</span>',
+                'approved': '<span class="status-badge status-approved">Approved</span>',
+                'completed': '<span class="status-badge status-completed">Completed</span>',
+                'cancelled': '<span class="status-badge status-draft">Cancelled</span>'
+            };
+            return statusMap[status] || '<span class="status-badge status-draft">Unknown</span>';
+        }
+        
+        function addChargeRow(type) {
+            const tableId = type === 'service' ? 'serviceChargesBody' : 'marginChargesBody';
+            const templateId = type === 'service' ? 'serviceChargeRowTemplate' : 'marginChargeRowTemplate';
+            const counter = type === 'service' ? wizardData.chargeCounter++ : wizardData.marginCounter++;
+            
+            const tableBody = document.getElementById(tableId);
+            const template = document.getElementById(templateId).innerHTML;
+            
+            let rowHtml = template
+                .replace(/{{id}}/g, Date.now() + '-' + counter)
+                .replace(/{{serial}}/g, counter);
+            
+            tableBody.insertAdjacentHTML('beforeend', rowHtml);
+            const newRow = tableBody.lastElementChild;
+            setupChargeRowEvents(newRow, type);
+            updateTotals();
+        }
+        
+        function setupChargeRowEvents(row, type) {
+            // Type change for custom type
+            const typeSelect = row.querySelector('.charge-type, .margin-type');
+            const customInput = row.querySelector('.custom-type');
+            
+            if (typeSelect && customInput) {
+                typeSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customInput.style.display = 'block';
+                        customInput.focus();
+                    } else {
+                        customInput.style.display = 'none';
+                        customInput.value = '';
+                    }
+                });
+                
+                customInput.addEventListener('input', function() {
+                    if (this.value) {
+                        typeSelect.value = 'custom';
+                    }
+                });
+            }
+            
+            // Calculate row amount
+            const priceInput = row.querySelector('.charge-price, .margin-price');
+            const quantityInput = row.querySelector('.charge-quantity, .margin-quantity');
+            const totalInput = row.querySelector('.charge-total, .margin-total');
+            
+            const calculateRowAmount = () => {
+                const price = parseFloat(priceInput.value) || 0;
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const total = price * quantity;
+                totalInput.value = total.toFixed(3);
+                updateTotals();
+            };
+            
+            priceInput.addEventListener('input', calculateRowAmount);
+            quantityInput.addEventListener('input', calculateRowAmount);
+            
+            // Remove button
+            const removeBtn = row.querySelector('.remove-charge-btn, .remove-margin-btn');
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                updateTotals();
+            });
+        }
+        
+        function updateTotals() {
+            let serviceSubtotal = 0;
+            let marginSubtotal = 0;
+            
+            // Calculate service charges subtotal
+            document.querySelectorAll('#serviceChargesBody .charge-total').forEach(input => {
+                serviceSubtotal += parseFloat(input.value) || 0;
+            });
+            
+            // Calculate margin charges subtotal
+            document.querySelectorAll('#marginChargesBody .margin-total').forEach(input => {
+                marginSubtotal += parseFloat(input.value) || 0;
+            });
+            
+            const totalCharges = serviceSubtotal + marginSubtotal;
+            const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            const taxAmount = totalCharges * 0; // 0% tax for now
+            const balanceDue = totalCharges - advanceAmount;
+            
+            // Update display
+            document.getElementById('serviceSubtotal').textContent = serviceSubtotal.toFixed(3) + ' KWD';
+            document.getElementById('marginSubtotal').textContent = marginSubtotal.toFixed(3) + ' KWD';
+            document.getElementById('totalCharges').textContent = totalCharges.toFixed(3) + ' KWD';
+            
+            document.getElementById('panelServiceSubtotal').textContent = serviceSubtotal.toFixed(3);
+            document.getElementById('panelMarginSubtotal').textContent = marginSubtotal.toFixed(3);
+            document.getElementById('panelTotalCharges').textContent = totalCharges.toFixed(3);
+            document.getElementById('panelAdvance').textContent = advanceAmount.toFixed(3);
+            document.getElementById('panelTax').textContent = taxAmount.toFixed(3);
+            document.getElementById('panelBalanceDue').textContent = balanceDue.toFixed(3);
+        }
+        
+        function showLoading(message = 'Processing...') {
+            const loadingText = document.getElementById('loadingText');
+            const overlay = document.getElementById('loadingOverlay');
+            
+            // Add loading class to buttons
+            document.getElementById('saveBtn').classList.add('loading');
+            document.getElementById('saveAndGenerateBtn').classList.add('loading');
+            
+            loadingText.textContent = message;
+            overlay.classList.add('active');
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            
+            // Remove loading class from buttons
+            document.getElementById('saveBtn').classList.remove('loading');
+            document.getElementById('saveAndGenerateBtn').classList.remove('loading');
+            
+            overlay.classList.remove('active');
+        }
+        
+        function showSuccess(message = 'Operation completed successfully!') {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.querySelector('span').textContent = message;
+            successMsg.classList.add('show');
+            
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+        
+        function showError(message = 'An error occurred!') {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.querySelector('span').textContent = message;
+            errorMsg.classList.add('show');
+            
+            setTimeout(() => {
+                errorMsg.classList.remove('show');
+            }, 5000);
+        }
+        
+        function cancelWizard() {
+            if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+                window.history.back();
+            }
+        }
+        
+        async function saveInvoice(generatePDF = false) {
+            try {
+                if (!wizardData.jobData) {
+                    showError('Job data not found');
+                    return;
+                }
+                
+                // Collect service charges
+                const serviceCharges = [];
+                let hasEmptyServiceDescription = false;
+                
+                document.querySelectorAll('#serviceChargesBody tr[data-charge-id]').forEach(row => {
+                    const typeSelect = row.querySelector('.charge-type');
+                    const customInput = row.querySelector('.custom-type');
+                    const description = row.querySelector('.charge-description').value.trim();
+                    const unit = row.querySelector('.charge-unit').value.trim() || 'each';
+                    const price = parseFloat(row.querySelector('.charge-price').value) || 0;
+                    const quantity = parseFloat(row.querySelector('.charge-quantity').value) || 0;
+                    const total = parseFloat(row.querySelector('.charge-total').value) || 0;
+                    
+                    let type = typeSelect.value;
+                    if (type === 'custom') {
+                        type = customInput.value.trim();
+                    }
+                    
+                    if (!description) {
+                        hasEmptyServiceDescription = true;
+                        row.querySelector('.charge-description').focus();
+                        return;
+                    }
+                    
+                    serviceCharges.push({
+                        type,
+                        description,
+                        unit,
+                        price,
+                        quantity,
+                        total
+                    });
+                });
+                
+                if (hasEmptyServiceDescription) {
+                    showError('Please enter description for all service charges');
+                    return;
+                }
+                
+                // Collect margin charges
+                const marginCharges = [];
+                let hasEmptyMarginDescription = false;
+                
+                document.querySelectorAll('#marginChargesBody tr[data-charge-id]').forEach(row => {
+                    const typeSelect = row.querySelector('.margin-type');
+                    const customInput = row.querySelector('.custom-type');
+                    const description = row.querySelector('.margin-description').value.trim();
+                    const unit = row.querySelector('.margin-unit').value.trim() || 'each';
+                    const price = parseFloat(row.querySelector('.margin-price').value) || 0;
+                    const quantity = parseFloat(row.querySelector('.margin-quantity').value) || 0;
+                    const total = parseFloat(row.querySelector('.margin-total').value) || 0;
+                    
+                    let type = typeSelect.value;
+                    if (type === 'custom') {
+                        type = customInput.value.trim();
+                    }
+                    
+                    if (!description) {
+                        hasEmptyMarginDescription = true;
+                        row.querySelector('.margin-description').focus();
+                        return;
+                    }
+                    
+                    marginCharges.push({
+                        type,
+                        description,
+                        unit,
+                        price,
+                        quantity,
+                        total
+                    });
+                });
+                
+                if (hasEmptyMarginDescription) {
+                    showError('Please enter description for all margin charges');
+                    return;
+                }
+                
+                // Collect advance payment
+                const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+                let advancePayment = null;
+                
+                if (advanceAmount > 0) {
+                    advancePayment = {
+                        amount: advanceAmount,
+                        date: document.getElementById('paymentDate').value,
+                        method: document.getElementById('paymentMethod').value,
+                        reference: document.getElementById('paymentReference').value || null
+                    };
+                }
+                
+                // Prepare invoice data
+                const invoiceData = {
+                    jobCardId: wizardData.jobData.id,
+                    invoiceNo: wizardData.jobData.invoice_no || `INV-${Date.now()}`,
+                    date: new Date().toISOString().split('T')[0],
+                    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    notes: document.getElementById('invoiceNotes').value.trim(),
+                    serviceCharges,
+                    marginCharges,
+                    advancePayment
+                };
+                
+                // Get API base URL
+                const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+                
+                // Show loading
+                showLoading(generatePDF ? 'Saving and generating PDF...' : 'Saving invoice...');
+                
+                // Send to backend
+                const endpoint = generatePDF ? '/api/invoices/create-with-pdf' : '/api/invoices/create';
+                const response = await fetch(apiBaseUrl + endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    body: JSON.stringify(invoiceData)
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                
+                // Handle success
+                hideLoading();
+                showSuccess(generatePDF ? 'Invoice saved and PDF generated!' : 'Invoice saved successfully!');
+                
+                if (generatePDF && result.pdfUrl) {
+                    setTimeout(() => {
+                        window.open(result.pdfUrl, '_blank');
+                    }, 1000);
+                }
+                
+                // Redirect back
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Save invoice error:', error);
+                showError('Failed to save invoice: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
