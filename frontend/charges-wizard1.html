@@ -329,52 +329,124 @@
     
     <!-- Templates -->
     <template id="chargeRowTemplate">
-        <tr data-charge-id="{{id}}">
-            <td>
-                <select class="charge-select charge-description">
-                    <option value="">Select charge type...</option>
-                    {{#each chargeTypes}}
-                    <option value="{{this.name}}">{{this.name}}</option>
-                    {{/each}}
-                    <option value="custom">Custom...</option>
-                </select>
-                <input type="text" 
-                       class="charge-input custom-description mt-2" 
-                       placeholder="Enter custom description"
-                       style="display: none;">
-            </td>
-            <td>
-                <input type="number" 
-                       class="charge-input charge-quantity" 
-                       value="1" 
-                       min="0.001" 
-                       step="0.001">
-            </td>
-            <td>
-                <input type="text" 
-                       class="charge-input charge-unit" 
-                       value="each">
-            </td>
-            <td>
-                <input type="number" 
-                       class="charge-input charge-rate" 
-                       value="0.000" 
-                       min="0" 
-                       step="0.001">
-            </td>
-            <td>
-                <input type="text" 
-                       class="charge-input charge-amount readonly" 
-                       value="0.000" 
-                       readonly>
-            </td>
-            <td>
-                <button class="remove-charge-btn">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    </template>
+    <tr data-charge-id="{{id}}">
+        <td>
+            <select class="charge-select charge-description">
+                <option value="">Select charge type...</option>
+                
+                <option value="General Merchandise (Purchase)">General Merchandise (Purchase)</option>
+                <option value="Repair & Return Approval Charges">Repair & Return Approval Charges</option>
+                <option value="Normal Bayan Charges">Normal Bayan Charges</option>
+                <option value="Filling Original Custom Documents">Filling Original Custom Documents</option>
+                <option value="Handling Charges">Handling Charges</option>
+                <option value="Air Port Handling Charges">Air Port Handling Charges</option>
+                <option value="Global Clearance House System Charges">Global Clearance House System Charges</option>
+                <option value="Stamp">Stamp</option>
+                <option value="Transportation Charges">Transportation Charges</option>
+                <option value="Legalization Charges">Legalization Charges</option>
+                <option value="MOFA Legalization Service Charges">MOFA Legalization Service Charges</option>
+                <option value="MOFA Legalization Charges">MOFA Legalization Charges</option>
+                <option value="COC Legalization Service Charges">COC Legalization Service Charges</option>
+                <option value="COC Legalization Charges">COC Legalization Charges</option>
+                <option value="Customs Clearance Service Charges">Customs Clearance Service Charges</option>
+                <option value="PAI Approval Charges">PAI Approval Charges</option>
+                <option value="Inspection Charges">Inspection Charges</option>
+                <option value="DO Collection Service Charges">DO Collection Service Charges</option>
+                <option value="MOH Approval">MOH Approval</option>
+                <option value="Cross Docking Charges">Cross Docking Charges</option>
+                <option value="Cost of Damaged Items">Cost of Damaged Items</option>
+                <option value="Custom Duty">Custom Duty</option>
+                <option value="Transloading Charges">Transloading Charges</option>
+                <option value="Cost of Goods Service">Cost of Goods Service</option>
+                <option value="Direct Cost, Purchase">Direct Cost, Purchase</option>
+                <option value="Direct Cost, Purchase (Adj-chg)">Direct Cost, Purchase (Adj-chg)</option>
+                <option value="Freight Charges (Sea)">Freight Charges (Sea)</option>
+                <option value="Freight Charges (Air)">Freight Charges (Air)</option>
+                <option value="Freight Charges (Land)">Freight Charges (Land)</option>
+                <option value="Ocean Freight">Ocean Freight</option>
+                <option value="Air Freight">Air Freight</option>
+                <option value="Road Freight">Road Freight</option>
+                <option value="FCL Charges">FCL Charges</option>
+                <option value="LCL Charges">LCL Charges</option>
+                <option value="THC (Terminal Handling Charges)">THC (Terminal Handling Charges)</option>
+                <option value="Documentation Charges">Documentation Charges</option>
+                <option value="Bill of Lading Fee">Bill of Lading Fee</option>
+                <option value="Air Waybill Fee">Air Waybill Fee</option>
+                <option value="custom">Custom...</option>
+            </select>
+            <input type="text" 
+                   class="charge-input custom-description mt-2" 
+                   placeholder="Enter custom description"
+                   style="display: none;">
+        </td>
+        <td>
+            <input type="number" 
+                   class="charge-input charge-quantity" 
+                   value="1" 
+                   min="0.000" 
+                   step="0.250">
+        </td>
+        <td>
+            <select class="charge-select charge-unit">
+                <option value="nos">Nos</option>
+                <option value="kg">Kilogram (kg)</option>
+                <option value="ton">Tonne</option>
+                <option value="item">Item</option>
+                <option value="box">Box</option>
+                <option value="pallet">Pallet</option>
+                <option value="carton">Carton</option>
+                <option value="cubic-meter">Cubic Meter (CBM)</option>
+                <option value="container">Container</option>
+                <option value="20ft-container">20ft Container</option>
+                <option value="40ft-container">40ft Container</option>
+                <option value="40hc-container">40ft HC Container</option>
+                <option value="teu">TEU (Twenty-foot Equivalent Unit)</option>
+                <option value="kg-air">Kg (Air Freight)</option>
+                <option value="kg-sea">Kg (Sea Freight)</option>
+                <option value="cbm-air">CBM (Air Freight)</option>
+                <option value="cbm-sea">CBM (Sea Freight)</option>
+                <option value="w-m">Weight or Measurement (W/M)</option>
+                <option value="hour">Hour</option>
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="trip">Trip</option>
+                <option value="shipment">Shipment</option>
+                <option value="document">Document</option>
+                <option value="certificate">Certificate</option>
+                <option value="approval">Approval</option>
+                <option value="service">Service</option>
+                <option value="transaction">Transaction</option>
+                <option value="lot">Lot</option>
+                <option value="percentage">Percentage (%)</option>
+                <option value="flat">Flat Rate</option>
+                <option value="custom">Custom Unit...</option>
+            </select>
+            <input type="text" 
+                   class="charge-input custom-unit mt-2" 
+                   placeholder="Enter custom unit"
+                   style="display: none;">
+        </td>
+        <td>
+            <input type="number" 
+                   class="charge-input charge-rate" 
+                   value="0.000" 
+                   min="0" 
+                   step="0.001">
+        </td>
+        <td>
+            <input type="text" 
+                   class="charge-input charge-amount readonly" 
+                   value="0.000" 
+                   readonly>
+        </td>
+        <td>
+            <button class="remove-charge-btn">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+</template>
     
     <!-- JavaScript Files -->
     <script src="scripts/config.js"></script>
