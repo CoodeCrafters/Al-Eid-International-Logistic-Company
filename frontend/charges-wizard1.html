@@ -140,13 +140,14 @@
         <div class="wizard-main">
             <!-- Charges Section -->
             <div class="charges-section">
+                <!-- Required Charges Section -->
                 <div class="section-title">
-                    <h2>Charges</h2>
-                    <span class="text-muted">Add, edit, or remove charges</span>
+                    <h2>Required Charges</h2>
+                    <span class="text-muted">Add, edit, or remove required charges</span>
                 </div>
                 
                 <div class="charges-table-container">
-                    <table class="charges-table">
+                    <table class="charges-table" id="requiredChargesTable">
                         <thead>
                             <tr>
                                 <th width="30%">Description</th>
@@ -157,16 +158,62 @@
                                 <th width="5%">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="chargesTableBody">
-                            <!-- Charges will be added here -->
+                        <tbody id="requiredChargesTableBody">
+                            <!-- Required charges will be added here -->
                         </tbody>
                     </table>
                 </div>
                 
-                <button class="add-charge-btn" id="addChargeBtn">
+                <button class="add-charge-btn" id="addRequiredChargeBtn">
                     <i class="fa-solid fa-plus"></i>
-                    Add New Charge
+                    Add Required Charge
                 </button>
+
+                <!-- Marginal Charges Section -->
+                <div class="section-title" style="margin-top: 40px;">
+                    <h2>Marginal Charges</h2>
+                    <span class="text-muted">Add marginal charges (profit, fees, etc.)</span>
+                </div>
+                
+                <div class="charges-table-container">
+                    <table class="charges-table" id="marginalChargesTable">
+                        <thead>
+                            <tr>
+                                <th width="30%">Description</th>
+                                <th width="15%">Quantity</th>
+                                <th width="15%">Unit</th>
+                                <th width="20%">Unit Price (KWD)</th>
+                                <th width="15%">Amount (KWD)</th>
+                                <th width="5%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marginalChargesTableBody">
+                            <!-- Marginal charges will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="add-charge-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);" 
+                        id="addMarginalChargeBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Marginal Charge
+                </button>
+
+                <!-- Subtotal Summary -->
+                <div class="subtotal-summary">
+                    <div class="subtotal-row">
+                        <span class="subtotal-label">Required Charges Subtotal:</span>
+                        <span class="subtotal-value" id="requiredSubtotal">0.000 KWD</span>
+                    </div>
+                    <div class="subtotal-row">
+                        <span class="subtotal-label">Marginal Charges Subtotal:</span>
+                        <span class="subtotal-value" id="marginalSubtotal">0.000 KWD</span>
+                    </div>
+                    <div class="subtotal-row grand-total">
+                        <span class="subtotal-label">Total Charges:</span>
+                        <span class="subtotal-value" id="totalChargesSum">0.000 KWD</span>
+                    </div>
+                </div>
             </div>
             
             <!-- Wizard Panel (Right Panel) -->
@@ -353,57 +400,65 @@
         
         // Wizard JavaScript
         let wizardData = {
-            jobData: null,
-            chargeTypes: [],
-            chargeCounter: 1
-        };
+        jobData: null,
+        chargeTypes: [],
+        requiredChargeCounter: 1,
+        marginalChargeCounter: 1,
+        requiredCharges: [],
+        marginalCharges: []
+    };
         
         function initializeWizard() {
-            // Parse URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const jobCardParam = urlParams.get('jobCard');
-            const chargeTypesParam = urlParams.get('chargeTypes');
-            
-            if (jobCardParam) {
-                try {
-                    wizardData.jobData = JSON.parse(decodeURIComponent(jobCardParam));
-                    initializeJobInfo();
-                } catch (e) {
-                    console.error('Error parsing job data:', e);
-                    showError('Invalid job data');
-                }
-            }
-            
-            if (chargeTypesParam) {
-                try {
-                    wizardData.chargeTypes = JSON.parse(decodeURIComponent(chargeTypesParam));
-                } catch (e) {
-                    console.error('Error parsing charge types:', e);
-                }
-            }
-            
-            // Set today's date as default payment date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('paymentDate').value = today;
-            
-            // Add event listeners
-            document.getElementById('addChargeBtn').addEventListener('click', addChargeRow);
-            document.getElementById('advanceAmount').addEventListener('input', updateTotals);
-            document.getElementById('cancelBtn').addEventListener('click', cancelWizard);
-            document.getElementById('saveBtn').addEventListener('click', () => saveInvoice(false));
-            document.getElementById('saveAndGenerateBtn').addEventListener('click', () => saveInvoice(true));
-            
-            // Add initial charge row
-            addChargeRow();
-            
-            // Set page title
-            if (wizardData.jobData) {
-                document.title = `Charges Wizard - ${wizardData.jobData.job_no}`;
-            }
-            
-            // Initialize totals
-            updateTotals();
+    // Parse URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobCardParam = urlParams.get('jobCard');
+    const chargeTypesParam = urlParams.get('chargeTypes');
+    
+    if (jobCardParam) {
+        try {
+            wizardData.jobData = JSON.parse(decodeURIComponent(jobCardParam));
+            initializeJobInfo();
+        } catch (e) {
+            console.error('Error parsing job data:', e);
+            showError('Invalid job data');
         }
+    }
+    
+    if (chargeTypesParam) {
+        try {
+            wizardData.chargeTypes = JSON.parse(decodeURIComponent(chargeTypesParam));
+        } catch (e) {
+            console.error('Error parsing charge types:', e);
+        }
+    }
+    
+    // Set today's date as default payment date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('paymentDate').value = today;
+    
+    // Add event listeners - FIXED HERE
+    document.getElementById('addRequiredChargeBtn').addEventListener('click', () => addChargeRow('required'));
+    document.getElementById('addMarginalChargeBtn').addEventListener('click', () => addChargeRow('marginal'));
+    document.getElementById('advanceAmount').addEventListener('input', updateTotals);
+    document.getElementById('cancelBtn').addEventListener('click', cancelWizard);
+    document.getElementById('saveBtn').addEventListener('click', () => saveInvoice(false));
+    document.getElementById('saveAndGenerateBtn').addEventListener('click', () => saveInvoice(true));
+    
+    // Remove this line - it's trying to use the old button ID
+    // document.getElementById('addChargeBtn').addEventListener('click', addChargeRow);
+    
+    // Add initial charge rows - FIXED HERE
+    addChargeRow('required');
+    addChargeRow('marginal');
+    
+    // Set page title
+    if (wizardData.jobData) {
+        document.title = `Charges Wizard - ${wizardData.jobData.job_no}`;
+    }
+    
+    // Initialize totals
+    updateTotals();
+}
         
         function loadUserData() {
             try {
@@ -486,37 +541,7 @@
             return statusMap[status] || status;
         }
         
-        function addChargeRow() {
-            const tableBody = document.getElementById('chargesTableBody');
-            const template = document.getElementById('chargeRowTemplate').innerHTML;
-            
-            // Prepare charge options
-            let chargeOptions = '';
-            wizardData.chargeTypes.forEach(type => {
-                chargeOptions += `<option value="${type.name}">${type.name}</option>`;
-            });
-            
-            // Replace placeholders in template
-            let rowHtml = template
-                .replace('{{#each chargeTypes}}', '')
-                .replace('{{/each}}', '')
-                .replace(/{{chargeTypes}}/g, chargeOptions)
-                .replace(/{{id}}/g, wizardData.chargeCounter++);
-            
-            tableBody.insertAdjacentHTML('beforeend', rowHtml);
-            
-            // Get the new row
-            const newRow = tableBody.lastElementChild;
-            
-            // Add event listeners to the new row
-            setupChargeRowEvents(newRow);
-            
-            // Focus on description
-            newRow.querySelector('.charge-description').focus();
-            
-            // Update totals
-            updateTotals();
-        }
+        
 
         // In your sidebar toggle function
         function toggleSidebar() {
@@ -533,58 +558,108 @@
             }
         }
         
-        function setupChargeRowEvents(row) {
-            // Description change
-            const descriptionSelect = row.querySelector('.charge-description');
-            const customInput = row.querySelector('.custom-description');
+    function setupChargeRowEvents(row, type) { // Add type parameter
+        // Description change
+        const descriptionSelect = row.querySelector('.charge-description');
+        const customInput = row.querySelector('.custom-description');
+        
+        descriptionSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
+        });
+        
+        // Custom description input
+        customInput.addEventListener('input', function() {
+            if (this.value) {
+                descriptionSelect.value = 'custom';
+            }
+        });
+        
+        // Quantity and rate inputs
+        const quantityInput = row.querySelector('.charge-quantity');
+        const rateInput = row.querySelector('.charge-rate');
+        
+        const calculateRowAmount = () => {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const rate = parseFloat(rateInput.value) || 0;
+            const amount = quantity * rate;
+            row.querySelector('.charge-amount').value = amount.toFixed(3);
+            updateTotals();
+        };
+        
+        quantityInput.addEventListener('input', calculateRowAmount);
+        rateInput.addEventListener('input', calculateRowAmount);
+        
+        // Remove button - update data storage
+        const removeBtn = row.querySelector('.remove-charge-btn');
+        removeBtn.addEventListener('click', function() {
+            row.remove();
+            updateTotals();
+        });
+    }
+
+        function addChargeRow(type) {
+            const tableBodyId = type === 'required' ? 'requiredChargesTableBody' : 'marginalChargesTableBody';
+            const counter = type === 'required' ? wizardData.requiredChargeCounter++ : wizardData.marginalChargeCounter++;
             
-            descriptionSelect.addEventListener('change', function() {
-                if (this.value === 'custom') {
-                    customInput.style.display = 'block';
-                    customInput.focus();
-                } else {
-                    customInput.style.display = 'none';
-                    customInput.value = '';
-                }
+            const tableBody = document.getElementById(tableBodyId);
+            const template = document.getElementById('chargeRowTemplate').innerHTML;
+            
+            // Prepare charge options - you can customize for each type
+            let chargeOptions = '';
+            wizardData.chargeTypes.forEach(typeOption => {
+                chargeOptions += `<option value="${typeOption.name}">${typeOption.name}</option>`;
             });
             
-            // Custom description input
-            customInput.addEventListener('input', function() {
-                if (this.value) {
-                    descriptionSelect.value = 'custom';
-                }
-            });
+            // Add specific options for marginal charges
+            if (type === 'marginal') {
+                chargeOptions += '<option value="Profit Margin">Profit Margin</option>';
+                chargeOptions += '<option value="Service Fee">Service Fee</option>';
+                chargeOptions += '<option value="Administration Fee">Administration Fee</option>';
+            }
             
-            // Quantity and rate inputs
-            const quantityInput = row.querySelector('.charge-quantity');
-            const rateInput = row.querySelector('.charge-rate');
+            // Replace placeholders in template
+            let rowHtml = template
+                .replace('{{#each chargeTypes}}', '')
+                .replace('{{/each}}', '')
+                .replace(/{{chargeTypes}}/g, chargeOptions)
+                .replace(/{{id}}/g, `${type}-${counter}`);
             
-            const calculateRowAmount = () => {
-                const quantity = parseFloat(quantityInput.value) || 0;
-                const rate = parseFloat(rateInput.value) || 0;
-                const amount = quantity * rate;
-                row.querySelector('.charge-amount').value = amount.toFixed(3);
-                updateTotals();
-            };
+            tableBody.insertAdjacentHTML('beforeend', rowHtml);
             
-            quantityInput.addEventListener('input', calculateRowAmount);
-            rateInput.addEventListener('input', calculateRowAmount);
+            // Get the new row
+            const newRow = tableBody.lastElementChild;
             
-            // Remove button
-            const removeBtn = row.querySelector('.remove-charge-btn');
-            removeBtn.addEventListener('click', function() {
-                row.remove();
-                updateTotals();
-            });
+            // Add event listeners to the new row
+            setupChargeRowEvents(newRow, type);
+            
+            // Focus on description
+            newRow.querySelector('.charge-description').focus();
+            
+            // Update totals
+            updateTotals();
         }
         
         function updateTotals() {
-            let totalCharges = 0;
+            let requiredSubtotal = 0;
+            let marginalSubtotal = 0;
             
-            // Calculate total charges
-            document.querySelectorAll('.charge-amount').forEach(input => {
-                totalCharges += parseFloat(input.value) || 0;
+            // Calculate required charges subtotal
+            document.querySelectorAll('#requiredChargesTableBody .charge-amount').forEach(input => {
+                requiredSubtotal += parseFloat(input.value) || 0;
             });
+            
+            // Calculate marginal charges subtotal
+            document.querySelectorAll('#marginalChargesTableBody .charge-amount').forEach(input => {
+                marginalSubtotal += parseFloat(input.value) || 0;
+            });
+            
+            const totalCharges = requiredSubtotal + marginalSubtotal;
             
             // Get advance payment
             const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
@@ -596,13 +671,17 @@
             // Calculate balance due
             const balanceDue = totalCharges - advanceAmount;
             
-            // Update display
+            // Update subtotal display
+            document.getElementById('requiredSubtotal').textContent = requiredSubtotal.toFixed(3) + ' KWD';
+            document.getElementById('marginalSubtotal').textContent = marginalSubtotal.toFixed(3) + ' KWD';
+            document.getElementById('totalChargesSum').textContent = totalCharges.toFixed(3) + ' KWD';
+            
+            // Update main totals display (keep your existing panel updates)
             document.getElementById('totalCharges').textContent = totalCharges.toFixed(3);
             document.getElementById('totalAdvance').textContent = advanceAmount.toFixed(3);
             document.getElementById('totalTax').textContent = taxAmount.toFixed(3);
             document.getElementById('balanceDue').textContent = balanceDue.toFixed(3);
         }
-        
         function showLoading(message = 'Processing...') {
             document.getElementById('loadingText').textContent = message;
             document.getElementById('loadingOverlay').classList.add('active');
@@ -645,11 +724,11 @@
                     return;
                 }
                 
-                // Validate charges
-                const charges = [];
-                let hasEmptyDescription = false;
+                // Collect required charges
+                const requiredCharges = [];
+                let hasEmptyRequiredDescription = false;
                 
-                document.querySelectorAll('tr[data-charge-id]').forEach(row => {
+                document.querySelectorAll('#requiredChargesTableBody tr[data-charge-id]').forEach(row => {
                     const descriptionSelect = row.querySelector('.charge-description');
                     const customInput = row.querySelector('.custom-description');
                     let description = '';
@@ -661,7 +740,7 @@
                     }
                     
                     if (!description) {
-                        hasEmptyDescription = true;
+                        hasEmptyRequiredDescription = true;
                         descriptionSelect.focus();
                         return;
                     }
@@ -672,11 +751,12 @@
                     const amount = parseFloat(row.querySelector('.charge-amount').value) || 0;
                     
                     if (quantity <= 0 || rate <= 0) {
-                        showError('Quantity and unit price must be greater than 0');
+                        showError('Quantity and unit price must be greater than 0 for required charges');
                         return;
                     }
                     
-                    charges.push({
+                    requiredCharges.push({
+                        type: 'required',
                         description,
                         quantity,
                         unit,
@@ -685,17 +765,61 @@
                     });
                 });
                 
-                if (hasEmptyDescription) {
-                    showError('Please enter description for all charges');
+                if (hasEmptyRequiredDescription) {
+                    showError('Please enter description for all required charges');
                     return;
                 }
                 
-                if (charges.length === 0) {
+                // Collect marginal charges
+                const marginalCharges = [];
+                let hasEmptyMarginalDescription = false;
+                
+                document.querySelectorAll('#marginalChargesTableBody tr[data-charge-id]').forEach(row => {
+                    const descriptionSelect = row.querySelector('.charge-description');
+                    const customInput = row.querySelector('.custom-description');
+                    let description = '';
+                    
+                    if (descriptionSelect.value === 'custom') {
+                        description = customInput.value.trim();
+                    } else {
+                        description = descriptionSelect.value;
+                    }
+                    
+                    if (!description) {
+                        hasEmptyMarginalDescription = true;
+                        descriptionSelect.focus();
+                        return;
+                    }
+                    
+                    const quantity = parseFloat(row.querySelector('.charge-quantity').value) || 0;
+                    const unit = row.querySelector('.charge-unit').value.trim() || 'each';
+                    const rate = parseFloat(row.querySelector('.charge-rate').value) || 0;
+                    const amount = parseFloat(row.querySelector('.charge-amount').value) || 0;
+                    
+                    marginalCharges.push({
+                        type: 'marginal',
+                        description,
+                        quantity,
+                        unit,
+                        rate,
+                        amount
+                    });
+                });
+                
+                if (hasEmptyMarginalDescription) {
+                    showError('Please enter description for all marginal charges');
+                    return;
+                }
+                
+                // Combine all charges
+                const allCharges = [...requiredCharges, ...marginalCharges];
+                
+                if (allCharges.length === 0) {
                     showError('Please add at least one charge');
                     return;
                 }
                 
-                // Collect advance payment
+                // Collect advance payment (existing code)
                 const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
                 let advancePayment = null;
                 
@@ -708,54 +832,17 @@
                     };
                 }
                 
-                // Prepare invoice data
+                // Prepare invoice data - update to include charge types
                 const invoiceData = {
                     jobCardId: wizardData.jobData.id,
                     date: new Date().toISOString().split('T')[0],
                     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                     notes: document.getElementById('invoiceNotes').value.trim(),
-                    charges,
+                    charges: allCharges, // Now includes both required and marginal
+                    requiredChargesSubtotal: requiredCharges.reduce((sum, charge) => sum + charge.amount, 0),
+                    marginalChargesSubtotal: marginalCharges.reduce((sum, charge) => sum + charge.amount, 0),
                     advancePayment
                 };
-                
-                // Get API base URL
-                const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
-                
-                // Show loading
-                showLoading(generatePDF ? 'Saving and generating PDF...' : 'Saving invoice...');
-                
-                // Send to backend
-                const endpoint = generatePDF ? '/api/invoices/create-with-pdf' : '/api/invoices/create';
-                const response = await fetch(apiBaseUrl + endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                    },
-                    body: JSON.stringify(invoiceData)
-                });
-                
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.message);
-                }
-                
-                // Handle success
-                hideLoading();
-                showSuccess(generatePDF ? 'Invoice saved and PDF generated!' : 'Invoice saved successfully!');
-                
-                if (generatePDF && result.pdfUrl) {
-                    // Open PDF in new tab
-                    setTimeout(() => {
-                        window.open(result.pdfUrl, '_blank');
-                    }, 1000);
-                }
-                
-                // Redirect back to main page after success
-                setTimeout(() => {
-                    window.location.href = 'home.html';
-                }, 2000);
                 
             } catch (error) {
                 hideLoading();
