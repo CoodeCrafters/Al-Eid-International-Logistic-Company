@@ -16,29 +16,7 @@
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="header-left">
-            <div class="logo-circle">
-                <i class="fas fa-shipping-fast"></i>
-            </div>
-            <div class="company-info">
-                <h1 class="company-title">AI Eid International Logistic Company</h1>
-                <p class="company-tagline">Global Logistics & Transport Solutions</p>
-            </div>
-        </div>
-        
-        <div class="header-right">
-            <div class="system-info">
-                <div class="system-time" id="systemTime">00:00:00</div>
-                <div class="system-date" id="systemDate">Saturday, January 3, 2026</div>
-            </div>
-            
-            <div class="user-profile">
-                <i class="fas fa-user-circle"></i>
-                <span class="profile-name" id="userName">Admin User</span>
-            </div>
-        </div>
-    </header>
+    
     <br><br></br>
 
     <!-- Sidebar (From your sidebar.js style) -->
@@ -111,10 +89,36 @@
         </div>
     </aside>
 
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo-circle">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="company-info">
+                <h1 class="company-title">AI Eid International Logistic Company</h1>
+                <p class="company-tagline">Global Logistics & Transport Solutions</p>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="system-info">
+                <div class="system-time" id="systemTime">00:00:00</div>
+                <div class="system-date" id="systemDate">Saturday, January 3, 2026</div>
+            </div>
+            
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="profile-name" id="userName">Admin User</span>
+            </div>
+        </div>
+    </header>
+
     <!-- Mobile Menu Toggle -->
     <button class="menu-btn" id="mobileMenuToggle">
         <i class="fas fa-bars"></i>
     </button>
+
+
 
     <!-- Main Content -->
     <main class="main-content">
@@ -512,6 +516,21 @@
             
             // Update totals
             updateTotals();
+        }
+
+        // In your sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const header = document.getElementById('mainHeader');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            // Force update header position
+            if (sidebar.classList.contains('collapsed')) {
+                header.style.left = '70px';
+            } else {
+                header.style.left = '240px';
+            }
         }
         
         function setupChargeRowEvents(row) {
