@@ -1,18 +1,6 @@
 // Import SidebarManager from sidebar.js
 import { SidebarManager } from './sidebar.js';
 
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Sidebar
-    window.sidebarManager = new SidebarManager();
-    
-    // Load user data for sidebar
-    window.loadUserData();
-    
-    // Now initialize the wizard
-    window.initializeWizard();
-});
-
 // Wizard JavaScript - attach to window object
 window.wizardData = {
     jobData: null,
@@ -22,6 +10,106 @@ window.wizardData = {
     requiredCharges: [],
     marginalCharges: []
 };
+
+// Define all functions BEFORE using them
+window.loadUserData = function() {
+    try {
+        const userData = sessionStorage.getItem('pos_user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            const userName = document.getElementById('userName');
+            const userRole = document.getElementById('userRole');
+            
+            if (userName) userName.textContent = user.name || 'User';
+            if (userRole) userRole.textContent = user.role || 'User';
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+    }
+};
+
+// Add this function to load charge types
+// Add this function to load charge types
+async function loadChargeTypes() {
+    try {
+        // Use Utils.getApiBaseUrl() to get the correct backend URL
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+        console.log('Fetching charge types from:', apiBaseUrl);
+        
+        const response = await fetch(`${apiBaseUrl}/api/charges/types`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('Loaded charge types:', result.data);
+            window.wizardData.chargeTypes = result.data;
+        } else {
+            console.warn('Failed to load charge types:', result.message);
+        }
+    } catch (error) {
+        console.error('Failed to load charge types:', error);
+        // Fallback to default charges if API fails
+        window.wizardData.chargeTypes = [
+            { id: '1', name: 'General Merchandise (Purchase)' },
+            { id: '2', name: 'Repair & Return Approval Charges' },
+            { id: '3', name: 'Normal Bayan Charges' },
+            { id: '4', name: 'Filling Original Custom Documents' },
+            { id: '5', name: 'Handling Charges' },
+            { id: '6', name: 'Air Port Handling Charges' },
+            { id: '7', name: 'Global Clearance House System Charges' },
+            { id: '8', name: 'Stamp' },
+            { id: '9', name: 'Transportation Charges' },
+            { id: '10', name: 'Legalization Charges' },
+            { id: '11', name: 'MOFA Legalization Service Charges' },
+            { id: '12', name: 'MOFA Legalization Charges' },
+            { id: '13', name: 'COC Legalization Service Charges' },
+            { id: '14', name: 'COC Legalization Charges' },
+            { id: '15', name: 'Customs Clearance Service Charges' },
+            { id: '16', name: 'PAI Approval Charges' },
+            { id: '17', name: 'Inspection Charges' },
+            { id: '18', name: 'DO Collection Service Charges' },
+            { id: '19', name: 'MOH Approval' },
+            { id: '20', name: 'Cross Docking Charges' },
+            { id: '21', name: 'Cost of Damaged Items' },
+            { id: '22', name: 'Custom Duty' },
+            { id: '23', name: 'Transloading Charges' },
+            { id: '24', name: 'Cost of Goods Service' },
+            { id: '25', name: 'Direct Cost, Purchase' },
+            { id: '26', name: 'Direct Cost, Purchase (Adj-chg)' },
+            { id: '27', name: 'Freight Charges (Sea)' },
+            { id: '28', name: 'Freight Charges (Air)' },
+            { id: '29', name: 'Freight Charges (Land)' },
+            { id: '30', name: 'Ocean Freight' },
+            { id: '31', name: 'Air Freight' },
+            { id: '32', name: 'Road Freight' },
+            { id: '33', name: 'FCL Charges' },
+            { id: '34', name: 'LCL Charges' },
+            { id: '35', name: 'THC (Terminal Handling Charges)' },
+            { id: '36', name: 'Documentation Charges' },
+            { id: '37', name: 'Bill of Lading Fee' },
+            { id: '38', name: 'Air Waybill Fee' }
+        ];
+    }
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize Sidebar
+    window.sidebarManager = new SidebarManager();
+    
+    // Load user data for sidebar
+    window.loadUserData();
+    
+    // Load charge types from backend
+    await loadChargeTypes();
+    
+    // Now initialize the wizard
+    window.initializeWizard();
+});
 
 window.initializeWizard = function() {
     // Parse URL parameters
@@ -70,22 +158,6 @@ window.initializeWizard = function() {
     
     // Initialize totals
     window.updateTotals();
-};
-
-window.loadUserData = function() {
-    try {
-        const userData = sessionStorage.getItem('pos_user');
-        if (userData) {
-            const user = JSON.parse(userData);
-            const userName = document.getElementById('userName');
-            const userRole = document.getElementById('userRole');
-            
-            if (userName) userName.textContent = user.name || 'User';
-            if (userRole) userRole.textContent = user.role || 'User';
-        }
-    } catch (error) {
-        console.error('Error loading user data:', error);
-    }
 };
 
 window.initializeJobInfo = function() {
@@ -226,10 +298,15 @@ window.addChargeRow = function(type) {
     const template = document.getElementById('chargeRowTemplate').innerHTML;
     
     // Prepare charge options - you can customize for each type
-    let chargeOptions = '';
+    let chargeOptions = '<option value="">Select charge type</option>';
+    
+    // Add default charge types
     window.wizardData.chargeTypes.forEach(typeOption => {
-        chargeOptions += `<option value="${typeOption.name}">${typeOption.name}</option>`;
+        chargeOptions += `<option value="${typeOption.name || typeOption.charge_name}">${typeOption.name || typeOption.charge_name}</option>`;
     });
+    
+    // Add custom option
+    chargeOptions += '<option value="custom">Custom...</option>';
     
     // Add specific options for marginal charges
     if (type === 'marginal') {
@@ -332,8 +409,11 @@ window.cancelWizard = function() {
 
 window.saveInvoice = async function(generatePDF = false) {
     try {
+        window.showLoading('Saving invoice...');
+        
         if (!window.wizardData.jobData) {
             window.showError('Job data not found');
+            window.hideLoading();
             return;
         }
         
@@ -365,6 +445,7 @@ window.saveInvoice = async function(generatePDF = false) {
             
             if (quantity <= 0 || rate <= 0) {
                 window.showError('Quantity and unit price must be greater than 0 for required charges');
+                window.hideLoading();
                 return;
             }
             
@@ -380,6 +461,7 @@ window.saveInvoice = async function(generatePDF = false) {
         
         if (hasEmptyRequiredDescription) {
             window.showError('Please enter description for all required charges');
+            window.hideLoading();
             return;
         }
         
@@ -421,6 +503,7 @@ window.saveInvoice = async function(generatePDF = false) {
         
         if (hasEmptyMarginalDescription) {
             window.showError('Please enter description for all marginal charges');
+            window.hideLoading();
             return;
         }
         
@@ -429,10 +512,11 @@ window.saveInvoice = async function(generatePDF = false) {
         
         if (allCharges.length === 0) {
             window.showError('Please add at least one charge');
+            window.hideLoading();
             return;
         }
         
-        // Collect advance payment (existing code)
+        // Collect advance payment
         const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
         let advancePayment = null;
         
@@ -445,21 +529,94 @@ window.saveInvoice = async function(generatePDF = false) {
             };
         }
         
-        // Prepare invoice data - update to include charge types
+        // Calculate totals
+        const requiredSubtotal = requiredCharges.reduce((sum, charge) => sum + charge.amount, 0);
+        const marginalSubtotal = marginalCharges.reduce((sum, charge) => sum + charge.amount, 0);
+        const totalCharges = requiredSubtotal + marginalSubtotal;
+        const taxRate = 0; // 0% tax for now
+        const taxAmount = totalCharges * taxRate;
+        
+        // Get user data
+        const userData = sessionStorage.getItem('pos_user');
+        const user = userData ? JSON.parse(userData) : { id: 'system' };
+        
+        // Prepare invoice data
         const invoiceData = {
             jobCardId: window.wizardData.jobData.id,
+            invoiceNumber: window.wizardData.jobData.invoice_no, // Use existing invoice number
             date: new Date().toISOString().split('T')[0],
             dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             notes: document.getElementById('invoiceNotes').value.trim(),
             charges: allCharges, // Now includes both required and marginal
-            requiredChargesSubtotal: requiredCharges.reduce((sum, charge) => sum + charge.amount, 0),
-            marginalChargesSubtotal: marginalCharges.reduce((sum, charge) => sum + charge.amount, 0),
-            advancePayment
+            requiredChargesSubtotal: requiredSubtotal,
+            marginalChargesSubtotal: marginalSubtotal,
+            subtotal: totalCharges,
+            tax: taxAmount,
+            total: totalCharges + taxAmount,
+            advancePayment: advancePayment,
+            createdBy: user.id || 'system'
         };
+        
+        console.log('Sending invoice data:', invoiceData);
+        
+        // Use Utils.getApiBaseUrl() to get the correct backend URL
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+        console.log('Saving invoice to:', apiBaseUrl);
+        
+        const response = await fetch(`${apiBaseUrl}/api/invoices/creation`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('token') || ''}`
+            },
+            body: JSON.stringify(invoiceData)
+        });
+        
+        const result = await response.json();
+        
+        window.hideLoading();
+        
+        if (result.success) {
+            window.showSuccess('Invoice saved successfully!');
+            
+            if (generatePDF) {
+                // Generate PDF if requested
+                window.generatePDF(result.invoiceId);
+            }
+            
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.history.back();
+            }, 2000);
+        } else {
+            window.showError(result.message || 'Failed to save invoice');
+        }
         
     } catch (error) {
         window.hideLoading();
         console.error('Save invoice error:', error);
         window.showError('Failed to save invoice: ' + error.message);
+    }
+};
+
+// PDF generation function
+window.generatePDF = function(invoiceId) {
+    try {
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+        window.open(`${apiBaseUrl}/api/invoices/${invoiceId}/pdf`, '_blank');
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        window.showError('Failed to generate PDF: ' + error.message);
+    }
+};
+
+// PDF generation function
+window.generatePDF = function(invoiceId) {
+    try {
+        const apiBaseUrl = window.CONFIG?.API_BASE_URL || 'http://localhost:5000';
+        window.open(`${apiBaseUrl}/api/invoices/${invoiceId}/pdf`, '_blank');
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        window.showError('Failed to generate PDF: ' + error.message);
     }
 };
