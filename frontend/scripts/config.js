@@ -1,5 +1,5 @@
 // config.js
 const CONFIG = {
-    API_BASE_URL: 'https://paragraph-mba-trusts-aged.trycloudflare.com'
+    API_BASE_URL: 'https://quantities-zone-starsmerchant-childrens.trycloudflare.com'
 };
 window.CONFIG = CONFIG;
