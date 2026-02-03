@@ -360,7 +360,7 @@
             "52527336", "97672920", "97606242", "52527323", "52527337", 
             "97478745", "99139788", "99148322", "55837755", "94961539", 
             "98791796", "98015827", "97422945", "96052261", "98857206", 
-            "98823571"
+            "98823571", "97254004", "97532586", "97448536", "97690412", "97151983", "98577165"
         ];
         
         // DOM elements
@@ -540,6 +540,7 @@
         }
         
         // Display the results in the table and textarea
+       // Display the results in the table and textarea
         function displayResults(billData) {
             // Clear previous results
             resultsBody.innerHTML = '';
@@ -580,8 +581,22 @@
             let formattedOutput = '';
             let amountsOnlyOutput = '';
             
-            billData.forEach(item => {
+            // Find the index where new numbers start (97254004)
+            const newNumbersStartIndex = phoneNumbers.indexOf("97254004");
+            
+            billData.forEach((item, index) => {
                 formattedOutput += `${item.phoneNumber}: ${item.newBill}\n`;
+                
+                // Check if this is where the new numbers start
+                const currentIndex = phoneNumbers.indexOf(item.phoneNumber);
+                if (currentIndex >= newNumbersStartIndex) {
+                    // This is a new number (or after the first new number)
+                    // Add two blank lines before the first new number's amount
+                    if (currentIndex === newNumbersStartIndex) {
+                        amountsOnlyOutput += '\n\n'; // Two blank lines before first new number
+                    }
+                }
+                
                 amountsOnlyOutput += `${item.newBill}\n`;
             });
             
