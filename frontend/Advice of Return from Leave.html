@@ -332,16 +332,18 @@
         
         .pdf-company-name-english {
             font-family: 'Calibri', sans-serif;
-            font-size: 16px;
+            font-size: 24px;
             font-weight: 700;
             color: #1e4569;
+            padding-left: 10px;
         }
         
         .pdf-company-name-arabic {
             font-family: 'Mirza', cursive;
-            font-size: 18px;
+            font-size: 30px;
             color: #1e4569;
-            direction: rtl;
+            direction: srtl;
+            text-align: center;
         }
         
         .pdf-company-slogan {
@@ -359,7 +361,7 @@
         
         .pdf-form-title-arabic {
             font-family: 'Mirza', cursive;
-            font-size: 24px;
+            font-size: 30px;
             color: #2c5f8c;
             direction: rtl;
             margin-bottom: 5px;
@@ -368,7 +370,7 @@
         
         .pdf-form-title-english {
             font-family: 'Calibri', sans-serif;
-            font-size: 20px;
+            font-size: 24px;
             color: #2c5f8c;
             font-weight: 600;
         }
@@ -616,9 +618,7 @@
                         <div class="pdf-company-name-arabic">شركة العيد انترناشيونال لوجستكس</div>
                     </div>
                 </div>
-                <div class="pdf-company-slogan">
-                    شركة العيد الدولية للوجستيات
-                </div>
+               
             </div>
             
             <!-- PDF Form Title -->
@@ -634,7 +634,7 @@
                         <strong>Date:</strong> <span id="preview-date">DD/MM/YYYY</span><br><br>
                         <strong>To: Accounts Department (Staff Record & Pay Section)</strong><br><br>
                         <strong>I, The Undersigned</strong><br>
-                        I Have Returned From My Holidays Which Commenced<br>
+                        I Have Returned From My Holidays Which Commenced On <br>
                         <span id="preview-start-date">[Start Date]</span>
                     </td>
                     <td width="50%" style="font-family: 'Mirza', cursive; direction: rtl; text-align: right; padding: 15px;">
@@ -689,6 +689,20 @@
                         </div>
                     </td>
                 </tr>
+
+                <tr>
+                    <td colspan="2" style="
+                        font-family: 'Calibri', sans-serif;
+                        padding: 10px;
+                        text-align: center;
+                        font-weight: bold;
+                        text-decoration: underline;
+                        font-size: 18px;
+                    ">
+                        For Official Use Only
+                    </td>
+                </tr>
+
                 <tr>
                     <td style="font-family: 'Calibri', sans-serif; padding: 15px;">
                         <strong>Particulars of Staff Record</strong><br><br>
@@ -718,6 +732,7 @@
         
         <div class="buttons no-print">
             <button class="generate-btn" onclick="generatePDF()">Generate & Download PDF</button>
+            <button class="generate-text-btn" onclick="generateTextPDF()">Generate & Download Text</button>
             <button class="reset-btn" onclick="resetForm()">Reset Form</button>
         </div>
         
@@ -861,8 +876,8 @@
             document.getElementById('preview-unpaid-days-ar').textContent = unpaidDays || "0";
             
             // With these lines:
-            document.getElementById('preview-posted').textContent = `${employeeName} (ID: ${employeeId}) - ${department}`;
-            document.getElementById('preview-posted-ar').textContent = `${employeeName} (رقم: ${employeeId}) - ${department}`;
+            document.getElementById('preview-posted').textContent = `${employeeName} - ${department}`;
+            document.getElementById('preview-posted-ar').textContent = `${employeeName} - ${department}`;
             
             document.getElementById('preview-form-date').textContent = formattedCurrentDate;
             document.getElementById('preview-form-date-ar').textContent = formattedCurrentDate;
@@ -990,6 +1005,9 @@
             // Hide the preview
             document.getElementById('pdf-preview').style.display = 'none';
         }
+
+
+            
     </script>
 </body>
 </html>
