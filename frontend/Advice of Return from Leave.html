@@ -874,9 +874,15 @@
             document.getElementById('preview-unpaid-days').textContent = unpaidDays || "0";
             document.getElementById('preview-unpaid-days-ar').textContent = unpaidDays || "0";
             
-            // With these lines:
-            document.getElementById('preview-posted').textContent = `${employeeName} - ${department}`;
-            document.getElementById('preview-posted-ar').textContent = `${employeeName} - ${department}`;
+            // For English section - multi-line with labels
+            document.getElementById('preview-posted').innerHTML = 
+                `Employee Name: ${employeeName}<br>` +
+                `Department: ${department}`;
+
+// For Arabic section - multi-line with labels in Arabic
+            document.getElementById('preview-posted-ar').innerHTML = 
+                `اسم الموظف: ${employeeName}<br>` +
+                `القسم: ${department}`;
             
             document.getElementById('preview-form-date').textContent = formattedCurrentDate;
             document.getElementById('preview-form-date-ar').textContent = formattedCurrentDate;
