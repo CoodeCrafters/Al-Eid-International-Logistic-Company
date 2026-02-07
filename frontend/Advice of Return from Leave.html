@@ -231,7 +231,7 @@
         .signature-line {
             height: 1px;
             background-color: #333;
-            margin-top: 40px;
+            margin-top: 90px;
             margin-bottom: 5px;
         }
         
@@ -404,6 +404,27 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain; /* Add this for proper scaling */
+        }
+
+
+        /* Style for read-only Arabic fields */
+        .input-group input[readonly] {
+            background-color: #f9f9f9 !important;
+            cursor: not-allowed;
+            border-color: #ddd !important;
+            color: #555;
+        }
+
+        .input-group input[readonly]:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #ddd !important;
+        }
+
+        /* Arabic labels for read-only fields */
+        .arabic-side .input-group label {
+            color: #666;
+            font-style: italic;
         }
     </style>
 </head>
