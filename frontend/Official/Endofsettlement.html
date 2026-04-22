@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settlement PDF Generator</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* --- VISUAL STYLES FOR THE INTERFACE --- */
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 900px; margin-top: 40px; }
+        
+        /* --- STYLES FOR THE PDF OUTPUT (EXCEL REPLICA) --- */
+        /* This section is hidden on the screen but used for the PDF */
+        #pdf-content {
+            display: none; /* Hidden until generation */
+            width: 100%;
+            background: white;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            color: black;
+        }
+
+        /* Replicating Excel Grid */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .excel-table th, .excel-table td {
+            border: 1px solid #000; /* Distinct black borders like Excel */
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .excel-table th {
+            background-color: #d9d9d9; /* Excel header grey */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .section-header {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .text-right { text-align: right !important; }
+        .text-center { text-align: center !important; }
+        .font-bold { font-weight: bold; }
+        
+        /* Banner Styling */
+        .company-banner {
+            width: 100%;
+            max-height: 150px;
+            object-fit: contain; /* Keeps aspect ratio */
+            margin-bottom: 20px;
+            /* You can adjust alignment here: left, center, right */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Settlement Sheet Generator</h4>
+        </div>
+        <div class="card-body">
+            <form id="dataForm">
+                <h5 class="text-secondary mb-3">Employee Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Employee Name</label>
+                        <input type="text" id="empName" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Designation</label>
+                        <input type="text" id="designation" class="form-control" placeholder="Engineer">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Joining Date</label>
+                        <input type="date" id="joinDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Resignation Date</label>
+                        <input type="date" id="resDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Last Working Day</label>
+                        <input type="date" id="lastDay" class="form-control">
+                    </div>
+                </div>
+
+                <h5 class="text-secondary mt-4 mb-3">Financial Constraints (SAR/INR)</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Basic Salary</label>
+                        <input type="number" id="basicSalary" class="form-control" value="0" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Housing Allowance</label>
+                        <input type="number" id="housing" class="form-control" value="0">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Transport Allowance</label>
+                        <input type="number" id="transport" class="form-control" value="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Unpaid Leave Days (Deduction)</label>
+                        <input type="number" id="leaveDays" class="form-control" value="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Other Additions/Bonus</label>
+                        <input type="number" id="bonus" class="form-control" value="0">
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <button type="button" onclick="generatePDF()" class="btn btn-success btn-lg w-100">
+                    Generate PDF
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="pdf-container" style="display: none;"> <div id="pdf-content">
+        
+        <img src="banner.png" class="company-banner" alt="Company Banner">
+        
+        <h2 style="text-align: center; text-decoration: underline; margin-bottom: 20px;">FINAL SETTLEMENT SHEET</h2>
+
+        <table class="excel-table">
+            <tr>
+                <th colspan="4" class="section-header">EMPLOYEE INFORMATION</th>
+            </tr>
+            <tr>
+                <td width="20%"><strong>Name:</strong></td>
+                <td width="30%"><span id="outName"></span></td>
+                <td width="20%"><strong>Designation:</strong></td>
+                <td width="30%"><span id="outDesignation"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Joining Date:</strong></td>
+                <td><span id="outJoin"></span></td>
+                <td><strong>Resignation Date:</strong></td>
+                <td><span id="outRes"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Total Service:</strong></td>
+                <td colspan="3"><span id="outServiceDuration"></span></td>
+            </tr>
+        </table>
+
+        <br>
+
+        <table class="excel-table">
+            <tr>
+                <th colspan="2" class="section-header">SALARY DETAILS</th>
+                <th width="20%" class="section-header">AMOUNT</th>
+            </tr>
+            <tr>
+                <td width="10%">1</td>
+                <td>Basic Salary</td>
+                <td class="text-right"><span id="outBasic"></span></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Housing Allowance</td>
+                <td class="text-right"><span id="outHousing"></span></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Transport Allowance</td>
+                <td class="text-right"><span id="outTransport"></span></td>
+            </tr>
+            <tr style="background-color: #f9f9f9;">
+                <td><strong>A</strong></td>
+                <td><strong>GROSS SALARY (Total Monthly)</strong></td>
+                <td class="text-right font-bold"><span id="outGross"></span></td>
+            </tr>
+        </table>
+
+        <br>
+
+        <table class="excel-table">
+            <tr>
+                <th colspan="3" class="section-header">SETTLEMENT CALCULATION</th>
+            </tr>
+            <tr>
+                <td><strong>Description</strong></td>
+                <td class="text-center"><strong>Days / Formula</strong></td>
+                <td class="text-right"><strong>Total</strong></td>
+            </tr>
+            
+            <tr>
+                <td>Salary for Worked Days (Current Month)</td>
+                <td class="text-center">Calculated on Daily Rate</td>
+                <td class="text-right"><span id="outCurrentMonthSalary"></span></td>
+            </tr>
+            
+            <tr>
+                <td>Leave Encashment / Bonus</td>
+                <td class="text-center">Added</td>
+                <td class="text-right"><span id="outBonus"></span></td>
+            </tr>
+
+            <tr>
+                <td>Less: Unpaid Leave Deductions</td>
+                <td class="text-center"><span id="outLeaveDays"></span> Days</td>
+                <td class="text-right" style="color: red;">(<span id="outLeaveDeduction"></span>)</td>
+            </tr>
+
+            <tr style="background-color: #e6e6e6; border-top: 2px solid black;">
+                <td colspan="2" class="text-right" style="font-size: 14px;"><strong>NET PAYABLE AMOUNT:</strong></td>
+                <td class="text-right font-bold" style="font-size: 14px;"><span id="outNetPayable"></span></td>
+            </tr>
+        </table>
+
+        <br><br><br>
+        
+        <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+            <div style="text-align: center; width: 30%; border-top: 1px solid black; padding-top: 5px;">
+                <strong>Prepared By</strong><br>HR Department
+            </div>
+            <div style="text-align: center; width: 30%; border-top: 1px solid black; padding-top: 5px;">
+                <strong>Approved By</strong><br>Finance Manager
+            </div>
+            <div style="text-align: center; width: 30%; border-top: 1px solid black; padding-top: 5px;">
+                <strong>Received By</strong><br>Employee Signature
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generatePDF() {
+        // --- 1. GET VALUES FROM FORM ---
+        const empName = document.getElementById('empName').value;
+        const designation = document.getElementById('designation').value;
+        const joinDate = document.getElementById('joinDate').value;
+        const resDate = document.getElementById('resDate').value;
+        
+        const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+        const housing = parseFloat(document.getElementById('housing').value) || 0;
+        const transport = parseFloat(document.getElementById('transport').value) || 0;
+        const leaveDays = parseFloat(document.getElementById('leaveDays').value) || 0;
+        const bonus = parseFloat(document.getElementById('bonus').value) || 0;
+
+        // --- 2. PERFORM EXCEL-STYLE CALCULATIONS ---
+        const gross = basic + housing + transport;
+        
+        // Logic: Daily salary typically calculated as Gross / 30
+        const dailyRate = gross / 30;
+        
+        // Logic: Deduction for unpaid leave
+        const leaveDeduction = (dailyRate * leaveDays).toFixed(2);
+        
+        // Logic: Assuming full current month salary for simplicity (or add logic for specific days)
+        // For this demo, we assume the Net Payable is Gross + Bonus - Deductions
+        const currentMonthSalary = gross.toFixed(2); 
+        
+        const netPayable = (parseFloat(currentMonthSalary) + bonus - parseFloat(leaveDeduction)).toFixed(2);
+
+        // --- 3. FILL THE HIDDEN PDF TEMPLATE ---
+        document.getElementById('outName').innerText = empName;
+        document.getElementById('outDesignation').innerText = designation;
+        document.getElementById('outJoin').innerText = joinDate;
+        document.getElementById('outRes').innerText = resDate;
+        
+        // Calculate service duration roughly
+        if(joinDate && resDate) {
+            const start = new Date(joinDate);
+            const end = new Date(resDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            const years = Math.floor(diffDays / 365);
+            const months = Math.floor((diffDays % 365) / 30);
+            document.getElementById('outServiceDuration').innerText = `${years} Years, ${months} Months`;
+        }
+
+        document.getElementById('outBasic').innerText = basic.toFixed(2);
+        document.getElementById('outHousing').innerText = housing.toFixed(2);
+        document.getElementById('outTransport').innerText = transport.toFixed(2);
+        document.getElementById('outGross').innerText = gross.toFixed(2);
+        
+        document.getElementById('outCurrentMonthSalary').innerText = currentMonthSalary;
+        document.getElementById('outBonus').innerText = bonus.toFixed(2);
+        document.getElementById('outLeaveDays').innerText = leaveDays;
+        document.getElementById('outLeaveDeduction').innerText = leaveDeduction;
+        document.getElementById('outNetPayable').innerText = netPayable;
+
+        // --- 4. GENERATE PDF ---
+        // We select the element that looks like the Excel sheet
+        const element = document.getElementById('pdf-content');
+        
+        // Show the hidden div briefly for rendering (or clone it)
+        // html2pdf handles this, but ensuring styles apply:
+        element.style.display = 'block';
+
+        var opt = {
+            margin:       0.5,
+            filename:     empName + '_Settlement.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        // New Promise-based usage
+        html2pdf().set(opt).from(element).save().then(function(){
+            // Hide it again after downloading
+            element.style.display = 'none';
+        });
+    }
+</script>
+
+</body>
+</html>
