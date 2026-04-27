@@ -1,5 +1,5 @@
 // config.js
 const CONFIG = {
-    API_BASE_URL: 'https://scholar-regarding-bunch-concept.trycloudflare.com'
+    API_BASE_URL: 'https://council-finder-fit-exports.trycloudflare.com'
 };
 window.CONFIG = CONFIG;
