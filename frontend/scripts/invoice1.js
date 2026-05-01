@@ -224,37 +224,16 @@
     }
 
   // Open charges wizard in new window
-async function openChargesWizard(jobId) {
-    try {
-        // Fetch job card details
-        const response = await fetch(`${API_BASE_URL}/jobcards/${jobId}/details`);
-        const result = await response.json();
-        
-        if (!result.success) {
-            throw new Error(result.message);
-        }
-        
-        const jobCard = result.data;
-        
-        // Fetch charge types
-        const chargeTypesResponse = await fetch(`${API_BASE_URL}/charge-types`);
-        const chargeTypesResult = await chargeTypesResponse.json();
-        const chargeTypes = chargeTypesResult.success ? chargeTypesResult.data : [];
-        
-        // Encode data for URL
-        const encodedJobCard = encodeURIComponent(JSON.stringify(jobCard));
-        const encodedChargeTypes = encodeURIComponent(JSON.stringify(chargeTypes));
-        
-        // Open wizard in SAME TAB
-        const wizardUrl = `charges-wizard1.html?jobId=${jobId}&jobCard=${encodedJobCard}&chargeTypes=${encodedChargeTypes}`;
-        window.location.href = wizardUrl;
-            
+    async function openChargesWizard(jobId) {
+        try {
+            // Simply pass the jobId in the URL
+            const wizardUrl = `charges-wizard1.html?jobId=${jobId}`;
+            window.location.href = wizardUrl;
         } catch (error) {
             console.error('Error opening wizard:', error);
             alert('Failed to open charges wizard: ' + error.message);
         }
     }
-
 
     // Search functionality
     function initSearch() {
