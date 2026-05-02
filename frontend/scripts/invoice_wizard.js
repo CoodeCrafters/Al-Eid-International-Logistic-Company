@@ -860,10 +860,7 @@ window.saveInvoice = async function(generatePDF = false) {
                 window.open(`${API_BASE_URL}/api/invoices/${result.invoiceId}/pdf`, '_blank');
             }
             
-            // Redirect after 2 seconds
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            
         } else {
             window.showError(result.message || 'Failed to save invoice');
         }
