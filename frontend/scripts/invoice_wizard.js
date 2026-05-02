@@ -145,14 +145,43 @@ async function loadJobCardDetails() {
         // Initialize job info display
         window.initializeJobInfo();
         
-        // Load existing charges if any
-        if (result.data.charges && result.data.charges.length > 0) {
-            loadExistingCharges(result.data.charges);
+        // CRITICAL FIX: Load existing charges from the correct path
+        let existingCharges = [];
+        
+        // Check multiple possible locations for charges data
+        if (result.data.invoice && result.data.invoice.items && result.data.invoice.items.length > 0) {
+            existingCharges = result.data.invoice.items;
+            console.log('Found charges in invoice.items:', existingCharges.length);
+        } else if (result.data.invoice_items && result.data.invoice_items.length > 0) {
+            existingCharges = result.data.invoice_items;
+            console.log('Found charges in invoice_items:', existingCharges.length);
+        } else if (result.data.charges && result.data.charges.length > 0) {
+            existingCharges = result.data.charges;
+            console.log('Found charges in charges:', existingCharges.length);
         }
         
-        // Load advance payments if any
-        if (result.data.advance_payments && result.data.advance_payments.length > 0) {
-            loadExistingAdvancePayments(result.data.advance_payments);
+        if (existingCharges.length > 0) {
+            loadExistingCharges(existingCharges);
+        } else {
+            console.log('No existing charges found, adding empty rows');
+            // Add empty rows if no charges exist
+            window.addChargeRow('required');
+            window.addChargeRow('marginal');
+        }
+        
+        // Load advance payments from the correct path
+        let existingPayments = [];
+        
+        if (result.data.invoice && result.data.invoice.advance_payments && result.data.invoice.advance_payments.length > 0) {
+            existingPayments = result.data.invoice.advance_payments;
+            console.log('Found payments in invoice.advance_payments:', existingPayments.length);
+        } else if (result.data.advance_payments && result.data.advance_payments.length > 0) {
+            existingPayments = result.data.advance_payments;
+            console.log('Found payments in advance_payments:', existingPayments.length);
+        }
+        
+        if (existingPayments.length > 0) {
+            loadExistingAdvancePayments(existingPayments);
         }
         
         window.hideLoading();
@@ -168,15 +197,35 @@ async function loadJobCardDetails() {
 
 // Load existing charges into the wizard
 function loadExistingCharges(charges) {
+    console.log('Loading existing charges:', charges);
+    
     // Clear existing rows
-    document.getElementById('requiredChargesTableBody').innerHTML = '';
-    document.getElementById('marginalChargesTableBody').innerHTML = '';
+    const requiredTableBody = document.getElementById('requiredChargesTableBody');
+    const marginalTableBody = document.getElementById('marginalChargesTableBody');
+    
+    if (requiredTableBody) requiredTableBody.innerHTML = '';
+    if (marginalTableBody) marginalTableBody.innerHTML = '';
     
     let requiredCount = 0;
     let marginalCount = 0;
     
-    charges.forEach(charge => {
-        if (charge.charge_type === 'required') {
+    charges.forEach((charge, index) => {
+        // Determine charge type (required or marginal)
+        let chargeType = charge.charge_type || 'required';
+        
+        // Normalize charge type
+        if (chargeType === 'required' || chargeType === 'req' || chargeType === 'mandatory') {
+            chargeType = 'required';
+        } else if (chargeType === 'marginal' || chargeType === 'margin' || chargeType === 'profit') {
+            chargeType = 'marginal';
+        } else {
+            // Default to required if unknown
+            chargeType = 'required';
+        }
+        
+        console.log(`Adding charge ${index + 1}: ${charge.description} (${chargeType})`);
+        
+        if (chargeType === 'required') {
             addChargeRowFromData('required', charge);
             requiredCount++;
         } else {
@@ -187,33 +236,50 @@ function loadExistingCharges(charges) {
     
     // If no charges, add empty rows
     if (requiredCount === 0) {
+        console.log('No required charges found, adding empty row');
         window.addChargeRow('required');
     }
     if (marginalCount === 0) {
+        console.log('No marginal charges found, adding empty row');
         window.addChargeRow('marginal');
     }
     
-    // Update totals
-    window.updateTotals();
+    // Update totals after loading
+    setTimeout(() => {
+        window.updateTotals();
+    }, 100);
 }
 
 // Add charge row from existing data
 function addChargeRowFromData(type, chargeData) {
     const tableBodyId = type === 'required' ? 'requiredChargesTableBody' : 'marginalChargesTableBody';
     const tableBody = document.getElementById(tableBodyId);
-    const template = document.getElementById('chargeRowTemplate').innerHTML;
     
+    if (!tableBody) {
+        console.error(`Table body not found: ${tableBodyId}`);
+        return;
+    }
+    
+    const template = document.getElementById('chargeRowTemplate');
+    if (!template) {
+        console.error('Charge row template not found');
+        return;
+    }
+    
+    const templateHtml = template.innerHTML;
+    
+    // Generate charge options with the current value selected
     const chargeOptions = generateChargeOptions(chargeData.description);
     
-    let rowHtml = template
+    let rowHtml = templateHtml
         .replace(/{{chargeTypes}}/g, chargeOptions)
-        .replace(/{{id}}/g, `${type}-${Date.now()}-${Math.random()}`);
+        .replace(/{{id}}/g, `${type}-${Date.now()}-${Math.random()}-${Math.random()}`);
     
     tableBody.insertAdjacentHTML('beforeend', rowHtml);
     
     const newRow = tableBody.lastElementChild;
     
-    // Set values
+    // Set values with proper parsing
     const descriptionSelect = newRow.querySelector('.charge-description');
     const customInput = newRow.querySelector('.custom-description');
     const quantityInput = newRow.querySelector('.charge-quantity');
@@ -222,57 +288,158 @@ function addChargeRowFromData(type, chargeData) {
     const rateInput = newRow.querySelector('.charge-rate');
     const amountInput = newRow.querySelector('.charge-amount');
     
-    // Check if description is custom
-    const isCustomCharge = !window.wizardData.chargeTypes.some(ct => ct.name === chargeData.description);
+    // Handle description
+    const description = chargeData.description || '';
+    const isCustomCharge = !window.wizardData.chargeTypes.some(ct => ct.name === description);
     
-    if (isCustomCharge) {
-        descriptionSelect.value = 'custom';
-        customInput.style.display = 'block';
-        customInput.value = chargeData.description;
-    } else {
-        descriptionSelect.value = chargeData.description;
-        customInput.style.display = 'none';
+    if (descriptionSelect) {
+        if (isCustomCharge && description) {
+            descriptionSelect.value = 'custom';
+            if (customInput) {
+                customInput.style.display = 'block';
+                customInput.value = description;
+            }
+        } else if (description) {
+            descriptionSelect.value = description;
+            if (customInput) customInput.style.display = 'none';
+        } else {
+            if (customInput) customInput.style.display = 'none';
+        }
     }
     
-    quantityInput.value = chargeData.quantity;
-    unitSelect.value = chargeData.unit;
-    rateInput.value = chargeData.rate;
-    amountInput.value = chargeData.amount.toFixed(3);
+    // Set quantity (handle string or number)
+    if (quantityInput) {
+        const quantity = parseFloat(chargeData.quantity) || 0;
+        quantityInput.value = quantity;
+    }
     
-    // Setup event listeners
+    // Set unit (check if it's a custom unit)
+    if (unitSelect) {
+        let unit = chargeData.unit || 'nos';
+        const isCustomUnit = !Array.from(unitSelect.options).some(opt => opt.value === unit);
+        
+        if (isCustomUnit) {
+            unitSelect.value = 'custom';
+            if (customUnit) {
+                customUnit.style.display = 'block';
+                customUnit.value = unit;
+            }
+        } else {
+            unitSelect.value = unit;
+            if (customUnit) customUnit.style.display = 'none';
+        }
+    }
+    
+    // Set rate
+    if (rateInput) {
+        const rate = parseFloat(chargeData.rate) || 0;
+        rateInput.value = rate;
+    }
+    
+    // Set amount
+    if (amountInput) {
+        const amount = parseFloat(chargeData.amount) || 0;
+        amountInput.value = amount.toFixed(3);
+    }
+    
+    // Setup event listeners for the new row
     window.setupChargeRowEvents(newRow, type);
+    
+    // Trigger amount calculation
+    const calculateEvent = new Event('input');
+    if (quantityInput) quantityInput.dispatchEvent(calculateEvent);
+    if (rateInput) rateInput.dispatchEvent(calculateEvent);
 }
 
-// Generate charge options HTML
+// Update the generateChargeOptions function to better handle selection
 function generateChargeOptions(selectedValue = '') {
     let options = '<option value="">Select charge type</option>';
     
     window.wizardData.chargeTypes.forEach(charge => {
-        const selected = charge.name === selectedValue ? 'selected' : '';
-        options += `<option value="${charge.name}" ${selected}>${charge.name}</option>`;
+        const selected = (charge.name === selectedValue) ? 'selected' : '';
+        options += `<option value="${escapeHtml(charge.name)}" ${selected}>${escapeHtml(charge.name)}</option>`;
     });
     
-    options += '<option value="custom">Custom...</option>';
+    // Add custom option
+    const customSelected = (selectedValue && !window.wizardData.chargeTypes.some(ct => ct.name === selectedValue)) ? 'selected' : '';
+    options += `<option value="custom" ${customSelected}>Custom...</option>`;
     
     return options;
 }
 
-// Load existing advance payments
+// Update unit select options with more comprehensive list
+function populateUnitSelect(selectElement, selectedValue = '') {
+    const units = [
+        { value: 'nos', label: 'Nos' },
+        { value: 'kg', label: 'Kilogram (kg)' },
+        { value: 'ton', label: 'Tonne' },
+        { value: 'item', label: 'Item' },
+        { value: 'box', label: 'Box' },
+        { value: 'pallet', label: 'Pallet' },
+        { value: 'carton', label: 'Carton' },
+        { value: 'cubic-meter', label: 'Cubic Meter (CBM)' },
+        { value: 'container', label: 'Container' },
+        { value: '20ft-container', label: '20ft Container' },
+        { value: '40ft-container', label: '40ft Container' },
+        { value: '40hc-container', label: '40ft HC Container' },
+        { value: 'teu', label: 'TEU' },
+        { value: 'hour', label: 'Hour' },
+        { value: 'day', label: 'Day' },
+        { value: 'week', label: 'Week' },
+        { value: 'month', label: 'Month' },
+        { value: 'trip', label: 'Trip' },
+        { value: 'shipment', label: 'Shipment' },
+        { value: 'document', label: 'Document' },
+        { value: 'certificate', label: 'Certificate' },
+        { value: 'approval', label: 'Approval' },
+        { value: 'service', label: 'Service' },
+        { value: 'transaction', label: 'Transaction' },
+        { value: 'lot', label: 'Lot' },
+        { value: 'percentage', label: 'Percentage (%)' },
+        { value: 'flat', label: 'Flat Rate' }
+    ];
+    
+    let options = '';
+    units.forEach(unit => {
+        const selected = (unit.value === selectedValue) ? 'selected' : '';
+        options += `<option value="${unit.value}" ${selected}>${unit.label}</option>`;
+    });
+    options += '<option value="custom">Custom Unit...</option>';
+    
+    if (selectElement) {
+        selectElement.innerHTML = options;
+    }
+}
+
+// Add debug logging to loadExistingAdvancePayments
 function loadExistingAdvancePayments(payments) {
-    if (payments.length > 0) {
-        const totalAdvance = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
-        document.getElementById('advanceAmount').value = totalAdvance.toFixed(3);
+    console.log('Loading advance payments:', payments);
+    
+    if (payments && payments.length > 0) {
+        const totalAdvance = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+        const advanceAmountInput = document.getElementById('advanceAmount');
+        if (advanceAmountInput) {
+            advanceAmountInput.value = totalAdvance.toFixed(3);
+        }
         
         // Set latest payment details
         const latestPayment = payments[0];
-        if (latestPayment.payment_date) {
-            document.getElementById('paymentDate').value = latestPayment.payment_date;
+        const paymentDateInput = document.getElementById('paymentDate');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const paymentReferenceInput = document.getElementById('paymentReference');
+        
+        if (paymentDateInput && latestPayment.payment_date) {
+            // Format date to YYYY-MM-DD
+            const paymentDate = new Date(latestPayment.payment_date);
+            if (!isNaN(paymentDate.getTime())) {
+                paymentDateInput.value = paymentDate.toISOString().split('T')[0];
+            }
         }
-        if (latestPayment.payment_method) {
-            document.getElementById('paymentMethod').value = latestPayment.payment_method;
+        if (paymentMethodSelect && latestPayment.payment_method) {
+            paymentMethodSelect.value = latestPayment.payment_method;
         }
-        if (latestPayment.reference_number) {
-            document.getElementById('paymentReference').value = latestPayment.reference_number;
+        if (paymentReferenceInput && latestPayment.reference_number) {
+            paymentReferenceInput.value = latestPayment.reference_number;
         }
     }
 }
